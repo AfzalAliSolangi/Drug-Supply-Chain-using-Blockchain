@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import multichain
-# from . import webs3
-# webs3.call_me_first()
+
+#Only password required to login users
+#Fix it before production
 password = {'prd': ['monk', "monk123"], 'mas': ['abi', 'abi123'], 'hos': [
     'hari', 'hari123'], 'buyd': ['dhan', 'dhan123'], 'owner': ['power', 'power123']}
 temp = ['patientid', 'doctorId', 'Time', 'Drug Id', 'Amount Paid']
@@ -68,10 +69,10 @@ def login(request):
 
 def getdetails(request):
     patid = int(request.GET['patid'])
-    k=webs3.retrive_data(patid)
+    # k=webs3.retrive_data(patid)
     context = {
         'left': temp,
-        'value': k
+        # 'value': k
     }
     print(context)
     return render(request, "logval.html", context)
