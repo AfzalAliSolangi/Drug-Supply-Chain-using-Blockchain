@@ -150,12 +150,7 @@ def drugbuy(request):
         patid = int(request.POST['patid'])
         docid = int(request.POST['docid'])
         reqamt = int(request.POST['reqamt'])
-        # webs3.buydrug(hosid, ProductID, reqamt, docid, patid)
-        # print("hosid" +  hosid)
-        # print("ProductID" + ProductID)
-        # print("patid" + patid)
-        # print("docid" + docid)
-        # print("reqamt" + reqamt)
+
         context = {
             "hosid":  hosid,
             "ProductID": ProductID,
