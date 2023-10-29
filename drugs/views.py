@@ -100,7 +100,7 @@ def prddata(request):
         return render(request, "dealerinput.html")
 
 
-def masterinput(request):
+def masterinput(request): #Manufacturer Input
     if request.method == 'POST':
         #feting input from the srceen
         ProductID = str(request.POST['PrdID'])
@@ -143,7 +143,7 @@ def hostpitalinput(request):
         return render(request, "hospitalinput.html", {"error": "Failed to publish data to MultiChain"})
 
 
-def drugbuy(request):
+def drugbuy(request):#Distributor Fetch screen, fetches the data from the chain and displays
     if request.method == 'POST':
         hosid = int(request.POST['hosid'])
         ProductID = int(request.POST['PrdID'])
