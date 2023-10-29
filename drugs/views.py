@@ -103,6 +103,7 @@ def prddata(request):
 def masterinput(request): #Manufacturer Input
     if request.method == 'POST':
         #feting input from the srceen
+        #Modify the screen and post method according to the "D:\BlockChain\Codes\medicine_data.json"
         ProductID = str(request.POST['PrdID'])
         ProdutName = str(request.POST['PrdName'])
         Signature = str(request.POST['Sig'])
