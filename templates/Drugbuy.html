@@ -4,21 +4,21 @@
       <form action="drgby" method="POST">
         {%csrf_token%}
         <div class="formbold-mb-3">
-          <label for="hosid" class="formbold-form-label"> Hospital Id </label>
+          <label for="strname" class="formbold-form-label"> stream name </label>
           <input
             type="text"
-            name="hosid"
+            name="strname"
             id="age"
             class="formbold-form-input"
-            placeholder="Hospital ID"
+            placeholder="stream_name"
           />
         </div> 
         <div class="formbold-input-flex">
           <div>
-            <label for="ProductID" class="formbold-form-label"> Product Id </label>
+            <label for="key" class="formbold-form-label"> key </label>
             <input
               type="text"
-              name="PrdID"
+              name="key"
               id="firstname"
               placeholder="Product Id"
               class="formbold-form-input"
@@ -26,35 +26,12 @@
           </div>
   
           <div>
-            <label for="patid" class="formbold-form-label"> Patient ID </label>
+            <label for="pub" class="formbold-form-label"> publisher </label>
             <input
               type="text"
-              name="patid"
+              name="pub"
               id="lastname"
-              placeholder="Patient ID"
-              class="formbold-form-input"
-            />
-          </div>
-        </div>
-        <div class="formbold-input-flex">
-          <div>
-            <label for="docid" class="formbold-form-label"> Doctor Id </label>
-            <input
-              type="text"
-              name="docid"
-              id="firstname"
-              placeholder="Doctor Id"
-              class="formbold-form-input"
-            />
-          </div>
-  
-          <div>
-            <label for="reqamt" class="formbold-form-label"> Required Amount </label>
-            <input
-              type="text"
-              name="reqamt"
-              id="lastname"
-              placeholder="Required Amount"
+              placeholder="publisher"
               class="formbold-form-input"
             />
           </div>
