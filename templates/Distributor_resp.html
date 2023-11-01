@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Transaction Details</title>
+    <title>Product Selection</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         * {
@@ -65,35 +65,85 @@
     </style>
 </head>
 <body>
-    <h1>Transaction Details</h1>
-    <p>manufacturer: {{ manufacturer }}</p>
-    <p>products: {{ products }}</p>
-    <p>product_code: {{ product_code }}</p>
-    <p>description: {{ description }}</p>
-    
-    <!-- Buttons -->
-    <button id="copyButton">Copy to Clipboard</button>
-    <button id="downloadButton">Download as Text File</button>
-    
-    <!-- JavaScript to handle copying and downloading -->
+    <h1>Product Selection</h1>
+
+    <!-- Dropdown for Manufacturers -->
+    <label for="manufacturerDropdown">Select Manufacturer:</label>
+    <select id="manufacturerDropdown">
+        <option value="" disabled selected>Select Manufacturer</option>
+    </select>
+
+    <!-- Dropdown for Products -->
+    <label for="productDropdown">Select Product:</label>
+    <select id="productDropdown" disabled>
+        <option value="" disabled selected>Select Product</option>
+    </select>
+
+    <!-- Display Description and Unit Price -->
+    <p>Description: <span id="description"></span></p>
+    <p>Unit Price: <span id="unitPrice"></span></p>
+
     <script>
-        document.getElementById("copyButton").addEventListener("click", function() {
-            const textArea = document.createElement("textarea");
-            textArea.value = "{{ txid }}";
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand("copy");
-            document.body.removeChild(textArea);
+        // Your JSON data
+        var jsonData = {{json_string|safe}};
+
+        // Populate the Manufacturer dropdown
+        var manufacturerDropdown = document.getElementById("manufacturerDropdown");
+        var manufacturers = jsonData.map(function (entry) {
+            return entry.data.json.manufacturer;
         });
 
-        document.getElementById("downloadButton").addEventListener("click", function() {
-            const blob = new Blob(["Transaction ID: {{ txid }}"], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "transaction.txt";
-            a.click();
-            URL.revokeObjectURL(url);
+        manufacturers.forEach(function (manufacturer) {
+            var option = document.createElement("option");
+            option.value = manufacturer;
+            option.text = manufacturer;
+            manufacturerDropdown.appendChild(option);
+        });
+
+        // Event listener for manufacturer selection
+        manufacturerDropdown.addEventListener("change", function () {
+            var selectedManufacturer = this.value;
+            var productDropdown = document.getElementById("productDropdown");
+            var descriptionElement = document.getElementById("description");
+            var unitPriceElement = document.getElementById("unitPrice");
+
+            // Find the selected manufacturer's data
+            var selectedManufacturerData = jsonData.find(function (entry) {
+                return entry.data.json.manufacturer === selectedManufacturer;
+            });
+
+            if (selectedManufacturerData) {
+                // Enable the Product dropdown and populate it with products
+                productDropdown.disabled = false;
+                productDropdown.innerHTML = "<option value='' disabled selected>Select Product</option>";
+
+                var products = selectedManufacturerData.data.json.products;
+
+                products.forEach(function (product) {
+                    var option = document.createElement("option");
+                    option.value = product.product_name;
+                    option.text = product.product_name;
+                    productDropdown.appendChild(option);
+                });
+
+                // Event listener for product selection
+                productDropdown.addEventListener("change", function () {
+                    var selectedProduct = this.value;
+
+                    // Find the selected product's data
+                    var selectedProductData = products.find(function (product) {
+                        return product.product_name === selectedProduct;
+                    });
+
+                    // Display the description and unit price
+                    descriptionElement.textContent = selectedProductData.description;
+                    unitPriceElement.textContent = selectedProductData.unit_price;
+                });
+            } else {
+                productDropdown.disabled = true;
+                descriptionElement.textContent = "";
+                unitPriceElement.textContent = "";
+            }
         });
     </script>
 </body>

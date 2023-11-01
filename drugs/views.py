@@ -151,18 +151,10 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
         key = str(request.POST['key'])
         publisher = str(request.POST['pub'])
 
-        x = rpc_connection.subscribe('{}'.format(stream_name)) 
+        x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
         response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(key), 'publisher' : '{}'.format(publisher)}) 
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-        json_load = json.loads(json_string)
-        manufacturer = json_load[0]["data"]["json"]['manufacturer']
-        products = json_load[0]["data"]["json"]['products'][0]['product_name']
-        product_code = json_load[0]["data"]["json"]['products'][0]['product_code']
-        description = json_load[0]["data"]["json"]['products'][0]['description']
 
-        return render(request, "Distributor_resp.html", {'manufacturer': manufacturer,
-                                                     'products':products,
-                                                     'product_code':product_code,
-                                                     'description':description})
+        return render(request, "Distributor_resp.html", {'json_string': json_string})
     else:
         return render(request, "Distributor_resp.html",{"error": "Failed to fetch data to MultiChain"})
