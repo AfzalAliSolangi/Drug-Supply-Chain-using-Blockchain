@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import multichain
+import json
 
 #Only password required to login users
 #Fix it before production
@@ -146,19 +147,22 @@ def hostpitalinput(request):
 
 def drugbuy(request):#Distributor Fetch screen, fetches the data from the chain and displays
     if request.method == 'POST':
-        hosid = int(request.POST['hosid'])
-        ProductID = int(request.POST['PrdID'])
-        patid = int(request.POST['patid'])
-        docid = int(request.POST['docid'])
-        reqamt = int(request.POST['reqamt'])
+        stream_name = str(request.POST['strname'])
+        key = str(request.POST['key'])
+        publisher = str(request.POST['pub'])
 
-        context = {
-            "hosid":  hosid,
-            "ProductID": ProductID,
-            "patid": patid,
-            "docid": docid,
-            "reqamt": reqamt
-        }
-        return render(request, "drugbuy.html", context)
+        x = rpc_connection.subscribe('{}'.format(stream_name)) 
+        response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(key), 'publisher' : '{}'.format(publisher)}) 
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_load = json.loads(json_string)
+        manufacturer = json_load[0]["data"]["json"]['manufacturer']
+        products = json_load[0]["data"]["json"]['products'][0]['product_name']
+        product_code = json_load[0]["data"]["json"]['products'][0]['product_code']
+        description = json_load[0]["data"]["json"]['products'][0]['description']
+
+        return render(request, "drugbuytrxid.html", {'manufacturer': manufacturer,
+                                                     'products':products,
+                                                     'product_code':product_code,
+                                                     'description':description})
     else:
-        return render(request, "drugbuy.html")
+        return render(request, "drugbuytrxid.html",{"error": "Failed to fetch data to MultiChain"})
