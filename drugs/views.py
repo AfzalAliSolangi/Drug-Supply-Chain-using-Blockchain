@@ -59,7 +59,7 @@ def login(request):
         elif passw in password["hos"]:
             return render(request, "hospitalinput.html")
         elif passw in password["buyd"]:
-            return render(request, "drugbuy.html")
+            return render(request, "Distributor.html")
         elif passw in password["owner"]:
             return render(request, "seedetails.html")
         else:
@@ -145,7 +145,7 @@ def hostpitalinput(request):
         return render(request, "hospitalinput.html", {"error": "Failed to publish data to MultiChain"})
 
 
-def drugbuy(request):#Distributor Fetch screen, fetches the data from the chain and displays
+def distributor(request):#Distributor Fetch screen, fetches the data from the chain and displays
     if request.method == 'POST':
         stream_name = str(request.POST['strname'])
         key = str(request.POST['key'])
@@ -160,9 +160,9 @@ def drugbuy(request):#Distributor Fetch screen, fetches the data from the chain 
         product_code = json_load[0]["data"]["json"]['products'][0]['product_code']
         description = json_load[0]["data"]["json"]['products'][0]['description']
 
-        return render(request, "drugbuytrxid.html", {'manufacturer': manufacturer,
+        return render(request, "Distributor_resp.html", {'manufacturer': manufacturer,
                                                      'products':products,
                                                      'product_code':product_code,
                                                      'description':description})
     else:
-        return render(request, "drugbuytrxid.html",{"error": "Failed to fetch data to MultiChain"})
+        return render(request, "Distributor_resp.html",{"error": "Failed to fetch data to MultiChain"})
