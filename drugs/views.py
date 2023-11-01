@@ -55,7 +55,7 @@ def login(request):
         if passw in password['prd']:
             return render(request, "dealerinput.html")
         elif passw in password["mas"]:
-            return render(request, "masterinput.html")
+            return render(request, "manufacturer.html")
         elif passw in password["hos"]:
             return render(request, "hospitalinput.html")
         elif passw in password["buyd"]:
@@ -101,7 +101,7 @@ def prddata(request):
         return render(request, "dealerinput.html")
 
 
-def masterinput(request): #Manufacturer Input
+def manufacturer(request): #Manufacturer Input
     if request.method == 'POST':
         #feting input from the srceen
         #Modify the screen and post method according to the "D:\BlockChain\Codes\medicine_data.json"
@@ -118,9 +118,9 @@ def masterinput(request): #Manufacturer Input
         }})
 
     if txid:
-        return render(request, "masterinput.html", {"txid": txid})
+        return render(request, "manufacturer.html", {"txid": txid})
     else:
-        return render(request, "masterinput.html", {"error": "Failed to publish data to MultiChain"})    
+        return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})    
 
 
 def hostpitalinput(request):
