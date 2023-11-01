@@ -113,7 +113,7 @@ def manufacturer(request): #Manufacturer Input
         manufacturing_date = str(request.POST['mfgdate'])
         expiry_date = str(request.POST['expdate'])
         
-        txid = rpc_connection.publish('testchain', 'contract', {'json' :{       #Publishing the data on the chain 
+        txid = rpc_connection.publish('testchain', 'new_contract', {'json' :{       #Publishing the data on the chain 
         'product_name': product_name,
         'product_code': product_code,
         'description': description,
