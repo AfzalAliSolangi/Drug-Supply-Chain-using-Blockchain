@@ -5,46 +5,92 @@
         {%csrf_token%}
         <div class="formbold-input-flex">
           <div>
-            <label for="PrdID" class="formbold-form-label"> Product Id </label>
+            <label for="PrdName" class="formbold-form-label"> product_name </label>
             <input
               type="text"
-              name="PrdID"
+              name="PrdName"
               id="firstname"
-              placeholder="Product Id"
+              placeholder="product_name"
               class="formbold-form-input"
             />
           </div>
   
           <div>
-            <label for="PrdName" class="formbold-form-label"> Produt Name </label>
+            <label for="PrdCode" class="formbold-form-label"> product_code </label>
             <input
               type="text"
-              name="PrdName"
+              name="PrdCode"
               id="lastname"
-              placeholder="Produt Name"
+              placeholder="product_code"
               class="formbold-form-input"
             />
           </div>
         </div>
         <div class="formbold-input-flex">
           <div>
-            <label for="Sig" class="formbold-form-label"> Signature </label>
+            <label for="Desc" class="formbold-form-label"> description </label>
             <input
               type="text"
-              name="Sig"
+              name="Desc"
               id="firstname"
-              placeholder="Signature"
+              placeholder="description"
               class="formbold-form-input"
             />
           </div>
   
           <div>
-            <label for="PripU" class="formbold-form-label"> Price Per Unit </label>
+            <label for="dosage" class="formbold-form-label"> dosage </label>
+            <input
+              type="text"
+              name="dosage"
+              id="lastname"
+              placeholder="dosage"
+              class="formbold-form-input"
+            />
+          </div>
+        </div>
+        <div class="formbold-input-flex">
+          <div>
+            <label for="instock" class="formbold-form-label"> quantity_in_stock </label>
+            <input
+              type="text"
+              name="instock"
+              id="firstname"
+              placeholder="quantity_in_stock"
+              class="formbold-form-input"
+            />
+          </div>
+  
+          <div>
+            <label for="PripU" class="formbold-form-label"> unit_price </label>
             <input
               type="text"
               name="PripU"
               id="lastname"
-              placeholder="Price Per Unit"
+              placeholder="unit_price"
+              class="formbold-form-input"
+            />
+          </div>
+        </div>
+        <div class="formbold-input-flex">
+          <div>
+            <label for="mfgdate" class="formbold-form-label"> Manufacturing Date </label>
+            <input
+              type="text"
+              name="mfgdate"
+              id="firstname"
+              placeholder="Manufacturing Date"
+              class="formbold-form-input"
+            />
+          </div>
+  
+          <div>
+            <label for="expdate" class="formbold-form-label"> Expiry Date </label>
+            <input
+              type="text"
+              name="expdate"
+              id="lastname"
+              placeholder="Expiry Date"
               class="formbold-form-input"
             />
           </div>

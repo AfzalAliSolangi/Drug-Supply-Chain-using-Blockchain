@@ -103,18 +103,25 @@ def prddata(request):
 
 def manufacturer(request): #Manufacturer Input
     if request.method == 'POST':
-        #feting input from the srceen
-        #Modify the screen and post method according to the "D:\BlockChain\Codes\medicine_data.json"
-        ProductID = str(request.POST['PrdID'])
-        ProdutName = str(request.POST['PrdName'])
-        Signature = str(request.POST['Sig'])
-        ProdPriceUnit = float(request.POST['PripU'])
-        #Publishing the data on the chain 
-        txid = rpc_connection.publish('testchain', 'contract', {'json' :{
-        'ProductID': ProductID,
-        'ProdutName': ProdutName,
-        'signature': Signature,
-        'ProdPriceUnit': ProdPriceUnit,
+        #fetching input from the srceen
+        product_name = str(request.POST['PrdName'])
+        product_code = str(request.POST['PrdCode'])
+        description = str(request.POST['Desc'])
+        dosage = str(request.POST['dosage'])
+        quantity_in_stock = int(request.POST['instock'])
+        unit_price = float(request.POST['PripU'])
+        manufacturing_date = str(request.POST['mfgdate'])
+        expiry_date = str(request.POST['expdate'])
+        
+        txid = rpc_connection.publish('testchain', 'contract', {'json' :{       #Publishing the data on the chain 
+        'product_name': product_name,
+        'product_code': product_code,
+        'description': description,
+        'dosage': dosage,
+        'quantity_in_stock': quantity_in_stock,
+        'unit_price': unit_price,
+        'manufacturing_date': manufacturing_date,
+        'expiry_date': expiry_date
         }})
 
     if txid:
