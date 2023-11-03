@@ -104,24 +104,16 @@ def prddata(request):
 
 def manufacturer(request): # Manufacturer Input
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            print(data)
-            manufacturer = data['manufacturer']
-            # Extract other fields as needed
-            
-            # Your existing code to publish data on the chain
-            txid = rpc_connection.publish('testchain', 'new_contract', {'json': data})
-            
-            if txid:
-                return JsonResponse({"message": "Data published successfully"})
-            else:
-                return JsonResponse({"message": "Failed to publish data to MultiChain"})
-        except json.JSONDecodeError as e:
-            return JsonResponse({"message": "Invalid JSON data"})
+        data = json.loads(request.POST.get('product_data'))
+        print(data)
+        
+        #publish data on the chain
+        txid = rpc_connection.publish('testchain', 'xx_contract', {'json': data})
+    if txid:
+        return render(request, "manufacturer.html", {"txid": txid})
     else:
-        return JsonResponse({"message": "Invalid request method"})
-
+        return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})               
+        
 
 def hostpitalinput(request):
     if request.method == 'POST':

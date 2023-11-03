@@ -52,6 +52,9 @@
                 // Output the JSON data to the console (you can send it to your server instead)
                 console.log(JSON.stringify(jsonData, null, 2));
 
+                // Submit the form using JavaScript
+                submitForm(jsonData);
+
                 // Reset the form
                 resetForm();
             }
@@ -84,7 +87,15 @@
             newProductSection.style.display = 'block';
             productSection.appendChild(newProductSection);
         }
-
+        function submitForm(data) {
+          const form = document.getElementById('product-form');
+          const jsonInput = document.createElement('input');
+          jsonInput.type = 'hidden';
+          jsonInput.name = 'product_data';  // Name to use in Django for the JSON data
+          jsonInput.value = JSON.stringify(data);
+          form.appendChild(jsonInput);
+          form.submit();
+      }
         // Call the addProduct function to initially display the first product input section
         addProduct();
     </script>
@@ -92,7 +103,7 @@
 <body>
     <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
-            <form action="masup" method="POST">
+            <form id="product-form" action="masup" method="POST">
                 {%csrf_token%}
                 <div class="formbold-input-flex">
                     <div>
