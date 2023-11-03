@@ -104,6 +104,7 @@ def prddata(request):
 def manufacturer(request): #Manufacturer Input
     if request.method == 'POST':
         #fetching input from the srceen
+        manufacturer = str(request.POST['manu'])
         product_name = str(request.POST['PrdName'])
         product_code = str(request.POST['PrdCode'])
         description = str(request.POST['Desc'])
@@ -113,7 +114,8 @@ def manufacturer(request): #Manufacturer Input
         manufacturing_date = str(request.POST['mfgdate'])
         expiry_date = str(request.POST['expdate'])
         
-        txid = rpc_connection.publish('testchain', 'new_contract', {'json' :{       #Publishing the data on the chain 
+        txid = rpc_connection.publish('testchain', 'xx_contract', {'json' :{       #Publishing the data on the chain 
+        'manufacturer': manufacturer,
         'product_name': product_name,
         'product_code': product_code,
         'description': description,
