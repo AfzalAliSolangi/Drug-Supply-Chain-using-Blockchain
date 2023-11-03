@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 import multichain
 import json
 
@@ -101,35 +102,25 @@ def prddata(request):
         return render(request, "dealerinput.html")
 
 
-def manufacturer(request): #Manufacturer Input
+def manufacturer(request): # Manufacturer Input
     if request.method == 'POST':
-        #fetching input from the srceen
-        manufacturer = str(request.POST['manu'])
-        product_name = str(request.POST['PrdName'])
-        product_code = str(request.POST['PrdCode'])
-        description = str(request.POST['Desc'])
-        dosage = str(request.POST['dosage'])
-        quantity_in_stock = int(request.POST['instock'])
-        unit_price = float(request.POST['PripU'])
-        manufacturing_date = str(request.POST['mfgdate'])
-        expiry_date = str(request.POST['expdate'])
-        
-        txid = rpc_connection.publish('testchain', 'new_contract', {'json' :{       #Publishing the data on the chain 
-        'manufacturer': manufacturer,
-        'product_name': product_name,
-        'product_code': product_code,
-        'description': description,
-        'dosage': dosage,
-        'quantity_in_stock': quantity_in_stock,
-        'unit_price': unit_price,
-        'manufacturing_date': manufacturing_date,
-        'expiry_date': expiry_date
-        }})
-
-    if txid:
-        return render(request, "manufacturer.html", {"txid": txid})
+        try:
+            data = json.loads(request.body)
+            print(data)
+            manufacturer = data['manufacturer']
+            # Extract other fields as needed
+            
+            # Your existing code to publish data on the chain
+            txid = rpc_connection.publish('testchain', 'new_contract', {'json': data})
+            
+            if txid:
+                return JsonResponse({"message": "Data published successfully"})
+            else:
+                return JsonResponse({"message": "Failed to publish data to MultiChain"})
+        except json.JSONDecodeError as e:
+            return JsonResponse({"message": "Invalid JSON data"})
     else:
-        return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})    
+        return JsonResponse({"message": "Invalid request method"})
 
 
 def hostpitalinput(request):
@@ -137,12 +128,6 @@ def hostpitalinput(request):
         hospid = int(request.POST['hospid'])
         patid = int(request.POST['patid'])
         docid = int(request.POST['docid'])
-        # webs3.reg_d(docid)
-        # webs3.reg_pat(patid, hospid)
-        # webs3.reg_h(hospid)
-        # print("ProductID" + hospid)
-        # print("patid" +patid)
-        # print("docid" + docid)
         txid = rpc_connection.publish('testchain', 'contract', {'json' :{
         'manufacturer': hospid,
         'distributor': patid,

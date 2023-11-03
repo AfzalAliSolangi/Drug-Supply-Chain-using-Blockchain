@@ -1,117 +1,135 @@
-<div class="formbold-main-wrapper">
-    <div class="formbold-form-wrapper">
-       <!-- <img src="your-image-here.jpg"> -->
-      <form action="masup" method="POST">
-        {%csrf_token%}
-        <div class="formbold-input-flex">
-          <div>
-            <label for="manu" class="formbold-form-label"> manufacturer </label>
-            <input
-              type="text"
-              name="manu"
-              id="firstname"
-              placeholder="manufacturer"
-              class="formbold-form-input"
-            />
-          </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Information Form</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
+    <script>
+        // Function to gather and format the product data as JSON
+        function collectProductData() {
+            const manufacturer = document.getElementById('manufacturer').value;
+            const address = document.getElementById('address').value;
+            const products = [];
+
+            const productSections = document.querySelectorAll('.product-section');
+            productSections.forEach((section) => {
+                const product = {
+                    product_name: section.querySelector('[name="PrdName"]').value,
+                    product_code: section.querySelector('[name="PrdCode"]').value,
+                    description: section.querySelector('[name="Desc"]').value,
+                    ingredients: section.querySelector('[name="Ingredients"]').value.split(',').map(ingredient => ingredient.trim()),
+                    dosage: section.querySelector('[name="dosage"]').value,
+                    quantity_in_stock: parseInt(section.querySelector('[name="instock"]').value),
+                    unit_price: parseFloat(section.querySelector('[name="PripU"]').value),
+                    manufacturing_date: section.querySelector('[name="mfgdate"]').value,
+                    expiry_date: section.querySelector('[name="expdate"]').value,
+                };
+                products.push(product);
+            });
+
+            const jsonData = {
+                manufacturer,
+                address,
+                products
+            };
+
+            // Output the JSON data to the console (you can send it to your server instead)
+            console.log(JSON.stringify(jsonData, null, 2));
+        }
+
+        // Function to add a new product input section
+function addProduct() {
+    const productSection = document.getElementById('product-section');
+    const productTemplate = document.getElementById('product-template');
+    const newProductSection = productTemplate.cloneNode(true);
+
+    // Reset the input values in the new product section
+    const inputElements = newProductSection.querySelectorAll('input');
+    inputElements.forEach((input) => {
+        input.value = '';
+    });
+
+    newProductSection.style.display = 'block';
+    productSection.appendChild(newProductSection);
+}
+
+        // Call the addProduct function to initially display the first product input section
+        addProduct();
+    </script>
+</head>
+<body>
+    <div class="formbold-main-wrapper">
+        <div class="formbold-form-wrapper">
+            <form action="masup" method="POST">
+                {%csrf_token%}
+                <div class="formbold-input-flex">
+                    <div>
+                        <label for="manufacturer" class="formbold-form-label">Manufacturer</label>
+                        <input type="text" id="manufacturer" placeholder="Manufacturer" class="formbold-form-input"/>
+                    </div>
+                    <div>
+                        <label for="address" class="formbold-form-label">Address</label>
+                        <input type="text" id="address" placeholder="Address" class="formbold-form-input"/>
+                    </div>
+                </div>
+
+                <div id="product-section">
+                    <div id="product-template" class="product-section">
+                        <div class="formbold-input-flex">
+                            <div>
+                                <label for="PrdName" class="formbold-form-label">Product Name</label>
+                                <input type="text" name="PrdName" placeholder="Product Name" class="formbold-form-input"/>
+                            </div>
+                            <div>
+                                <label for="PrdCode" class="formbold-form-label">Product Code</label>
+                                <input type="text" name="PrdCode" placeholder="Product Code" class="formbold-form-input"/>
+                            </div>
+                        </div>
+                        <div class="formbold-input-flex">
+                            <div>
+                                <label for="Desc" class="formbold-form-label">Description</label>
+                                <input type="text" name="Desc" placeholder="Description" class="formbold-form-input"/>
+                            </div>
+                            <div>
+                                <label for="Ingredients" class="formbold-form-label">Ingredients (comma-separated)</label>
+                                <input type="text" name="Ingredients" placeholder="Ingredients" class="formbold-form-input"/>
+                            </div>
+                        </div>
+                        <div class="formbold-input-flex">
+                            <div>
+                                <label for="dosage" class="formbold-form-label">Dosage</label>
+                                <input type="text" name="dosage" placeholder="Dosage" class="formbold-form-input"/>
+                            </div>
+                            <div>
+                                <label for="instock" class="formbold-form-label">Quantity in Stock</label>
+                                <input type="text" name="instock" placeholder="Quantity in Stock" class="formbold-form-input"/>
+                            </div>
+                        </div>
+                        <div class="formbold-input-flex">
+                            <div>
+                                <label for="PripU" class="formbold-form-label">Unit Price</label>
+                                <input type="text" name="PripU" placeholder="Unit Price" class="formbold-form-input"/>
+                            </div>
+                            <div>
+                                <label for="mfgdate" class="formbold-form-label">Manufacturing Date</label>
+                                <input type="date" name="mfgdate" class="formbold-form-input"/>
+                            </div>
+                            <div>
+                                <label for="expdate" class="formbold-form-label">Expiry Date</label>
+                                <input type="date" name="expdate" class="formbold-form-input"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="addProduct()">Add Product</button>
+                <button type="button" onclick="collectProductData()">Apply Now</button>
+            </form>
         </div>
-        <div class="formbold-input-flex">
-          <div>
-            <label for="PrdName" class="formbold-form-label"> product_name </label>
-            <input
-              type="text"
-              name="PrdName"
-              id="firstname"
-              placeholder="product_name"
-              class="formbold-form-input"
-            />
-          </div>
-  
-          <div>
-            <label for="PrdCode" class="formbold-form-label"> product_code </label>
-            <input
-              type="text"
-              name="PrdCode"
-              id="lastname"
-              placeholder="product_code"
-              class="formbold-form-input"
-            />
-          </div>
-        </div>
-        <div class="formbold-input-flex">
-          <div>
-            <label for="Desc" class="formbold-form-label"> description </label>
-            <input
-              type="text"
-              name="Desc"
-              id="firstname"
-              placeholder="description"
-              class="formbold-form-input"
-            />
-          </div>
-  
-          <div>
-            <label for="dosage" class="formbold-form-label"> dosage </label>
-            <input
-              type="text"
-              name="dosage"
-              id="lastname"
-              placeholder="dosage"
-              class="formbold-form-input"
-            />
-          </div>
-        </div>
-        <div class="formbold-input-flex">
-          <div>
-            <label for="instock" class="formbold-form-label"> quantity_in_stock </label>
-            <input
-              type="text"
-              name="instock"
-              id="firstname"
-              placeholder="quantity_in_stock"
-              class="formbold-form-input"
-            />
-          </div>
-  
-          <div>
-            <label for="PripU" class="formbold-form-label"> unit_price </label>
-            <input
-              type="text"
-              name="PripU"
-              id="lastname"
-              placeholder="unit_price"
-              class="formbold-form-input"
-            />
-          </div>
-        </div>
-        <div class="formbold-input-flex">
-          <div>
-            <label for="mfgdate" class="formbold-form-label"> Manufacturing Date </label>
-            <input
-              type="date"
-              name="mfgdate"
-              id="firstname"
-              placeholder="Manufacturing Date"
-              class="formbold-form-input"
-            />
-          </div>
-  
-          <div>
-            <label for="expdate" class="formbold-form-label"> Expiry Date </label>
-            <input
-              type="date"
-              name="expdate"
-              id="lastname"
-              placeholder="Expiry Date"
-              class="formbold-form-input"
-            />
-          </div>
-        </div>
- 
-        <button class="formbold-btn">Apply Now</button>
-      </form>
     </div>
-  </div>
+</body>
+</html>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     * {
