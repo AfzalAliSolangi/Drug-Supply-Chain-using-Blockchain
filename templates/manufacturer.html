@@ -51,7 +51,22 @@
 
                 // Output the JSON data to the console (you can send it to your server instead)
                 console.log(JSON.stringify(jsonData, null, 2));
+
+                // Reset the form
+                resetForm();
             }
+        }
+
+        // Function to reset the form
+        function resetForm() {
+            document.getElementById('manufacturer').value = '';
+            document.getElementById('address').value = '';
+            const productSection = document.getElementById('product-section');
+            while (productSection.firstChild) {
+                productSection.removeChild(productSection.firstChild);
+            }
+            // Call the addProduct function to initially display the first product input section
+            addProduct();
         }
 
         // Function to add a new product input section
@@ -132,7 +147,7 @@
                                 <input type="date" name="mfgdate" class="formbold-form-input"/>
                             </div>
                             <div>
-                                <label for="expdate" class="formbold-form-label">Expiry Date</label>
+                                <label for "expdate" class="formbold-form-label">Expiry Date</label>
                                 <input type="date" name="expdate" class="formbold-form-input"/>
                             </div>
                         </div>
@@ -145,6 +160,7 @@
     </div>
 </body>
 </html>
+
 
 
   <style>
