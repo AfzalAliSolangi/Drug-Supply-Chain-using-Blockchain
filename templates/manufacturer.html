@@ -2,7 +2,30 @@
 <html>
 <head>
     <title>Product Information Form</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
     <script>
+        // Define the function globally
+        function updateAddProductButton() {
+            const productSections = document.querySelectorAll('.product-section');
+            const addButton = document.getElementById('add-product-button');
+            let allProductFieldsFilled = true;
+
+            // Check if all fields for the current product are filled
+            productSections.forEach((section) => {
+                const inputElements = section.querySelectorAll('input');
+                inputElements.forEach((input) => {
+                    if (!input.value) {
+                        allProductFieldsFilled = false;
+                    }
+                });
+            });
+
+            // Enable or disable the "Add Product" button accordingly
+            addButton.disabled = !allProductFieldsFilled;
+        }
+
         // Function to gather and format the product data as JSON
         function collectProductData() {
             const manufacturer = document.getElementById('manufacturer').value;
@@ -86,7 +109,11 @@
 
             newProductSection.style.display = 'block';
             productSection.appendChild(newProductSection);
+
+            // Enable or disable the "Add Product" button based on whether all fields are filled
+            updateAddProductButton();
         }
+
         function submitForm(data) {
           const form = document.getElementById('product-form');
           const jsonInput = document.createElement('input');
@@ -95,7 +122,8 @@
           jsonInput.value = JSON.stringify(data);
           form.appendChild(jsonInput);
           form.submit();
-      }
+        }
+
         // Call the addProduct function to initially display the first product input section
         addProduct();
     </script>
@@ -108,11 +136,11 @@
                 <div class="formbold-input-flex">
                     <div>
                         <label for="manufacturer" class="formbold-form-label">Manufacturer</label>
-                        <input type="text" id="manufacturer" placeholder="Manufacturer" class="formbold-form-input"/>
+                        <input type="text" id="manufacturer" placeholder="Manufacturer" class="formbold-form-input" onchange="updateAddProductButton()"/>
                     </div>
                     <div>
                         <label for="address" class="formbold-form-label">Address</label>
-                        <input type="text" id="address" placeholder="Address" class="formbold-form-input"/>
+                        <input type="text" id="address" placeholder="Address" class="formbold-form-input" onchange="updateAddProductButton()"/>
                     </div>
                 </div>
 
@@ -121,57 +149,56 @@
                         <div class="formbold-input-flex">
                             <div>
                                 <label for="PrdName" class="formbold-form-label">Product Name</label>
-                                <input type="text" name="PrdName" placeholder="Product Name" class="formbold-form-input"/>
+                                <input type="text" name="PrdName" placeholder="Product Name" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                             <div>
                                 <label for="PrdCode" class="formbold-form-label">Product Code</label>
-                                <input type="text" name="PrdCode" placeholder="Product Code" class="formbold-form-input"/>
+                                <input type="text" name="PrdCode" placeholder="Product Code" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                         </div>
                         <div class="formbold-input-flex">
                             <div>
                                 <label for="Desc" class="formbold-form-label">Description</label>
-                                <input type="text" name="Desc" placeholder="Description" class="formbold-form-input"/>
+                                <input type="text" name="Desc" placeholder="Description" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                             <div>
                                 <label for="Ingredients" class="formbold-form-label">Ingredients (comma-separated)</label>
-                                <input type="text" name="Ingredients" placeholder="Ingredients" class="formbold-form-input"/>
+                                <input type="text" name="Ingredients" placeholder="Ingredients" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                         </div>
                         <div class="formbold-input-flex">
                             <div>
                                 <label for="dosage" class="formbold-form-label">Dosage</label>
-                                <input type="text" name="dosage" placeholder="Dosage" class="formbold-form-input"/>
+                                <input type="text" name="dosage" placeholder="Dosage" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                             <div>
                                 <label for="instock" class="formbold-form-label">Quantity in Stock</label>
-                                <input type="text" name="instock" placeholder="Quantity in Stock" class="formbold-form-input"/>
+                                <input type="text" name="instock" placeholder="Quantity in Stock" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                         </div>
                         <div class="formbold-input-flex">
                             <div>
                                 <label for="PripU" class="formbold-form-label">Unit Price</label>
-                                <input type="text" name="PripU" placeholder="Unit Price" class="formbold-form-input"/>
+                                <input type="text" name="PripU" placeholder="Unit Price" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                             <div>
                                 <label for="mfgdate" class="formbold-form-label">Manufacturing Date</label>
-                                <input type="date" name="mfgdate" class="formbold-form-input"/>
+                                <input type="date" name="mfgdate" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                             <div>
-                                <label for "expdate" class="formbold-form-label">Expiry Date</label>
-                                <input type="date" name="expdate" class="formbold-form-input"/>
+                                <label for="expdate" class="formbold-form-label">Expiry Date</label>
+                                <input type="date" name="expdate" class="formbold-form-input" onchange="updateAddProductButton()"/>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button type="button" onclick="addProduct()">Add Product</button>
+                <button type="button" id="add-product-button" onclick="addProduct()" disabled>Add Product</button>
                 <button type="button" onclick="collectProductData()">Apply Now</button>
             </form>
         </div>
     </div>
 </body>
 </html>
-
 
 
   <style>
