@@ -2,9 +2,6 @@
 <html>
 <head>
     <title>Product Information Form</title>
-    <style>
-        /* Your CSS styles here */
-    </style>
     <script>
         // Function to gather and format the product data as JSON
         function collectProductData() {
@@ -13,6 +10,8 @@
             const products = [];
 
             const productSections = document.querySelectorAll('.product-section');
+            let allFieldsFilled = true;
+
             productSections.forEach((section) => {
                 const product = {
                     product_name: section.querySelector('[name="PrdName"]').value,
@@ -25,34 +24,51 @@
                     manufacturing_date: section.querySelector('[name="mfgdate"]').value,
                     expiry_date: section.querySelector('[name="expdate"]').value,
                 };
+
+                // Check if any field is empty
+                for (const key in product) {
+                    if (!product[key]) {
+                        allFieldsFilled = false;
+                        break;
+                    }
+                }
+
                 products.push(product);
             });
 
-            const jsonData = {
-                manufacturer,
-                address,
-                products
-            };
+            if (!manufacturer || !address) {
+                allFieldsFilled = false;
+            }
 
-            // Output the JSON data to the console (you can send it to your server instead)
-            console.log(JSON.stringify(jsonData, null, 2));
+            if (!allFieldsFilled) {
+                alert('Please fill in all fields before submitting the form.');
+            } else {
+                const jsonData = {
+                    manufacturer,
+                    address,
+                    products
+                };
+
+                // Output the JSON data to the console (you can send it to your server instead)
+                console.log(JSON.stringify(jsonData, null, 2));
+            }
         }
 
         // Function to add a new product input section
-function addProduct() {
-    const productSection = document.getElementById('product-section');
-    const productTemplate = document.getElementById('product-template');
-    const newProductSection = productTemplate.cloneNode(true);
+        function addProduct() {
+            const productSection = document.getElementById('product-section');
+            const productTemplate = document.getElementById('product-template');
+            const newProductSection = productTemplate.cloneNode(true);
 
-    // Reset the input values in the new product section
-    const inputElements = newProductSection.querySelectorAll('input');
-    inputElements.forEach((input) => {
-        input.value = '';
-    });
+            // Reset the input values in the new product section
+            const inputElements = newProductSection.querySelectorAll('input');
+            inputElements.forEach((input) => {
+                input.value = '';
+            });
 
-    newProductSection.style.display = 'block';
-    productSection.appendChild(newProductSection);
-}
+            newProductSection.style.display = 'block';
+            productSection.appendChild(newProductSection);
+        }
 
         // Call the addProduct function to initially display the first product input section
         addProduct();
@@ -129,6 +145,7 @@ function addProduct() {
     </div>
 </body>
 </html>
+
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
