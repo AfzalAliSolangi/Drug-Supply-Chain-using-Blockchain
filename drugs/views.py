@@ -3,6 +3,20 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 import multichain
 import json
+import configparser
+
+config = configparser.ConfigParser()
+
+# Load the .conf file
+print(config.read('./drugs/config.conf'))
+
+# Access configuration values from the default section
+stream_name = config.get('Section1','stream_name')
+key = config.get('Section1','key')
+publisher = config.get('Section1','publisher')
+print(stream_name)
+print(key)
+print(publisher)
 
 #Only password required to login users
 #Fix it before production
@@ -108,7 +122,7 @@ def manufacturer(request): # Manufacturer Input
         print(data)
         
         #publish data on the chain
-        txid = rpc_connection.publish('testchain', 'xx_contract', {'json': data})
+        txid = rpc_connection.publish('{}'.format(stream_name), '{}'.format(key), {'json': data})
     if txid:
         return render(request, "manufacturer.html", {"txid": txid})
     else:
