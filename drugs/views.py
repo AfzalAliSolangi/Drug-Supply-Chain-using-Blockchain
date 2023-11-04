@@ -27,11 +27,11 @@ temp = ['patientid', 'doctorId', 'Time', 'Drug Id', 'Amount Paid']
 
 
 # Configure your MultiChain connection here
-rpcuser = "multichainrpc"
-rpcpassword = "3CX65D6EebJVLi6fNb1qo4XhRT3btgNHkxBmhHSikxTQ"
-rpchost = "127.0.0.1"
-rpcport = "2750"
-chainname = "PC1"
+rpcuser = config.get('Section1','rpcuser')
+rpcpassword= config.get('Section1','rpcpassword')
+rpchost = config.get('Section1','rpchost')
+rpcport = config.get('Section1','rpcport')
+chainname = config.get('Section1','chainname')
 rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassword)
 
 
@@ -120,7 +120,7 @@ def manufacturer(request): # Manufacturer Input
     if request.method == 'POST':
         data = json.loads(request.POST.get('product_data'))
         print(data)
-        
+        x = rpc_connection.subscribe('{}'.format(stream_name))
         #publish data on the chain
         txid = rpc_connection.publish('{}'.format(stream_name), '{}'.format(key), {'json': data})
     if txid:
