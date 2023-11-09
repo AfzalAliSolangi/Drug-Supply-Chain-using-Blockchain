@@ -36,7 +36,22 @@
             background: #0077be; /* fallback color */
             background: linear-gradient(to bottom, #0077be, #00a0e9);
         }
-
+        .button-container {
+            text-align: right;
+        }
+        .integer-input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .place-order-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
           
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -63,13 +78,18 @@
         <div class="product-info">
             <h3>Product Details</h3>
             <p>Description: <span id="description"></span></p>
+            <p>Product Code: <span id="product_code"></span></p>
             <p>Dosage: <span id="dosage"></span></p>
             <p>Ingredients: <span id="ingredients"></span></p>
-            <p>Quantity in Stock: <span id="quantity_in_stock"></span></p>
             <p>Manufacturing Date: <span id="manufacturing_date"></span></p>
             <p>Expiry Date: <span id="expiry_date"></span></p>
             <p>Unit Price: <span id="unitPrice"></span></p>
-            <p>Product Code: <span id="product_code"></span></p>
+            <p>Quantity in Stock: <span id="quantity_in_stock"></span></p>
+        </div>
+        
+        <div class="button-container">
+            <input class="integer-input" type="number" min="0" placeholder="Enter an integer">
+            <button class="place-order-button">Place Order</button>
         </div>
     </div>
 
