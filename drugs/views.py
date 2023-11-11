@@ -155,7 +155,15 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
         response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(key), 'publisher' : '{}'.format(publisher)}) 
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
 
-        return render(request, "Distributor_resp.html", {'json_string': json_string})
+        json_load = json.loads(json_string)
+        # print(json_load)
+        numOfMfg = len(json_load)
+        lstMfg = [] # list to save the name of the manufactuers
+
+        for i in range(numOfMfg):
+            lstMfg.append(json_load[i]['data']['json']['manufacturer'])
+
+        return render(request, "Distributor_resp.html", {'json_string': lstMfg})
     
     else:
         return render(request, "Distributor_resp.html",{"error": "Failed to fetch data to MultiChain"})

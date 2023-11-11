@@ -1,224 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Product Selection</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributor Response</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
         .container {
-            max-width: 600px;
-            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
-        .dropdown-label {
+        label {
             display: block;
-            margin-top: 10px;
-        }
-
-        .dropdown-select {
-            width: 100%;
-            padding: 5px;
             margin-bottom: 10px;
         }
 
-        .product-info {
-            border: 1px solid #ccc;
+        select {
+            width: 100%;
             padding: 10px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
-        .product-info h3 {
-            margin-top: 0;
-        }
-
-        .product-info p {
-            margin: 5px 0;
-        }
-        body {
-            background: #0077be; /* fallback color */
-            background: linear-gradient(to bottom, #0077be, #00a0e9);
-        }
-        .button-container {
-            text-align: right;
-        }
-        .integer-input {
-            padding: 8px 1px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .place-order-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
         }
-          
-    </style>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Latest compiled JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <h2>Select Manufacturer and Product</h2>
+        <h1>Select a Manufacturer</h1>
 
-        <!-- Dropdown for Manufacturers -->
-        <label for="manufacturerDropdown" class="dropdown-label">Select Manufacturer:</label>
-        <select id="manufacturerDropdown" class="dropdown-select">
-            <option value="" disabled selected>Select Manufacturer</option>
-        </select>
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="manufacturer">Choose a Manufacturer:</label>
+            <select id="manufacturer" name="manufacturer">
+                {% for manufacturer in json_string %}
+                    <option value="{{ manufacturer }}">{{ manufacturer }}</option>
+                {% endfor %}
+            </select>
 
-        <!-- Dropdown for Products -->
-        <label for="productDropdown" class="dropdown-label">Select Product:</label>
-        <select id="productDropdown" class="dropdown-select" disabled>
-            <option value="" disabled selected>Select Product</option>
-        </select>
-
-        <div class="product-info">
-            <h3>Product Details</h3>
-            <p>Description: <span id="description"></span></p>
-            <p>Product Code: <span id="product_code"></span></p>
-            <p>Dosage: <span id="dosage"></span></p>
-            <p>Ingredients: <span id="ingredients"></span></p>
-            <p>Manufacturing Date: <span id="manufacturing_date"></span></p>
-            <p>Expiry Date: <span id="expiry_date"></span></p>
-            <p>Unit Price: <span id="unitPrice"></span></p>
-            <p>Quantity in Stock: <span id="quantity_in_stock"></span></p>
-        </div>
-        
-        <div class="button-container">
-            <input class="integer-input" type="number" min="0" placeholder="Quantity">
-            <button id="placeOrderButton" class="place-order-button">Place Order</button>
-        </div>
+            <button type="submit">Submit</button>
+        </form>
     </div>
 
-    <script>
-        // Your JSON data
-        var jsonData = {{json_string|safe}};
-        console.log(jsonData)
-
-        // Populate the Manufacturer dropdown
-        var manufacturerDropdown = document.getElementById("manufacturerDropdown");
-        var manufacturers = jsonData.map(function (entry) {
-            return entry.data.json.manufacturer;
-        });
-
-        manufacturers.forEach(function (manufacturer) {
-            var option = document.createElement("option");
-            option.value = manufacturer;
-            option.text = manufacturer;
-            manufacturerDropdown.appendChild(option);
-        });
-
-        // Event listener for manufacturer selection
-        manufacturerDropdown.addEventListener("change", function () {
-            var selectedManufacturer = this.value;
-            var productDropdown = document.getElementById("productDropdown");
-            var descriptionElement = document.getElementById("description");
-            var prodcodeElement = document.getElementById("product_code");
-            var quantityinstockElement = document.getElementById("quantity_in_stock");
-            var mfgdateElement = document.getElementById("manufacturing_date");
-            var expdateElement = document.getElementById("expiry_date");
-            var dosageElement = document.getElementById("dosage");
-            var ingredientElement = document.getElementById("ingredients");
-            var unitPriceElement = document.getElementById("unitPrice");
-
-            // Find the selected manufacturer's data
-            var selectedManufacturerData = jsonData.find(function (entry) {
-                return entry.data.json.manufacturer === selectedManufacturer;
-            });
-
-            if (selectedManufacturerData) {
-                // Enable the Product dropdown and populate it with products
-                productDropdown.disabled = false;
-                productDropdown.innerHTML = "<option value='' disabled selected>Select Product</option>";
-
-                var products = selectedManufacturerData.data.json.products;
-
-                products.forEach(function (product) {
-                    var option = document.createElement("option");
-                    option.value = product.product_name;
-                    option.text = product.product_name;
-                    productDropdown.appendChild(option);
-                });
-
-                // Event listener for product selection
-                productDropdown.addEventListener("change", function () {
-                    var selectedProduct = this.value;
-
-                    // Find the selected product's data
-                    var selectedProductData = products.find(function (product) {
-                        return product.product_name === selectedProduct;
-                    });
-                    console.log("sel", selectedProductData)
-                    console.log(dosageElement.innerHTML)
-
-                    // Display the description and unit price
-                    descriptionElement.textContent = selectedProductData.description;
-                    unitPriceElement.textContent = selectedProductData.unit_price;
-                    prodcodeElement.textContent = selectedProductData.product_code;
-                    quantityinstockElement.textContent = selectedProductData.quantity_in_stock;
-                    mfgdateElement.textContent = selectedProductData.manufacturing_date;
-                    expdateElement.textContent = selectedProductData.expiry_date;
-                    dosageElement.textContent = selectedProductData.dosage;
-                    ingredientElement.textContent = selectedProductData.ingredients;
-                    unitPriceElement.textContent = selectedProductData.unit_price;
-                });
-            } else {
-                productDropdown.disabled = true;
-                descriptionElement.textContent = "";
-                unitPriceElement.textContent = "";
-                descriptionElement.textContent = "";
-                prodcodeElement.textContent = "";
-                quantityinstockElement.textContent = "";
-                mfgdateElement.textContent = "";
-                expdateElement.textContent = "";
-                dosageElement.textContent = "";
-                ingredientElement.textContent = "";
-                unitPriceElement.textContent = "";
-            }
-        });
-        document.getElementById("placeOrderButton").addEventListener("click", function () {
-            // Gather the selected data
-            var selectedManufacturer = document.getElementById("manufacturerDropdown").value;
-            var selectedProduct = document.getElementById("productDropdown").value;
-            var quantity = document.querySelector(".integer-input").value;
-    
-            // Check if a manufacturer and product are selected
-            if (selectedManufacturer && selectedProduct && quantity !== "") {
-                // Construct the order data
-                var orderData = {
-                    manufacturer: selectedManufacturer,
-                    product: {
-                        name: selectedProduct,
-                        code: document.getElementById("product_code").textContent,
-                        unit_price: document.getElementById("unitPrice").textContent
-
-                    },
-                    quantity_ordered: quantity,
-                };
-    
-                // Send the order data to the Django backend using a POST request
-                fetch("/your-django-endpoint/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(orderData),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Order placed successfully:", data);
-                    // You can handle the response from the server as needed
-                })
-                .catch(error => {
-                    console.error("Error placing order:", error);
-                });
-            } else {
-                console.error("Please select a manufacturer, product, and enter a quantity.");
-            }
-        });
-    </script>
 </body>
 </html>
