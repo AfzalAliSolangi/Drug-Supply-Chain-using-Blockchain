@@ -167,3 +167,8 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
     
     else:
         return render(request, "Distributor_resp.html",{"error": "Failed to fetch data to MultiChain"})
+
+
+def products(request):
+    # Your logic for the products view goes here
+    return render(request, 'products.html')  # Replace 'products.html' with your actual template
