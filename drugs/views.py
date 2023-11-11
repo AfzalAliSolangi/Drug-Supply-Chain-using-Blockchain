@@ -156,5 +156,6 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
 
         return render(request, "Distributor_resp.html", {'json_string': json_string})
+    
     else:
         return render(request, "Distributor_resp.html",{"error": "Failed to fetch data to MultiChain"})

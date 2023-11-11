@@ -40,7 +40,7 @@
             text-align: right;
         }
         .integer-input {
-            padding: 5px;
+            padding: 8px 1px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -88,8 +88,8 @@
         </div>
         
         <div class="button-container">
-            <input class="integer-input" type="number" min="0" placeholder="Enter an integer">
-            <button class="place-order-button">Place Order</button>
+            <input class="integer-input" type="number" min="0" placeholder="Quantity">
+            <button id="placeOrderButton" class="place-order-button">Place Order</button>
         </div>
     </div>
 
@@ -177,6 +177,46 @@
                 dosageElement.textContent = "";
                 ingredientElement.textContent = "";
                 unitPriceElement.textContent = "";
+            }
+        });
+        document.getElementById("placeOrderButton").addEventListener("click", function () {
+            // Gather the selected data
+            var selectedManufacturer = document.getElementById("manufacturerDropdown").value;
+            var selectedProduct = document.getElementById("productDropdown").value;
+            var quantity = document.querySelector(".integer-input").value;
+    
+            // Check if a manufacturer and product are selected
+            if (selectedManufacturer && selectedProduct && quantity !== "") {
+                // Construct the order data
+                var orderData = {
+                    manufacturer: selectedManufacturer,
+                    product: {
+                        name: selectedProduct,
+                        code: document.getElementById("product_code").textContent,
+                        unit_price: document.getElementById("unitPrice").textContent
+
+                    },
+                    quantity_ordered: quantity,
+                };
+    
+                // Send the order data to the Django backend using a POST request
+                fetch("/your-django-endpoint/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(orderData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Order placed successfully:", data);
+                    // You can handle the response from the server as needed
+                })
+                .catch(error => {
+                    console.error("Error placing order:", error);
+                });
+            } else {
+                console.error("Please select a manufacturer, product, and enter a quantity.");
             }
         });
     </script>
