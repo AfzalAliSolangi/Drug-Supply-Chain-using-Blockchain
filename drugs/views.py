@@ -12,11 +12,11 @@ print(config.read('./drugs/config.conf'))
 
 # Access configuration values from the default section
 stream_name = config.get('Section1','stream_name')
-key = config.get('Section1','key')
-publisher = config.get('Section1','publisher')
-print(stream_name)
-print(key)
-print(publisher)
+key = config.get('Section1','key') #Key - for manufacturer
+publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
+# print(stream_name)
+# print(key)
+# print(publisher)
 
 #Only password required to login users
 #Fix it before production
@@ -176,9 +176,13 @@ def products(request):
     selected_manufacturer = request.GET.get('manufacturer', None)
     print(selected_manufacturer)
     x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-    response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(selected_manufacturer), 'publisher' : '{}'.format(publisher)}) 
+    # response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(selected_manufacturer), 'publisher' : '{}'.format(publisher)}) 
+    response = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(selected_manufacturer))
+    response = response[-1]# always fetches the latest record of medicines from the manufacturer
     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+    response = {}
+    print(json_string)
     json_load = json.loads(json_string)
-    print(json_load)
+    # print(json_load[0]['data']['json']['products'])
     # Your logic for the products view goes here
     return render(request, 'products.html', {'selected_manufacturer': selected_manufacturer})
