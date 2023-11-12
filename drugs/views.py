@@ -173,10 +173,9 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
     return render(request, "Distributor.html", {'json_string': lstMfg})
 
 def products(request):
-    selected_manufacturer = request.GET.get('manufacturer', None)
+    selected_manufacturer = request.GET.get('manufacturer', None) #Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)
     x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-    # response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(selected_manufacturer), 'publisher' : '{}'.format(publisher)}) 
     response = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(selected_manufacturer))
     response = response[-1]# always fetches the latest record of medicines from the manufacturer
     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
