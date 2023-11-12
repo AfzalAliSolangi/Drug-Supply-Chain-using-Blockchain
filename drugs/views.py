@@ -34,6 +34,19 @@ rpcport = config.get('Section1','rpcport')
 chainname = config.get('Section1','chainname')
 rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassword)
 
+def lst_of_mfg():#Distributor Fetch screen, fetches the data from the chain and displays
+    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
+    response = rpc_connection.liststreamkeys(stream_name)
+    json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+    print(json_string)
+    json_load = json.loads(json_string)
+    numOfMfg = len(json_load)
+    lstMfg = [] # list to save the name of the manufactuers
+    for i in range(numOfMfg):
+        lstMfg.append(json_load[i]['key'])
+
+    print(lstMfg)
+    return lstMfg
 
 def index(request):
     return render(request, "index.html")
@@ -74,7 +87,7 @@ def login(request):
         elif passw in password["hos"]:
             return render(request, "hospitalinput.html")
         elif passw in password["buyd"]:
-            return render(request, "Distributor.html")
+            return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
         elif passw in password["owner"]:
             return render(request, "seedetails.html")
         else:
@@ -146,29 +159,26 @@ def hostpitalinput(request):
 
 
 def distributor(request):#Distributor Fetch screen, fetches the data from the chain and displays
-    if request.method == 'POST':
-        stream_name = str(request.POST['strname'])
-        key = str(request.POST['key'])
-        publisher = str(request.POST['pub'])
+    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
+    response = rpc_connection.liststreamkeys(stream_name)
+    json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+    print(json_string)
+    json_load = json.loads(json_string)
+    numOfMfg = len(json_load)
+    lstMfg = [] # list to save the name of the manufactuers
 
-        x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-        response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(key), 'publisher' : '{}'.format(publisher)}) 
-        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+    for i in range(numOfMfg):
+        lstMfg.append(json_load[i]['key'])
 
-        json_load = json.loads(json_string)
-        # print(json_load)
-        numOfMfg = len(json_load)
-        lstMfg = [] # list to save the name of the manufactuers
-
-        for i in range(numOfMfg):
-            lstMfg.append(json_load[i]['data']['json']['manufacturer'])
-
-        return render(request, "Distributor_resp.html", {'json_string': lstMfg})
-    
-    else:
-        return render(request, "Distributor_resp.html",{"error": "Failed to fetch data to MultiChain"})
-
+    return render(request, "Distributor.html", {'json_string': lstMfg})
 
 def products(request):
+    selected_manufacturer = request.GET.get('manufacturer', None)
+    print(selected_manufacturer)
+    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
+    response =  rpc_connection.liststreamqueryitems('{}'.format(stream_name), {'key' : '{}'.format(selected_manufacturer), 'publisher' : '{}'.format(publisher)}) 
+    json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+    json_load = json.loads(json_string)
+    print(json_load)
     # Your logic for the products view goes here
-    return render(request, 'products.html')  # Replace 'products.html' with your actual template
+    return render(request, 'products.html', {'selected_manufacturer': selected_manufacturer})
