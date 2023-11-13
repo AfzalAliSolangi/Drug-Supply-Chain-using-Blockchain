@@ -169,7 +169,7 @@
                                             <label for="quantity">Quantity:</label>
                                             <input type="number" class="form-control" id="quantity{{ product.id }}" name="quantity" value="1" min="1" max="{{ product.quantity_in_stock }}">
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.id }}', '{{ product.quantity_in_stock }}')">Add to Cart</button>
+                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.id }}', '{{ product.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_code }}', '{{ product.unit_price }}')">Add to Cart</button>
                                     </form>
                                 </div>
                             </div>
@@ -179,45 +179,63 @@
             </div>
         </div>
     </div>
-    <div class="cart-popup" id="cartPopup">
-        <!-- Cart content goes here -->
-        <p>Your cart is empty.</p>
-        <button onclick="closeCartPopup()">Close</button>
+    <!-- Add this button in your HTML -->
+    
+
+    <div class="container">
+        <button onclick="viewCart()">View Cart</button>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
+        var cartItems = [];
+
         function toggleReadMore(productId) {
             var readMoreContent = document.getElementById('readMoreContent' + productId);
             readMoreContent.style.display = (readMoreContent.style.display === 'none' || readMoreContent.style.display === '') ? 'block' : 'none';
         }
 
-        function addToCart(productId, maxQuantity) {
+        function addToCart(productId, maxQuantity, productName, productCode, unitPrice) {
             var quantityInput = document.getElementById('quantity' + productId);
             var quantity = parseInt(quantityInput.value, 10);
+
             if (quantity > 0 && quantity <= maxQuantity) {
+                // Create a new cart item for each product
+                var cartItem = {
+                    productId: productId,
+                    productName: productName,
+                    productCode: productCode,
+                    unitPrice: unitPrice,
+                    quantity: quantity
+                    // Add other properties if needed
+                };
+
+                // Add the cart item to the cartItems array
+                cartItems.push(cartItem);
+
+                // Update the cart counter
                 var cartCounter = document.getElementById('cartCounter');
                 var currentCount = parseInt(cartCounter.innerText, 10);
                 cartCounter.innerText = currentCount + 1;
+
+                // Reset quantity input
                 quantityInput.value = 0;
+
+                // Hide the modal
                 $('#addToCartModal' + productId).modal('hide');
-                
+
                 // Add additional logic here to update the cart or perform other actions
             } else {
                 alert('Invalid quantity. Please enter a valid quantity.');
             }
         }
-        function openCartPopup() {
-            var cartPopup = document.getElementById('cartPopup');
-            cartPopup.style.display = 'block';
-        }
 
-        function closeCartPopup() {
-            var cartPopup = document.getElementById('cartPopup');
-            cartPopup.style.display = 'none';
+        function viewCart() {
+            console.log(cartItems);
         }
+        // Example function to view the current cart items (for testing purposes)
     </script>
 </body>
 </html>
