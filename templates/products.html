@@ -8,11 +8,13 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
             margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .product {
@@ -71,10 +73,10 @@
                         <div class="col-md-9 mt-1">
                             <h5>{{ product.product_name }}</h5>
                             <p>{{ product.description }}</p>
-                            <p>Quantity: {{ product.quantity }}</p>
+                            <p>Quantity: {{ product.quantity_in_stock }}</p>
                             <div class="d-flex flex-row align-items-center justify-content-between">
                                 <div>
-                                    <h4 class="mr-1">${{ product.price }}</h4>
+                                    <h4 class="mr-1">${{ product.unit_price }}</h4>
                                 </div>
                                 <div class="d-flex flex-column">
                                     <button class="btn btn-primary btn-sm" type="button">Details</button>
