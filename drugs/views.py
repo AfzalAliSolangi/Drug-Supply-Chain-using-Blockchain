@@ -173,15 +173,37 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
     return render(request, "Distributor.html", {'json_string': lstMfg})
 
 def products(request):
-    selected_manufacturer = request.GET.get('manufacturer', None) #Manufacturer name being passed from Distributor.html
-    print(selected_manufacturer)
-    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-    response = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(selected_manufacturer))#Based on the manufacturer KEY the data is being fetched
-    response = response[-1]# always fetches the latest record of medicines from the manufacturer stream
-    json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-    response = {} #Cleaning the unused response
-    print(json_string)
-    json_load = json.loads(json_string)
-    json_load = json_load['data']['json']['products']
+    # selected_manufacturer = request.GET.get('manufacturer', None) #Manufacturer name being passed from Distributor.html
+    # print(selected_manufacturer)
+    # x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
+    # response = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(selected_manufacturer))#Based on the manufacturer KEY the data is being fetched
+    # response = response[-1]# always fetches the latest record of medicines from the manufacturer stream
+    # json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+    # response = {} #Cleaning the unused response
+    # print(json_string)
+    # json_load = json.loads(json_string)
+    # json_load = json_load['data']['json']['products']
     # Your logic for the products view goes here
-    return render(request, 'products.html', {'selected_manufacturer': json_load})
+    # return render(request, 'products.html', {'selected_manufacturer': json_load})
+    products = [
+        {
+            'product_name': 'Product A',
+            'description': 'Description for Product A',
+            'price': 19.99,
+            'quantity': 5,
+        },
+        {
+            'product_name': 'Product B',
+            'description': 'Description for Product B',
+            'price': 29.99,
+            'quantity': 10,
+        },
+        {
+            'product_name': 'Product C',
+            'description': 'Description for Product C',
+            'price': 14.99,
+            'quantity': 3,
+        },
+        # Add more products as needed
+    ]
+    return render(request, 'products.html', {'products': products})
