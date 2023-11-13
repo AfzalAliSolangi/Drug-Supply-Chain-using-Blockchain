@@ -87,25 +87,44 @@
         .cart-counter {
             position: fixed;
             top: 25px;
-            right: 30px;
+            right: 30px;    
             background-color: #007bff;
             color: #fff;
             padding: 5px 10px;
             border-radius: 50%;
+        }
+
+        /* Cart Popup */
+        .cart-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Cart Icon -->
-        <div class="cart-icon">
+        <div class="cart-icon" onclick="openCartPopup()">
             <i class="fas fa-shopping-cart"></i>
         </div>
 
         <!-- Cart Counter -->
         <div class="cart-counter" id="cartCounter">0</div>
 
+        <!-- Cart Popup -->
+        <div class="cart-popup" id="cartPopup">
+            <!-- Cart content goes here -->
+            <p>Your cart is empty.</p>
+            <button onclick="closeCartPopup()">Close</button>
+        </div>
         <div class="d-flex justify-content-center row">
             <div class="col-md-10">
                 {% for product in products %}
@@ -160,7 +179,11 @@
             </div>
         </div>
     </div>
-
+    <div class="cart-popup" id="cartPopup">
+        <!-- Cart content goes here -->
+        <p>Your cart is empty.</p>
+        <button onclick="closeCartPopup()">Close</button>
+    </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -185,6 +208,15 @@
             } else {
                 alert('Invalid quantity. Please enter a valid quantity.');
             }
+        }
+        function openCartPopup() {
+            var cartPopup = document.getElementById('cartPopup');
+            cartPopup.style.display = 'block';
+        }
+
+        function closeCartPopup() {
+            var cartPopup = document.getElementById('cartPopup');
+            cartPopup.style.display = 'none';
         }
     </script>
 </body>
