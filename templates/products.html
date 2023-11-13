@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Font Awesome -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -60,11 +62,50 @@
             background-color: #007bff;
             color: #fff;
         }
+
+        .read-more-content {
+            overflow: hidden;
+            height: 1.5em; /* Adjust as needed */
+        }
+
+        .read-more-toggle {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        /* Cart Icon */
+        .cart-icon {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        /* Cart Counter */
+        .cart-counter {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <!-- Cart Icon -->
+        <div class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+
+        <!-- Cart Counter -->
+        <div class="cart-counter" id="cartCounter">0</div>
+
         <div class="d-flex justify-content-center row">
             <div class="col-md-10">
                 {% for product in products %}
@@ -72,15 +113,45 @@
                         <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="{{ product.image_url }}"></div>
                         <div class="col-md-9 mt-1">
                             <h5>{{ product.product_name }}</h5>
-                            <p>{{ product.description }}</p>
+                            <div class="read-more-content">
+                                <p>{{ product.description | slice:":89" }}</p>
+                            </div>
+                            {% if product.description.length > 89 %}
+                                <p class="read-more-toggle" onclick="toggleReadMore('{{ product.id }}')">Read more...</p>
+                                <div id="readMoreContent{{ product.id }}" style="display: none;">{{ product.description | slice:"89:" }}</div>
+                            {% endif %}
                             <p>Quantity: {{ product.quantity_in_stock }}</p>
                             <div class="d-flex flex-row align-items-center justify-content-between">
                                 <div>
                                     <h4 class="mr-1">${{ product.unit_price }}</h4>
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <button class="btn btn-primary btn-sm" type="button">Details</button>
-                                    <button class="btn btn-outline-primary btn-sm mt-2" type="button">Add to Cart</button>
+                                    <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.id }}">
+                                        Buy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Modal -->
+                    <div class="modal fade" id="addToCartModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="quantity">Quantity:</label>
+                                            <input type="number" class="form-control" id="quantity{{ product.id }}" name="quantity" value="1" min="1" max="{{ product.quantity_in_stock }}">
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.id }}', '{{ product.quantity_in_stock }}')">Add to Cart</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -89,5 +160,32 @@
             </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        function toggleReadMore(productId) {
+            var readMoreContent = document.getElementById('readMoreContent' + productId);
+            readMoreContent.style.display = (readMoreContent.style.display === 'none' || readMoreContent.style.display === '') ? 'block' : 'none';
+        }
+
+        function addToCart(productId, maxQuantity) {
+            var quantityInput = document.getElementById('quantity' + productId);
+            var quantity = parseInt(quantityInput.value, 10);
+            if (quantity > 0 && quantity <= maxQuantity) {
+                var cartCounter = document.getElementById('cartCounter');
+                var currentCount = parseInt(cartCounter.innerText, 10);
+                cartCounter.innerText = currentCount + 1;
+                quantityInput.value = 0;
+                $('#addToCartModal' + productId).modal('hide');
+                
+                // Add additional logic here to update the cart or perform other actions
+            } else {
+                alert('Invalid quantity. Please enter a valid quantity.');
+            }
+        }
+    </script>
 </body>
 </html>
