@@ -145,7 +145,7 @@
                                     <h4 class="mr-1">${{ product.unit_price }}</h4>
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.id }}">
+                                    <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.product_code }}">
                                         Buy
                                     </button>
                                 </div>
@@ -154,7 +154,7 @@
                     </div>
 
                     <!-- Add to Cart Modal -->
-                    <div class="modal fade" id="addToCartModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="addToCartModal{{ product.product_code }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -167,14 +167,15 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="quantity">Quantity:</label>
-                                            <input type="number" class="form-control" id="quantity{{ product.id }}" name="quantity" value="1" min="1" max="{{ product.quantity_in_stock }}">
+                                            <input type="number" class="form-control" id="quantity{{ product.product_code }}" name="quantity" value="1" min="1" max="{{ product.quantity_in_stock }}">
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.id }}', '{{ product.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_code }}', '{{ product.unit_price }}')">Add to Cart</button>
+                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.product_code }}', '{{ product.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_code }}', '{{ product.unit_price }}')">Add to Cart</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 {% endfor %}
             </div>
         </div>
@@ -197,14 +198,12 @@
             readMoreContent.style.display = (readMoreContent.style.display === 'none' || readMoreContent.style.display === '') ? 'block' : 'none';
         }
 
-        function addToCart(productId, maxQuantity, productName, productCode, unitPrice) {
-            var quantityInput = document.getElementById('quantity' + productId);
+        function addToCart(productCode, maxQuantity, productName, productCode, unitPrice) {
+            var quantityInput = document.getElementById('quantity' + productCode);
             var quantity = parseInt(quantityInput.value, 10);
-
             if (quantity > 0 && quantity <= maxQuantity) {
                 // Create a new cart item for each product
                 var cartItem = {
-                    productId: productId,
                     productName: productName,
                     productCode: productCode,
                     unitPrice: unitPrice,
@@ -214,6 +213,7 @@
 
                 // Add the cart item to the cartItems array
                 cartItems.push(cartItem);
+                console.log(cartItem);
 
                 // Update the cart counter
                 var cartCounter = document.getElementById('cartCounter');
@@ -224,8 +224,8 @@
                 quantityInput.value = 0;
 
                 // Hide the modal
-                $('#addToCartModal' + productId).modal('hide');
-
+                $('#addToCartModal' + productCode).modal('hide');
+                
                 // Add additional logic here to update the cart or perform other actions
             } else {
                 alert('Invalid quantity. Please enter a valid quantity.');
