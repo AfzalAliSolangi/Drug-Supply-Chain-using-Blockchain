@@ -132,6 +132,16 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .cart-buttons button {
+            flex-grow: 1;
+            margin-right: 5px;
+        }
     </style>
 </head>
 
@@ -203,7 +213,10 @@
     <div id="cartOverlay" class="cart-overlay" onclick="closeCartPopup()">
         <div class="cart-popup" id="cartPopup">
             <div id="cartContent"></div> <!-- Display cart items here -->
-            <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
+            <div class="cart-buttons">
+                <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
+                <button class="btn btn-primary" onclick="proceedToCheckout()">Proceed to Checkout</button>
+            </div>
         </div>
     </div>
     </div>
