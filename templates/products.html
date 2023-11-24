@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
@@ -307,12 +308,56 @@
             // Hide the cart overlay
             document.getElementById('cartOverlay').style.display = 'none';
         }
-        
+
         function proceedToCheckout() {
             // Log the cart items to the console
             console.log(cartItems);
         }
-        // Example function to view the current cart items (for testing purposes)
+
+        function proceedToCheckout() {
+            // Log the cart items to the console
+            console.log(cartItems);
+        
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/checkout';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+        
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+            form.appendChild(csrfInput);
+        
+            // Create an input field to hold the cartItems data
+            const jsonInput = document.createElement('input');
+            jsonInput.type = 'hidden';
+            jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
+            jsonInput.value = JSON.stringify(cartItems);
+        
+            // Append the input fields to the form
+            form.appendChild(jsonInput);
+        
+            // Append the form to the document body
+            document.body.appendChild(form);
+        
+            // Submit the form
+            form.submit();
+        }
+        
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
     </script>
 </body>
 </html>

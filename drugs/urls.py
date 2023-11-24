@@ -15,5 +15,6 @@ urlpatterns = [
     path('hosup', views.hostpitalinput, name='hosup'),
     path('drgby', views.distributor, name='drgby'),
     path('seedet', views.getdetails, name='seedet'),
-    path('products', views.products, name='products'),  # Add this line
+    path('products', views.products, name='products'),  
+    path('checkout', views.checkout, name='checkout'),
 ]

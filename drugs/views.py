@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -184,3 +185,21 @@ def products(request):
     json_load = json.loads(json_string)
     products = json_load['data']['json']['products']
     return render(request, 'products.html', {'products': products})
+
+@csrf_protect
+def checkout(request):
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+
+        if cart_items_json:
+            # Parse the JSON data
+            cart_items = json.loads(cart_items_json)
+
+            # Do something with the cart_items data (e.g., save to the database, process the order, etc.)
+            # For example, you can print it for demonstration purposes
+            print(cart_items)
+
+            # You can also render a template or return an appropriate HTTP response
+            return render(request, 'checkout.html', {'cart_items': cart_items})
+    
