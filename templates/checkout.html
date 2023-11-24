@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        section {
+            border: 1px solid #ccc;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 0.25rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border-bottom: 1px solid #ccc;
+            padding: 1rem;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section>
+            <h2>Shipping Information</h2>
+            <!-- Your existing shipping form here -->
+        </section>
+
+        <section>
+            <h2>Order Summary</h2>
+            <ul>
+                {% for item in cart_items %}
+                    <li>
+                        <p>Product: {{ item.productName }}</p>
+                        <p>Quantity: {{ item.quantity }}</p>
+                        <p>Price: ${{ item.unitPrice}}</p>
+                        <p>Price: ${{ item.totalprice }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section>
+            <h2>Payment</h2>
+            <!-- Add your payment form here -->
+        </section>
+
+        <button onclick="submitForm({{ cart_items|safe }})">Complete Purchase</button>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        function submitForm(cartItems) {
+            // Log the cart items to the console
+            console.log(cartItems);
+        
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/publish';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+        
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+            form.appendChild(csrfInput);
+        
+            // Create an input field to hold the cartItems data
+            const jsonInput = document.createElement('input');
+            jsonInput.type = 'hidden';
+            jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
+            jsonInput.value = JSON.stringify(cartItems);
+        
+            // Append the input fields to the form
+            form.appendChild(jsonInput);
+        
+            // Append the form to the document body
+            document.body.appendChild(form);
+        
+            // Submit the form
+            form.submit();
+        }
+        
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+        
+    </script>
+</body>
+</html>

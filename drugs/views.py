@@ -203,3 +203,22 @@ def checkout(request):
             # You can also render a template or return an appropriate HTTP response
             return render(request, 'checkout.html', {'cart_items': cart_items})
     
+@csrf_protect
+def publish(request):
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+
+        if cart_items_json:
+            # Parse the JSON data
+            cart_items = json.loads(cart_items_json)
+            txid = rpc_connection.publish('orders', 'contract', {'json' :{
+                                            'order' : cart_items    
+                                         }})
+            # Do something with the cart_items data
+            # For example, you can print it for demonstration purposes
+            print("xyz")
+            print(cart_items)
+
+            # You can also render a template or return an appropriate HTTP response
+            return HttpResponse("Purchase completed. Thank you!")

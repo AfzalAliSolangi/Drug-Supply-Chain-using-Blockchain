@@ -246,11 +246,13 @@
                     existingItem.quantity += quantity;
                 } else {
                     // Create a new cart item for each product
+                    
                     var cartItem = {
                         productName: productName,
                         productCode: productCode,
                         unitPrice: unitPrice,
-                        quantity: quantity
+                        quantity: quantity,
+                        totalprice : quantity*unitPrice
                         // Add other properties if needed
                     };
         
@@ -293,7 +295,7 @@
                         <div>
                             <p>Product: ${item.productName}</p>
                             <p>Quantity: ${item.quantity}</p>
-                            <p>Price: $${item.unitPrice * item.quantity}</p>
+                            <p>Total Price: $${item.unitPrice * item.quantity}</p>
                         </div>
                         <hr>
                     `;
