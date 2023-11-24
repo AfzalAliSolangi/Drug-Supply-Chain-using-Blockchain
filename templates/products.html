@@ -183,10 +183,8 @@
         </div>
     </div>
     <!-- Add this div to the bottom of your HTML body -->
-    <div id="cartOverlay" class="cart-overlay">
+    <div id="cartOverlay" class="cart-overlay" onclick="closeCartPopup()">
         <div class="cart-popup" id="cartPopup">
-            <!-- Cart content goes here -->
-            {% comment %} <p>Your cart is empty.</p> {% endcomment %}
             <div id="cartContent"></div> <!-- Display cart items here -->
             <button onclick="closeCartPopup()">Close</button>
         </div>
