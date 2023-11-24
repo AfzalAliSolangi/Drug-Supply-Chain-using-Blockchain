@@ -235,36 +235,45 @@
         function addToCart(productCode, maxQuantity, productName, productCode, unitPrice) {
             var quantityInput = document.getElementById('quantity' + productCode);
             var quantity = parseInt(quantityInput.value, 10);
+        
             if (quantity > 0 && quantity <= maxQuantity) {
-                // Create a new cart item for each product
-                var cartItem = {
-                    productName: productName,
-                    productCode: productCode,
-                    unitPrice: unitPrice,
-                    quantity: quantity
-                    // Add other properties if needed
-                };
-
-                // Add the cart item to the cartItems array
-                cartItems.push(cartItem);
-                console.log(cartItem);
-
-                // Update the cart counter
-                var cartCounter = document.getElementById('cartCounter');
-                var currentCount = parseInt(cartCounter.innerText, 10);
-                cartCounter.innerText = currentCount + 1;
-
+                // Check if the product is already in the cart
+                var existingItem = cartItems.find(item => item.productCode === productCode);
+        
+                if (existingItem) {
+                    // Product already in the cart, update the quantity
+                    existingItem.quantity += quantity;
+                } else {
+                    // Create a new cart item for each product
+                    var cartItem = {
+                        productName: productName,
+                        productCode: productCode,
+                        unitPrice: unitPrice,
+                        quantity: quantity
+                        // Add other properties if needed
+                    };
+        
+                    // Add the cart item to the cartItems array
+                    cartItems.push(cartItem);
+        
+                    // Update the cart counter only for new products
+                    var cartCounter = document.getElementById('cartCounter');
+                    var currentCount = parseInt(cartCounter.innerText, 10);
+                    cartCounter.innerText = currentCount + 1;
+                }
+        
                 // Reset quantity input
                 quantityInput.value = 0;
-
+        
                 // Hide the modal
                 $('#addToCartModal' + productCode).modal('hide');
                 
-                // Add additional logic here to update the cart or perform other actions
+                // Additional logic here to update the cart or perform other actions
             } else {
                 alert('Invalid quantity. Please enter a valid quantity.');
             }
         }
+        
 
         function viewCart() {
             // Show the cart overlay
@@ -297,6 +306,11 @@
         function closeCartPopup() {
             // Hide the cart overlay
             document.getElementById('cartOverlay').style.display = 'none';
+        }
+        
+        function proceedToCheckout() {
+            // Log the cart items to the console
+            console.log(cartItems);
         }
         // Example function to view the current cart items (for testing purposes)
     </script>
