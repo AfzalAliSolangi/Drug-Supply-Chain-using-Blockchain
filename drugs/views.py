@@ -220,13 +220,22 @@ def publish(request):
         if cart_items_json:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
+            response = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
+            response = response[-1]
+            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+            response = {} 
+            json_load = json.loads(json_string)
+            products = json_load['data']['json']['products']
+            print(products)
+            #need to add logic for subtracting quantity
             # txid = rpc_connection.publish('orders', 'contract', {'json' :{
             #                                 'order' : cart_items    
             #                              }})
+            
             # Do something with the cart_items data
             # For example, you can print it for demonstration purposes
             print("xyz")
-            print(cart_items)
+            # print(cart_items)
 
             # You can also render a template or return an appropriate HTTP response
             return HttpResponse("Purchase completed. Thank you!")
