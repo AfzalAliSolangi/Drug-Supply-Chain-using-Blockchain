@@ -184,15 +184,17 @@ def products(request):
     print(json_string)
     json_load = json.loads(json_string)
     products = json_load['data']['json']['products']
-    return render(request, 'products.html', {'products': products})
+    return render(request, 'products.html', {'products': products,'manufacturer' : selected_manufacturer})
 
 @csrf_protect
 def checkout(request):
     if request.method == 'POST':
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
+        manufacturer = request.POST.get('manufacturer', None)
+        # print(manufacturer)
 
-        if cart_items_json:
+        if cart_items_json and manufacturer:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
 
@@ -201,20 +203,26 @@ def checkout(request):
             print(cart_items)
 
             # You can also render a template or return an appropriate HTTP response
-            return render(request, 'checkout.html', {'cart_items': cart_items})
+            return render(request, 'checkout.html', {'cart_items': cart_items,'manufacturer' : manufacturer})
     
 @csrf_protect
 def publish(request):
     if request.method == 'POST':
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
-
+        #NOTE:
+        # Please implement the flow in which whenever the distributor places an order,
+        #  it first goes to the order confirmation page of the MANUFACTURER.
+        # Once manufacturer confirms the order, the quantity of the medicine is minused from the MANUFACTURER stream
+        # and new Item is published in the MANUFACTURER stream.
+        manufacturer = request.POST.get('manufacturer', None)
+        print(manufacturer)
         if cart_items_json:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
-            txid = rpc_connection.publish('orders', 'contract', {'json' :{
-                                            'order' : cart_items    
-                                         }})
+            # txid = rpc_connection.publish('orders', 'contract', {'json' :{
+            #                                 'order' : cart_items    
+            #                              }})
             # Do something with the cart_items data
             # For example, you can print it for demonstration purposes
             print("xyz")

@@ -148,6 +148,7 @@
 
 <body>
     <div class="container">
+        <h2>Manufacturer: {{ manufacturer }}</h2>
         <div class="cart-icon" onclick="viewCart()">
             <i class="fas fa-shopping-cart"></i>
         </div>
@@ -216,7 +217,7 @@
             <div id="cartContent"></div> <!-- Display cart items here -->
             <div class="cart-buttons">
                 <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
-                <button class="btn btn-primary" onclick="proceedToCheckout()">Proceed to Checkout</button>
+                <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Proceed to Checkout</button>
             </div>
         </div>
     </div>
@@ -316,9 +317,10 @@
             console.log(cartItems);
         }
 
-        function proceedToCheckout() {
+        function proceedToCheckout(manufacturer) {
             // Log the cart items to the console
             console.log(cartItems);
+            console.log(manufacturer);
         
             // Create a form dynamically
             const form = document.createElement('form');
@@ -338,9 +340,15 @@
             jsonInput.type = 'hidden';
             jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
             jsonInput.value = JSON.stringify(cartItems);
-        
-            // Append the input fields to the form
             form.appendChild(jsonInput);
+            
+             // Add an input field for the manufacturer name
+            const manufacturerInput = document.createElement('input');
+            manufacturerInput.type = 'hidden';
+            manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+            manufacturerInput.value = '{{ manufacturer }}';  // Use Django template syntax to get the manufacturer value
+            form.appendChild(manufacturerInput);
+            // Append the input fields to the form
         
             // Append the form to the document body
             document.body.appendChild(form);
