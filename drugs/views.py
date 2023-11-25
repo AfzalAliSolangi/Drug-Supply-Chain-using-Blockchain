@@ -228,21 +228,23 @@ def publish(request):
             prev_products = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
             prev_products = prev_products[-1]
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
+            prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
             prev_products = {} 
             json_load = json.loads(prev_products_str)
-            prev_products = json_load['data']['json']['products']
+            prev_products = json_load['data']['json']
+            
             print(prev_products)
             print("--------\n")
             for item_a in cart_items:
-                for item_b in prev_products:
+                for item_b in prev_products['products']:
                     if item_a['productCode'] == item_b['product_code']:
                         item_b['quantity_in_stock'] -= item_a['quantity']
             #need to add logic for subtracting quantity
-            # txid = rpc_connection.publish('orders', 'contract', {'json' :{
-            #                                 'order' : cart_items    
-            #                              }})
             updated_items = json.dumps(prev_products, indent=4)
+            updated_items = json.loads(updated_items)
             print(updated_items)
+            txid = rpc_connection.publish('{}'.format(stream_name), '{}'.format(manufacturer), {'json': updated_items})
+            txid = rpc_connection.publish('{}'.format('Orders'), '{}'.format('contract'), {'json': {'order' : cart_items}})
             # Do something with the cart_items data
             # For example, you can print it for demonstration purposes
             print("xyz")
