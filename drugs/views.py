@@ -216,40 +216,49 @@ def publish(request):
         # it first goes to the order confirmation page of the MANUFACTURER.
         # Once manufacturer confirms the order, the quantity of the medicine is minused from the MANUFACTURER stream
         # and new Item is published in the MANUFACTURER stream.
+
         # Retrieve the manufacturer name from checkout.html from the POST request
         manufacturer = request.POST.get('manufacturer', None)
-        # print(manufacturer)
+        print("----MANUFACTURER NAME----")
+        print(manufacturer)
+        print("--------\n")
+
+        #Also getting the manufacturer name becuase it's a key in the MANUFACTURER 
         if cart_items_json:
-            # Parse the JSON data
-            print("--------")
+            print("----CART ITEMS from frontEND----")
             cart_items = json.loads(cart_items_json)
             print(cart_items)
-            print("--------")
+            print("--------\n")
 
+            #Fetching the products from the MANUFACTURER STREAM to update their quantity
             prev_products = rpc_connection.liststreamkeyitems('{}'.format(manufacturer_stream), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
             prev_products = prev_products[-1]
-            prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
             prev_products = {} 
             json_load = json.loads(prev_products_str)
             prev_products = json_load['data']['json']
-            
-            print(prev_products)
+            print("----PRODCUCTS fetched from MANUFACTURER stream----")
+            print(prev_products_str)
             print("--------\n")
+
+            #Logic for subtracting the quantity of the products from the order stream 
             for item_a in cart_items:
                 for item_b in prev_products['products']:
                     if item_a['productCode'] == item_b['product_code']:
                         item_b['quantity_in_stock'] -= item_a['quantity']
-            #need to add logic for subtracting quantity
-            updated_items = json.dumps(prev_products, indent=4)
-            updated_items = json.loads(updated_items)
-            print(updated_items)
-            txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(manufacturer), {'json': updated_items})
-            txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order' : cart_items}})
-            # Do something with the cart_items data
-            # For example, you can print it for demonstration purposes
-            print("xyz")
-            # print(cart_items)
+            updated_items_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
+            updated_items = json.loads(updated_items_str)
+            print("----Updated PRODCUCTS quantity publised to MANUFACTURER STEAM----")
+            print(updated_items_str)
+            print("--------\n")
 
-            # You can also render a template or return an appropriate HTTP response
+            #Publishes the updated quantity of the products into the MANUFACTURER stream
+            txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(manufacturer), {'json': updated_items})
+           
+            #Publises the ordered products into the PRODUCT stream
+            txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order' : cart_items}})
+
+            print("ITEMS UPDATED!!")
+
+            #render a template or return an appropriate HTTP response, still to be decided
             return HttpResponse("Purchase completed. Thank you!")
