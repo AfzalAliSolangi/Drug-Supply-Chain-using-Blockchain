@@ -12,10 +12,11 @@ config = configparser.ConfigParser()
 print(config.read('./drugs/config.conf'))
 
 # Access configuration values from the default section
-stream_name = config.get('Section1','stream_name')
+manufacturer_stream = config.get('Section1','manufacturer_stream')
+order_stream = config.get('Section1','order_stream')
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
-# print(stream_name)
+# print(manufacturer_stream)
 # print(key)
 # print(publisher)
 
@@ -36,8 +37,8 @@ chainname = config.get('Section1','chainname')
 rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassword)
 
 def lst_of_mfg():#Distributor Fetch screen, fetches the data from the chain and displays
-    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-    response = rpc_connection.liststreamkeys(stream_name)
+    x = rpc_connection.subscribe('{}'.format(manufacturer_stream)) #subscribing
+    response = rpc_connection.liststreamkeys(manufacturer_stream)
     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
     print(json_string)
     json_load = json.loads(json_string)
@@ -134,9 +135,9 @@ def manufacturer(request): # Manufacturer Input
     if request.method == 'POST':
         data = json.loads(request.POST.get('product_data'))
         print(data)
-        x = rpc_connection.subscribe('{}'.format(stream_name))
+        x = rpc_connection.subscribe('{}'.format(manufacturer_stream))
         #publish data on the chain
-        txid = rpc_connection.publish('{}'.format(stream_name), '{}'.format(key), {'json': data})
+        txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(key), {'json': data})
     if txid:
         return render(request, "manufacturer.html", {"txid": txid})
     else:
@@ -160,8 +161,8 @@ def hostpitalinput(request):
 
 
 def distributor(request):#Distributor Fetch screen, fetches the data from the chain and displays
-    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-    response = rpc_connection.liststreamkeys(stream_name)
+    x = rpc_connection.subscribe('{}'.format(manufacturer_stream)) #subscribing
+    response = rpc_connection.liststreamkeys(manufacturer_stream)
     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
     print(json_string)
     json_load = json.loads(json_string)
@@ -176,8 +177,8 @@ def distributor(request):#Distributor Fetch screen, fetches the data from the ch
 def products(request):
     selected_manufacturer = request.GET.get('manufacturer', None) #Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)
-    x = rpc_connection.subscribe('{}'.format(stream_name)) #subscribing
-    response = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(selected_manufacturer))#Based on the manufacturer KEY the data is being fetched
+    x = rpc_connection.subscribe('{}'.format(manufacturer_stream)) #subscribing
+    response = rpc_connection.liststreamkeyitems('{}'.format(manufacturer_stream), '{}'.format(selected_manufacturer))#Based on the manufacturer KEY the data is being fetched
     response = response[-1]# always fetches the latest record of medicines from the manufacturer stream
     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
     response = {} #Cleaning the unused response
@@ -225,7 +226,7 @@ def publish(request):
             print(cart_items)
             print("--------")
 
-            prev_products = rpc_connection.liststreamkeyitems('{}'.format(stream_name), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
+            prev_products = rpc_connection.liststreamkeyitems('{}'.format(manufacturer_stream), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
             prev_products = prev_products[-1]
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
@@ -243,8 +244,8 @@ def publish(request):
             updated_items = json.dumps(prev_products, indent=4)
             updated_items = json.loads(updated_items)
             print(updated_items)
-            txid = rpc_connection.publish('{}'.format(stream_name), '{}'.format(manufacturer), {'json': updated_items})
-            txid = rpc_connection.publish('{}'.format('Orders'), '{}'.format('contract'), {'json': {'order' : cart_items}})
+            txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(manufacturer), {'json': updated_items})
+            txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order' : cart_items}})
             # Do something with the cart_items data
             # For example, you can print it for demonstration purposes
             print("xyz")
