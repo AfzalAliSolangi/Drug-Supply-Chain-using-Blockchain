@@ -134,10 +134,45 @@ def prddata(request):
 def manufacturer(request): # Manufacturer Input
     if request.method == 'POST':
         data = json.loads(request.POST.get('product_data'))
+        print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
         print(data)
+        print("--------\n")
+
+        #NOTE:
+        # Currently we a re getting it from the Manufacturer screen as an input
+        # Implement the logic where the USERS are present in a stream, while logging in
+        # the password and user is verified using the stream, and from the stream the Manufacturer name
+        # is fetched.
+
+        manufacturer = data["manufacturer"]
+        print("----MANUFACTURER NAME----")
+        print(manufacturer)
+        print("--------\n")
+        #Manufacturer name will be a key when publishing in the MANUFACTURER stream
+
+        structured_json = {
+            "address": data["address"],
+            "products": []
+        }
+
+        for product in data["products"]:
+            structured_product = {
+                "product_name": product["product_name"],
+                "product_code": product["product_code"],
+                "description": product["description"],
+                "ingredients": product["ingredients"],
+                "dosage": product["dosage"],
+                "quantity_in_stock": product["quantity_in_stock"],
+                "unit_price": product["unit_price"],
+                "manufacturing_date": product["manufacturing_date"],
+                "expiry_date": product["expiry_date"]
+            }
+            structured_json["products"].append(structured_product)
+
+        print(structured_json)
         x = rpc_connection.subscribe('{}'.format(manufacturer_stream))
         #publish data on the chain
-        txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(key), {'json': data})
+        txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(manufacturer), {'json': data})
     if txid:
         return render(request, "manufacturer.html", {"txid": txid})
     else:
