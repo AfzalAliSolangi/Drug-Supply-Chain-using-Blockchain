@@ -18,12 +18,24 @@ key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
 # print(manufacturer_stream)
 # print(key)
-# print(publisher)
+# print(publisher)  
 
 #Only password required to login users
 #Fix it before production
-password = {'prd': ['monk', "monk123"], 'mas': ['abi', 'abi123'], 'hos': [
-    'hari', 'hari123'], 'buyd': ['dhan', 'dhan123'], 'owner': ['power', 'power123']}
+password = {'prd': ['monk', "monk123"],
+            'mas': ['manufacturer', 'manufacturer'], 
+            'buyd': ['distributor', 'distributor'], 
+            }
+
+
+
+
+
+
+
+
+
+
 temp = ['patientid', 'doctorId', 'Time', 'Drug Id', 'Amount Paid']
 
 
@@ -82,16 +94,22 @@ def login(request):
         passw = request.POST['passw']
         # print('uname : ' + uname)
         # print('passw : ' + passw)
-        if passw in password['prd']:
-            return render(request, "dealerinput.html")
-        elif passw in password["mas"]:
+        # if passw in password['prd']:
+        #     return render(request, "dealerinput.html")
+        # elif passw in password["mas"]:
+        #     return render(request, "manufacturer.html")
+        # elif passw in password["hos"]:
+        #     return render(request, "hospitalinput.html")
+        # elif passw in password["buyd"]:
+        #     return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
+        # elif passw in password["owner"]:
+        #     return render(request, "seedetails.html")
+        # else:
+        #     return render(request, "login.html")
+        if passw in password["mas"]:
             return render(request, "manufacturer.html")
-        elif passw in password["hos"]:
-            return render(request, "hospitalinput.html")
         elif passw in password["buyd"]:
             return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
-        elif passw in password["owner"]:
-            return render(request, "seedetails.html")
         else:
             return render(request, "login.html")
     else:
