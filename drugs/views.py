@@ -85,6 +85,9 @@ def pricing(request):
 def contact(request):
     return render(request, "contact.html")
 
+def signup(request):
+    print("Sign-up check")
+    return render(request, "signup.html")
 
 def login(request):
     print("login check")
