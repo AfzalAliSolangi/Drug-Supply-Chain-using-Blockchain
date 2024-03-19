@@ -85,9 +85,21 @@ def pricing(request):
 def contact(request):
     return render(request, "contact.html")
 
-def signup(request):
-    print("Sign-up check")
-    return render(request, "signup.html")
+def signup_master(request):
+    print("signup-master check")
+    return render(request, "signup-master.html")
+
+def signup_manufacturer(request):
+    print("signup-manufacturer check")
+    return render(request, "signup-manufacturer.html")
+
+def signup_distributor(request):
+    print("signup-distributor check")
+    return render(request, "signup-distributor.html")
+
+def signup_pharmacy(request):
+    print("Signup-pharmacy check")
+    return render(request, "Signup-pharmacy.html")
 
 def login(request):
     print("login check")
