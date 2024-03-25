@@ -1,11 +1,152 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedConnect</title>
-</head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
+  <title>MedConnect</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href=" {% static 'assets/img/favicon.png' %} " rel="icon">
+  <link href=" {% static 'assets/img/apple-touch-icon.png' %} " rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href=" {% static 'assets/vendor/aos/aos.css' %} " rel="stylesheet">
+  <link href=" {% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %} " rel="stylesheet">
+  <link href=" {% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %} " rel="stylesheet">
+  <link href=" {% static 'assets/vendor/boxicons/css/boxicons.min.css' %} " rel="stylesheet">
+  <link href=" {% static 'assets/vendor/swiper/swiper-bundle.min.css' %} " rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href=" {% static 'assets/css/style.css' %} " rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: SoftLand - v4.10.0
+  * Template URL: https://bootstrapmade.com/softland-bootstrap-app-landing-page-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+<body>
+    <h1>User Registration Form</h1>
+    <form action="process_registration.php" method="post">
+        <fieldset>
+            <legend>Personal Details</legend>
+            <label for="company_name">Company Name:</label><br>
+            <input type="text" id="company_info" name="company_info" required autocomplete="off"><br><br>
+            
+            <label for="company_address">Company Address:</label><br>
+            <input type="text" id="street_address" name="street_address" placeholder="Street address" required autocomplete="off"><br><br>
+
+            <label for="business_details">Business Details:</label><br>
+            <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off"></textarea><br><br>
+
+            <label for="state">State:</label><br>
+            <select id="state" name="state" onchange="populateCities()">
+                <option value="">Select State</option>
+                <option value="Sindh">Sindh</option>
+                <option value="Punjab">Punjab</option>
+                <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khuwa</option>
+                <option value="Balochistan">Balochistan</option>
+                <!-- Add more options for other states if needed -->
+            </select><br><br>
+            
+            <label for="city">City:</label><br>
+            <select id="city" name="city" required>
+                <option value="">Select City</option>
+            </select><br><br>
+            
+            <label for="zip_code">Zip code:</label><br>
+            <input type="text" id="zip_code" name="zip_code" placeholder="Zip code" required autocomplete="off"><br><br>
+        </fieldset>
+        
+        <fieldset>
+            <legend>Security</legend>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required autocomplete="off"><br><br>
+        </fieldset>
+        
+        <fieldset>
+            <legend>Human Verification</legend>
+            <label for="verification">Please check the box below to verify you are human:</label><br>
+            <input type="checkbox" id="verification" name="verification" required> I'm not a robot<br><br>
+        </fieldset>
+        
+        <fieldset>
+            <legend>Terms and Conditions</legend>
+            <label for="agree_terms">I agree to the Terms and Conditions:</label>
+            <input type="checkbox" id="agree_terms" name="agree_terms" required><br><br>
+        </fieldset>
+        
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        function populateCities() {
+            var stateSelect = document.getElementById("state");
+            var citySelect = document.getElementById("city");
+            var selectedState = stateSelect.value;
+            
+            // Clear previous options
+            citySelect.innerHTML = "<option value=''>Select City</option>";
+            
+            // Populate cities based on selected state
+            if (selectedState === "Sindh") {
+                var sindhCities = ["Karachi", "Hyderabad", "Sukkur", "Larkana"];
+                sindhCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Punjab") {
+                var sindhCities = ["Lahore", "Faisalabad", "Rawalpindi", "Gujranwala"];
+                sindhCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Punjab") {
+                var sindhCities = ["Lahore", "Faisalabad", "Rawalpindi", "Gujranwala"];
+                sindhCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Kyber Pakhtun-Khwa") {
+                var sindhCities = ["Peshawar", "Mardan", "Kohat", "Abbottabad"];
+                sindhCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Balochistan") {
+                var sindhCities = ["Quetta ", "Gwadar", "Hub"];
+                sindhCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            // Add more conditions for other states if needed
+    }
+    </script>
+</body>
 </html>
