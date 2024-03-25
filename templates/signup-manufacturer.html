@@ -9,21 +9,36 @@
             content: " *";
             color: red;
         }
+
+        /* Style for password strength meter */
+        #password-strength-meter-container {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            margin-bottom: 10px;
+        }
+
+        #password-strength-meter {
+            height: 100%;
+            width: 0;
+            background-color: #ff0000; /* Default color: Red */
+        }
     </style>
 </head>
 <body>
-    <h1>User Registration Form</h1>
+    <h1>User Manufacturer Registration Form</h1>
     <form action="process_registration.php" method="post" onsubmit="return validateForm()">
         <fieldset>
             <legend>Personal Details</legend>
-            <label for="company_info">Company Information<span class="required"></span>:</label><br>
-            <input type="text" id="company_info" name="company_info" required autocomplete="off"><br><br>
+            <label for="company_info">Company Name<span class="required">*</span>:</label><br>
+            <input type="text" id="company_info" name="company_info" required autocomplete="off" maxlength="70"><br><br>
             
             <label for="street_address">Street Address<span class="required"></span>:</label><br>
-            <input type="text" id="street_address" name="street_address" required autocomplete="off"><br><br>
+            <input type="text" id="street_address" name="street_address" required autocomplete="off" maxlength="100"><br><br>
 
             <label for="business_details">Business Details<span class="required"></span>:</label><br>
-            <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off"></textarea><br><br>
+            <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off" maxlength="500"></textarea>
+            <small>Maximum 500 characters.</small><br><br>
 
             <label for="state">State<span class="required"></span>:</label><br>
             <select id="state" name="state" onchange="populateCities()" required>
@@ -39,16 +54,26 @@
                 <option value="">Select City</option>
             </select><br><br>
             
-            <label for="zip_code">Zip code<span class="required"></span>:</label><br>
-            <input type="text" id="zip_code" name="zip_code" required autocomplete="off"><br><br>
+            <label for="zip_code">Zip code<span class="required">*</span>:</label><br>
+            <input type="text" id="zip_code" name="zip_code" required autocomplete="off" pattern="[0-9]{5}">
+            <small>Zip code must contain exactly 5 numeric characters.</small><br><br>
         </fieldset>
         
         <fieldset>
             <legend>Security</legend>
             <label for="password">Password<span class="required"></span>:</label><br>
-            <input type="password" id="password" name="password" required autocomplete="off"><br><br>
+            <input type="password" id="password" name="password" required autocomplete="off" onkeyup="checkPasswordStrength(this.value)">
+            <div id="password-strength-meter-container">
+                <div id="password-strength-meter"></div>
+            </div>
+            <small>Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 6 characters long.</small><br><br>
         </fieldset>
         
+        <fieldset>
+            <label for="license_certification">License and Certification (PDF or Word document)<span class="required"></span>:</label><br>
+            <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required><br><br>
+
+        </fieldset>
         <fieldset>
             <legend>Human Verification</legend>
             <label for="verification">Please check the box below to verify you are human<span class="required"></span>:</label><br>
@@ -127,6 +152,50 @@
                 return false;
             }
             return true;
+        }
+
+        function checkPasswordStrength(password) {
+            var progressBar = document.getElementById("password-strength-meter");
+            var strength = 0;
+            
+            // Check for presence of lowercase letter
+            if (password.match(/[a-z]/)) {
+                strength += 1;
+            }
+        
+            // Check for presence of uppercase letter
+            if (password.match(/[A-Z]/)) {
+                strength += 1;
+            }
+        
+            // Check for presence of digit
+            if (password.match(/\d/)) {
+                strength += 1;
+            }
+        
+            // Check for presence of special character
+            if (password.match(/[!@#$%^&*]/)) {
+                strength += 1;
+            }
+        
+            // Check for length
+            if (password.length >= 6) {
+                strength += 1;
+            }
+        
+            // Update progress bar based on strength
+            progressBar.style.width = (strength * 20) + "%";
+        
+            // You can also provide feedback to the user based on the strength level
+            // For example:
+            // Change color based on strength
+            if (strength < 3) {
+                progressBar.style.backgroundColor = "red";
+            } else if (strength < 5) {
+                progressBar.style.backgroundColor = "orange";
+            } else {
+                progressBar.style.backgroundColor = "green";
+            }
         }
     </script>
 </body>
