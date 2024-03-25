@@ -1,89 +1,63 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>MedConnect</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <!-- Favicons -->
-  <link href=" {% static 'assets/img/favicon.png' %} " rel="icon">
-  <link href=" {% static 'assets/img/apple-touch-icon.png' %} " rel="apple-touch-icon">
-
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-    rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href=" {% static 'assets/vendor/aos/aos.css' %} " rel="stylesheet">
-  <link href=" {% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %} " rel="stylesheet">
-  <link href=" {% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %} " rel="stylesheet">
-  <link href=" {% static 'assets/vendor/boxicons/css/boxicons.min.css' %} " rel="stylesheet">
-  <link href=" {% static 'assets/vendor/swiper/swiper-bundle.min.css' %} " rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link href=" {% static 'assets/css/style.css' %} " rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: SoftLand - v4.10.0
-  * Template URL: https://bootstrapmade.com/softland-bootstrap-app-landing-page-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>User Registration Form</h1>
-    <form action="process_registration.php" method="post">
+    <form action="process_registration.php" method="post" onsubmit="return validateForm()">
         <fieldset>
             <legend>Personal Details</legend>
-            <label for="company_name">Company Name:</label><br>
+            <label for="company_info">Company Information<span class="required"></span>:</label><br>
             <input type="text" id="company_info" name="company_info" required autocomplete="off"><br><br>
             
-            <label for="company_address">Company Address:</label><br>
-            <input type="text" id="street_address" name="street_address" placeholder="Street address" required autocomplete="off"><br><br>
+            <label for="street_address">Street Address<span class="required"></span>:</label><br>
+            <input type="text" id="street_address" name="street_address" required autocomplete="off"><br><br>
 
-            <label for="business_details">Business Details:</label><br>
+            <label for="business_details">Business Details<span class="required"></span>:</label><br>
             <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off"></textarea><br><br>
 
-            <label for="state">State:</label><br>
-            <select id="state" name="state" onchange="populateCities()">
+            <label for="state">State<span class="required"></span>:</label><br>
+            <select id="state" name="state" onchange="populateCities()" required>
                 <option value="">Select State</option>
                 <option value="Sindh">Sindh</option>
                 <option value="Punjab">Punjab</option>
-                <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khuwa</option>
+                <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
                 <option value="Balochistan">Balochistan</option>
-                <!-- Add more options for other states if needed -->
             </select><br><br>
             
-            <label for="city">City:</label><br>
+            <label for="city">City<span class="required"></span>:</label><br>
             <select id="city" name="city" required>
                 <option value="">Select City</option>
             </select><br><br>
             
-            <label for="zip_code">Zip code:</label><br>
-            <input type="text" id="zip_code" name="zip_code" placeholder="Zip code" required autocomplete="off"><br><br>
+            <label for="zip_code">Zip code<span class="required"></span>:</label><br>
+            <input type="text" id="zip_code" name="zip_code" required autocomplete="off"><br><br>
         </fieldset>
         
         <fieldset>
             <legend>Security</legend>
-            <label for="password">Password:</label><br>
+            <label for="password">Password<span class="required"></span>:</label><br>
             <input type="password" id="password" name="password" required autocomplete="off"><br><br>
         </fieldset>
         
         <fieldset>
             <legend>Human Verification</legend>
-            <label for="verification">Please check the box below to verify you are human:</label><br>
+            <label for="verification">Please check the box below to verify you are human<span class="required"></span>:</label><br>
             <input type="checkbox" id="verification" name="verification" required> I'm not a robot<br><br>
         </fieldset>
         
         <fieldset>
             <legend>Terms and Conditions</legend>
-            <label for="agree_terms">I agree to the Terms and Conditions:</label>
+            <label for="agree_terms">I agree to the Terms and Conditions<span class="required"></span>:</label>
             <input type="checkbox" id="agree_terms" name="agree_terms" required><br><br>
         </fieldset>
         
@@ -110,17 +84,8 @@
                 });
             }
             else if (selectedState === "Punjab") {
-                var sindhCities = ["Lahore", "Faisalabad", "Rawalpindi", "Gujranwala"];
-                sindhCities.forEach(function(city) {
-                    var option = document.createElement("option");
-                    option.value = city;
-                    option.text = city;
-                    citySelect.appendChild(option);
-                });
-            }
-            else if (selectedState === "Punjab") {
-                var sindhCities = ["Lahore", "Faisalabad", "Rawalpindi", "Gujranwala"];
-                sindhCities.forEach(function(city) {
+                var punjabCities = ["Lahore", "Faisalabad", "Rawalpindi", "Gujranwala"];
+                punjabCities.forEach(function(city) {
                     var option = document.createElement("option");
                     option.value = city;
                     option.text = city;
@@ -128,8 +93,8 @@
                 });
             }
             else if (selectedState === "Kyber Pakhtun-Khwa") {
-                var sindhCities = ["Peshawar", "Mardan", "Kohat", "Abbottabad"];
-                sindhCities.forEach(function(city) {
+                var kpCities = ["Peshawar", "Mardan", "Kohat", "Abbottabad"];
+                kpCities.forEach(function(city) {
                     var option = document.createElement("option");
                     option.value = city;
                     option.text = city;
@@ -137,16 +102,32 @@
                 });
             }
             else if (selectedState === "Balochistan") {
-                var sindhCities = ["Quetta ", "Gwadar", "Hub"];
-                sindhCities.forEach(function(city) {
+                var balochistanCities = ["Quetta", "Gwadar", "Hub"];
+                balochistanCities.forEach(function(city) {
                     var option = document.createElement("option");
                     option.value = city;
                     option.text = city;
                     citySelect.appendChild(option);
                 });
             }
-            // Add more conditions for other states if needed
-    }
+        }
+
+        function validateForm() {
+            var companyInfo = document.getElementById("company_info").value;
+            var streetAddress = document.getElementById("street_address").value;
+            var businessDetails = document.getElementById("business_details").value;
+            var state = document.getElementById("state").value;
+            var city = document.getElementById("city").value;
+            var zipCode = document.getElementById("zip_code").value;
+            var password = document.getElementById("password").value;
+            var agreeTerms = document.getElementById("agree_terms").checked;
+
+            if (companyInfo === "" || streetAddress === "" || businessDetails === "" || state === "" || city === "" || zipCode === "" || password === "" || !agreeTerms) {
+                alert("Please fill in all fields.");
+                return false;
+            }
+            return true;
+        }
     </script>
 </body>
 </html>
