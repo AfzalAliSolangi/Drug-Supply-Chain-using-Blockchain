@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="{% static 'assets/css/login.css' %}">
+  <title>MedConnect</title>
+</head>
+
+<body>
+
+  <body>
+    <div class="login-page">
+      <div class="form">
+        <div class="login">
+          <div class="login-header">
+            <h3>SIGNUP PHARMACY</h3>
+            <p>Please enter your email.</p>
+          </div>
+        </div>
+        <form class="login-form" action="email_check_pharmacy" method="post">
+          {%csrf_token%}
+          <input name='email' type="text" placeholder="email" />
+          <button>Procced</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</body>
+
+</html>

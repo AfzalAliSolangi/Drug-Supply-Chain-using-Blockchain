@@ -14,7 +14,7 @@ print(config.read('./drugs/config.conf'))
 # Access configuration values from the default section
 manufacturer_stream = config.get('Section1','manufacturer_stream')
 order_stream = config.get('Section1','order_stream')
-users_stream = config.get('Section1','users_stream')
+users_stream = config.get('Section1','users_stream') #Need to add different user stream for all users
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
 # print(manufacturer_stream)
@@ -91,7 +91,7 @@ def signup_master(request):
     return render(request, "email_check_master.html")
 
 def email_check_master(request):
-    print("email_check")
+    print("email_check_master")
     x = rpc_connection.subscribe('{}'.format(users_stream))
     if request.method == 'POST':
         # print("method check")
@@ -107,20 +107,78 @@ def email_check_master(request):
                 print("present")
                 return render(request, "login.html") #if the email is present prompt to login master page
         return render(request, "signup-master.html") #if the email is not present then render this page
-    # print(email)
-    # return 0
+
 
 def signup_manufacturer(request):
     print("signup-manufacturer check")
-    return render(request, "signup-manufacturer.html")
+    return render(request, "email_check_manufacturer.html")
+
+def email_check_manufacturer(request):
+    print("email_check_manufacturer")
+    x = rpc_connection.subscribe('{}'.format(users_stream))
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST['email']
+        response = rpc_connection.liststreamkeys(users_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        # print(json_string)
+        email_keys = [entry["key"] for entry in json_string]
+        print(email_keys)
+        for each_email in email_keys:
+            if each_email==email:
+                print("present")
+                return render(request, "login.html") #if the email is present prompt to login master page
+        return render(request, "signup-manufacturer.html") #if the email is not present then render this page
 
 def signup_distributor(request):
     print("signup-distributor check")
-    return render(request, "signup-distributor.html")
+    return render(request, "email_check_distributor.html")
+
+
+def email_check_distributor(request):
+    print("email_check_distributor")
+    x = rpc_connection.subscribe('{}'.format(users_stream))
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST['email']
+        response = rpc_connection.liststreamkeys(users_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        # print(json_string)
+        email_keys = [entry["key"] for entry in json_string]
+        print(email_keys)
+        for each_email in email_keys:
+            if each_email==email:
+                print("present")
+                return render(request, "login.html") #if the email is present prompt to login master page
+        return render(request, "signup-distributor.html") #if the email is not present then render this page
+
 
 def signup_pharmacy(request):
     print("Signup-pharmacy check")
-    return render(request, "Signup-pharmacy.html")
+    return render(request, "email_check_pharmacy.html")
+
+def email_check_pharmacy(request):
+    print("email_check_pharmacy")
+    x = rpc_connection.subscribe('{}'.format(users_stream))
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST['email']
+        response = rpc_connection.liststreamkeys(users_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        # print(json_string)
+        email_keys = [entry["key"] for entry in json_string]
+        print(email_keys)
+        for each_email in email_keys:
+            if each_email==email:
+                print("present")
+                return render(request, "login.html") #if the email is present prompt to login master page
+        return render(request, "Signup-pharmacy.html") #if the email is not present then render this page
+
+
+
 
 def login(request):
     print("login check")
