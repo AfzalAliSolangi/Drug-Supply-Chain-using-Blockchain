@@ -14,6 +14,7 @@ print(config.read('./drugs/config.conf'))
 # Access configuration values from the default section
 manufacturer_stream = config.get('Section1','manufacturer_stream')
 order_stream = config.get('Section1','order_stream')
+users_stream = config.get('Section1','users_stream')
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
 # print(manufacturer_stream)
@@ -87,7 +88,27 @@ def contact(request):
 
 def signup_master(request):
     print("signup-master check")
-    return render(request, "signup-master.html")
+    return render(request, "email_check_master.html")
+
+def email_check_master(request):
+    print("email_check")
+    x = rpc_connection.subscribe('{}'.format(users_stream))
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST['email']
+        response = rpc_connection.liststreamkeys(users_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        # print(json_string)
+        email_keys = [entry["key"] for entry in json_string]
+        print(email_keys)
+        for each_email in email_keys:
+            if each_email==email:
+                print("present")
+                return render(request, "login.html") #if the email is present prompt to login master page
+        return render(request, "signup-master.html") #if the email is not present then render this page
+    # print(email)
+    # return 0
 
 def signup_manufacturer(request):
     print("signup-manufacturer check")

@@ -22,4 +22,5 @@ urlpatterns = [
     path('products', views.products, name='products'),  
     path('checkout', views.checkout, name='checkout'),
     path('publish', views.publish, name='publish'),
+    path('email_check_master', views.email_check_master, name='email_check_master'),
 ]
