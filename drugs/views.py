@@ -95,11 +95,11 @@ def signup_master(request):
 
 def email_check_master(request):
     print("email_check_master")
-    x = rpc_connection.subscribe('{}'.format(users_stream))
+    x = rpc_connection.subscribe('{}'.format(users_master_stream))
     if request.method == 'POST':
         # print("method check")
         email = request.POST['email']
-        response = rpc_connection.liststreamkeys(users_stream)
+        response = rpc_connection.liststreamkeys(users_master_stream)
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
         # print(json_string)
@@ -108,9 +108,44 @@ def email_check_master(request):
         for each_email in email_keys:
             if each_email==email:
                 print("present")
-                return render(request, "login.html") #if the email is present prompt to login master page
-        return render(request, "signup-master.html") #if the email is not present then render this page
+                return render(request, "login_master.html") #if the email is present prompt to login master page
+        return render(request, "signup-master.html",{'email': email}) #if the email is not present then render this page
 
+def process_registration_master(request):
+    print("process_registration_manufacturer")
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST.get('email')
+        request_data = {
+            "email": request.POST.get('email'),
+            "company_info": request.POST.get('company_info'),
+            "street_address": request.POST.get('street_address'),
+            "business_details": request.POST.get('business_details'),
+            "state": request.POST.get('state'),
+            "city": request.POST.get('city'),
+            "zip_code": request.POST.get('zip_code'),
+            "password": request.POST.get('password'),
+            "license_certification": request.POST.get('license_certification')
+        }
+        data = json.dumps(request_data)
+        data = json.loads(data)
+        txid = rpc_connection.publish('users_master_stream', '{}'.format(email), {'json' : data})
+        if txid:
+            return HttpResponse("process_registration_manufacturer")
+        
+def login_master(request):
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST.get('email')
+        return render(request, "login_master.html")
+
+def login_check_master(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        password = request.POST.get('passw')
+        print(name)
+        print(password)
+        return render(request, "master.html")
 
 def signup_manufacturer(request):
     print("signup-manufacturer check")
@@ -119,11 +154,11 @@ def signup_manufacturer(request):
 
 def email_check_manufacturer(request):
     print("email_check_manufacturer")
-    x = rpc_connection.subscribe('{}'.format(users_stream))
+    x = rpc_connection.subscribe('{}'.format(users_manufacturer_stream))
     if request.method == 'POST':
         # print("method check")
         email = request.POST['email']
-        response = rpc_connection.liststreamkeys(users_stream)
+        response = rpc_connection.liststreamkeys(users_manufacturer_stream)
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
         # print(json_string)
@@ -132,7 +167,7 @@ def email_check_manufacturer(request):
         for each_email in email_keys:
             if each_email==email:
                 print("present")
-                return render(request, "login.html") #if the email is present prompt to login master page
+                return render(request, "login_manufacturer.html") #if the email is present prompt to login master page
         return render(request, "signup-manufacturer.html",{'email': email}) #if the email is not present then render this page
     
 
@@ -188,11 +223,11 @@ def signup_distributor(request):
 
 def email_check_distributor(request):
     print("email_check_distributor")
-    x = rpc_connection.subscribe('{}'.format(users_stream))
+    x = rpc_connection.subscribe('{}'.format(users_distributor_stream))
     if request.method == 'POST':
         # print("method check")
         email = request.POST['email']
-        response = rpc_connection.liststreamkeys(users_stream)
+        response = rpc_connection.liststreamkeys(users_distributor_stream)
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
         # print(json_string)
@@ -211,11 +246,11 @@ def signup_pharmacy(request):
 
 def email_check_pharmacy(request):
     print("email_check_pharmacy")
-    x = rpc_connection.subscribe('{}'.format(users_stream))
+    x = rpc_connection.subscribe('{}'.format(users_pharmacy_stream))
     if request.method == 'POST':
         # print("method check")
         email = request.POST['email']
-        response = rpc_connection.liststreamkeys(users_stream)
+        response = rpc_connection.liststreamkeys(users_pharmacy_stream)
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
         # print(json_string)
