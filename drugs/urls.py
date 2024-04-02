@@ -26,4 +26,5 @@ urlpatterns = [
     path('email_check_manufacturer', views.email_check_manufacturer, name='email_check_manufacturer'),
     path('email_check_distributor', views.email_check_distributor, name='email_check_distributor'),
     path('email_check_pharmacy', views.email_check_pharmacy, name='email_check_pharmacy'),
+    path('process_registration_manufacturer', views.process_registration_manufacturer, name='process_registration_manufacturer'),
 ]

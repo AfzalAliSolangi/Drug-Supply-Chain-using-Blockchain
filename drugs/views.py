@@ -113,6 +113,7 @@ def signup_manufacturer(request):
     print("signup-manufacturer check")
     return render(request, "email_check_manufacturer.html")
 
+
 def email_check_manufacturer(request):
     print("email_check_manufacturer")
     x = rpc_connection.subscribe('{}'.format(users_stream))
@@ -130,6 +131,30 @@ def email_check_manufacturer(request):
                 print("present")
                 return render(request, "login.html") #if the email is present prompt to login master page
         return render(request, "signup-manufacturer.html") #if the email is not present then render this page
+    
+
+def process_registration_manufacturer(request):
+    print("process_registration_manufacturer")
+    if request.method == 'POST':
+        # print("method check")
+
+        company_info = request.POST['company_info']
+        street_address = request.POST['street_address']
+        business_details = request.POST['business_details']
+        state = request.POST['state']
+        city = request.POST['city']
+        zip_code = request.POST['zip_code']
+        password = request.POST['password']
+        license_certification = request.POST['license_certification']
+        print(company_info)
+        print(street_address)
+        print(business_details)
+        print(state)
+        print(city)
+        print(zip_code)
+        print(password)
+        print(license_certification)
+        return HttpResponse("process_registration_manufacturer")
 
 def signup_distributor(request):
     print("signup-distributor check")
