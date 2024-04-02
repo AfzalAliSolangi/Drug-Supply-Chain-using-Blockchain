@@ -203,6 +203,8 @@ def login_check_manufacturer(request): #Implement Password authentication
         print(password)
         return render(request, "manufacturer.html")
 
+
+####Distributor#####
 def signup_distributor(request):
     print("signup-distributor check")
     return render(request, "email_check_distributor.html")
@@ -223,11 +225,42 @@ def email_check_distributor(request):
         for each_email in email_keys:
             if each_email==email:
                 print("present")
-                return render(request, "login.html") #if the email is present prompt to login master page
-        return render(request, "signup-distributor.html") #if the email is not present then render this page
+                return render(request, "login_distributor.html") #if the email is present prompt to login master page
+        return render(request, "signup-distributor.html",{'email': email}) #if the email is not present then render this page
+
+def process_registration_distributor(request):
+    print("process_registration_manufacturer")
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST.get('email')
+        request_data = {
+            "email": request.POST.get('email'),
+            "company_info": request.POST.get('company_info'),
+            "street_address": request.POST.get('street_address'),
+            "business_details": request.POST.get('business_details'),
+            "state": request.POST.get('state'),
+            "city": request.POST.get('city'),
+            "zip_code": request.POST.get('zip_code'),
+            "password": request.POST.get('password'),
+            "license_certification": request.POST.get('license_certification')
+        }
+        data = json.dumps(request_data)
+        data = json.loads(data)
+        txid = rpc_connection.publish('users_distributor_stream', '{}'.format(email), {'json' : data})
+        if txid:
+            return HttpResponse("process_registration_distributor")
 
 def login_distributor(request):
         return render(request, "login_distributor.html")
+
+def login_check_distributor(request): #Implement Password authentication
+    print('login_check_manufacturer')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        password = request.POST.get('passw')
+        print(name)
+        print(password)
+        return HttpResponse("log in distributor success!")
 
 def signup_pharmacy(request):
     print("Signup-pharmacy check")
@@ -254,35 +287,6 @@ def email_check_pharmacy(request):
 def login_pharmacy(request):
         return render(request, "login_pharmacy.html")
 
-
-# def login(request):
-#     print("login check")
-#     if request.method == 'POST':
-#         print("method check")
-#         uname = request.POST['name']
-#         passw = request.POST['passw']
-#         # print('uname : ' + uname)
-#         # print('passw : ' + passw)
-#         # if passw in password['prd']:
-#         #     return render(request, "dealerinput.html")
-#         # elif passw in password["mas"]:
-#         #     return render(request, "manufacturer.html")
-#         # elif passw in password["hos"]:
-#         #     return render(request, "hospitalinput.html")
-#         # elif passw in password["buyd"]:
-#         #     return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
-#         # elif passw in password["owner"]:
-#         #     return render(request, "seedetails.html")
-#         # else:
-#         #     return render(request, "login.html")
-#         if passw in password["mas"]:
-#             return render(request, "manufacturer.html")
-#         elif passw in password["buyd"]:
-#             return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
-#         else:
-#             return render(request, "login.html")
-#     else:
-#         return render(request, "login.html")
 
 
 def getdetails(request):
