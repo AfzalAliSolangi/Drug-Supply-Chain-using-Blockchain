@@ -138,24 +138,22 @@ def process_registration_manufacturer(request):
     if request.method == 'POST':
         # print("method check")
         email = request.POST.get('email')
-        company_info = request.POST['company_info']
-        street_address = request.POST['street_address']
-        business_details = request.POST['business_details']
-        state = request.POST['state']
-        city = request.POST['city']
-        zip_code = request.POST['zip_code']
-        password = request.POST['password']
-        license_certification = request.POST['license_certification']
-        print(company_info)
-        print(street_address)
-        print(business_details)
-        print(state)
-        print(city)
-        print(zip_code)
-        print(password)
-        print(license_certification)
-        print(email)
-        return HttpResponse("process_registration_manufacturer")
+        request_data = {
+            "email": request.POST.get('email'),
+            "company_info": request.POST.get('company_info'),
+            "street_address": request.POST.get('street_address'),
+            "business_details": request.POST.get('business_details'),
+            "state": request.POST.get('state'),
+            "city": request.POST.get('city'),
+            "zip_code": request.POST.get('zip_code'),
+            "password": request.POST.get('password'),
+            "license_certification": request.POST.get('license_certification')
+        }
+        data = json.dumps(request_data)
+        data = json.loads(data)
+        txid = rpc_connection.publish('users', '{}'.format(email), {'json' : data})
+        if txid:
+            return HttpResponse("process_registration_manufacturer")
 
 def signup_distributor(request):
     print("signup-distributor check")
