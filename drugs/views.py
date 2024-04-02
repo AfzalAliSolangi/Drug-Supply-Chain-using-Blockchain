@@ -154,6 +154,29 @@ def process_registration_manufacturer(request):
         txid = rpc_connection.publish('users', '{}'.format(email), {'json' : data})
         if txid:
             return HttpResponse("process_registration_manufacturer")
+        
+def login_manufacturer(request):
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST.get('email')
+        return render(request, "login_manufacturer.html")
+
+def login_check_manufacturer(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        password = request.POST.get('passw')
+        print(name)
+        print(password)
+        return render(request, "manufacturer.html")
+
+def login_master(request):
+    return render(request, "login_manufacturer.html")
+
+def login_distributor(request):
+    return render(request, "login_manufacturer.html")
+
+def login_pharmacy(request):
+    return render(request, "login_manufacturer.html")
 
 def signup_distributor(request):
     print("signup-distributor check")
@@ -204,34 +227,34 @@ def email_check_pharmacy(request):
 
 
 
-def login(request):
-    print("login check")
-    if request.method == 'POST':
-        print("method check")
-        uname = request.POST['name']
-        passw = request.POST['passw']
-        # print('uname : ' + uname)
-        # print('passw : ' + passw)
-        # if passw in password['prd']:
-        #     return render(request, "dealerinput.html")
-        # elif passw in password["mas"]:
-        #     return render(request, "manufacturer.html")
-        # elif passw in password["hos"]:
-        #     return render(request, "hospitalinput.html")
-        # elif passw in password["buyd"]:
-        #     return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
-        # elif passw in password["owner"]:
-        #     return render(request, "seedetails.html")
-        # else:
-        #     return render(request, "login.html")
-        if passw in password["mas"]:
-            return render(request, "manufacturer.html")
-        elif passw in password["buyd"]:
-            return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
-        else:
-            return render(request, "login.html")
-    else:
-        return render(request, "login.html")
+# def login(request):
+#     print("login check")
+#     if request.method == 'POST':
+#         print("method check")
+#         uname = request.POST['name']
+#         passw = request.POST['passw']
+#         # print('uname : ' + uname)
+#         # print('passw : ' + passw)
+#         # if passw in password['prd']:
+#         #     return render(request, "dealerinput.html")
+#         # elif passw in password["mas"]:
+#         #     return render(request, "manufacturer.html")
+#         # elif passw in password["hos"]:
+#         #     return render(request, "hospitalinput.html")
+#         # elif passw in password["buyd"]:
+#         #     return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
+#         # elif passw in password["owner"]:
+#         #     return render(request, "seedetails.html")
+#         # else:
+#         #     return render(request, "login.html")
+#         if passw in password["mas"]:
+#             return render(request, "manufacturer.html")
+#         elif passw in password["buyd"]:
+#             return render(request, "Distributor.html",{'json_string' : lst_of_mfg()})
+#         else:
+#             return render(request, "login.html")
+#     else:
+#         return render(request, "login.html")
 
 
 def getdetails(request):
