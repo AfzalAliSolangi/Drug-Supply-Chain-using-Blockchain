@@ -13,6 +13,7 @@ urlpatterns = [
     path('login_distributor', views.login_distributor, name='login_distributor'),
     path('login_pharmacy', views.login_pharmacy, name='login_pharmacy'),
     path('login_check_manufacturer', views.login_check_manufacturer, name='login_check_manufacturer'),
+    path('login_check_master', views.login_check_master, name='login_check_master'),
     path('signup-master', views.signup_master, name='signup-master'),
     path('signup-manufacturer', views.signup_manufacturer, name='signup-manufacturer'),
     path('signup-distributor', views.signup_distributor, name='signup-distributor'),

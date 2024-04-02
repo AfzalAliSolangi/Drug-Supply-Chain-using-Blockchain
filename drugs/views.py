@@ -131,15 +131,13 @@ def process_registration_master(request):
         data = json.loads(data)
         txid = rpc_connection.publish('users_master_stream', '{}'.format(email), {'json' : data})
         if txid:
-            return HttpResponse("process_registration_manufacturer")
+            return HttpResponse("process_registration_master")
         
 def login_master(request):
-    if request.method == 'POST':
-        # print("method check")
-        email = request.POST.get('email')
         return render(request, "login_master.html")
 
-def login_check_master(request):
+def login_check_master(request): #Implement Password authentication
+    print('login_check_master')
     if request.method == 'POST':
         name = request.POST.get('name')
         password = request.POST.get('passw')
@@ -189,32 +187,21 @@ def process_registration_manufacturer(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish('users', '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish('users_manufacturer_stream', '{}'.format(email), {'json' : data})
         if txid:
             return HttpResponse("process_registration_manufacturer")
         
 def login_manufacturer(request):
-    if request.method == 'POST':
-        # print("method check")
-        email = request.POST.get('email')
         return render(request, "login_manufacturer.html")
 
-def login_check_manufacturer(request):
+def login_check_manufacturer(request): #Implement Password authentication
+    print('login_check_manufacturer')
     if request.method == 'POST':
         name = request.POST.get('name')
         password = request.POST.get('passw')
         print(name)
         print(password)
         return render(request, "manufacturer.html")
-
-def login_master(request):
-    return render(request, "login_manufacturer.html")
-
-def login_distributor(request):
-    return render(request, "login_manufacturer.html")
-
-def login_pharmacy(request):
-    return render(request, "login_manufacturer.html")
 
 def signup_distributor(request):
     print("signup-distributor check")
@@ -239,6 +226,8 @@ def email_check_distributor(request):
                 return render(request, "login.html") #if the email is present prompt to login master page
         return render(request, "signup-distributor.html") #if the email is not present then render this page
 
+def login_distributor(request):
+        return render(request, "login_distributor.html")
 
 def signup_pharmacy(request):
     print("Signup-pharmacy check")
@@ -262,7 +251,8 @@ def email_check_pharmacy(request):
                 return render(request, "login.html") #if the email is present prompt to login master page
         return render(request, "Signup-pharmacy.html") #if the email is not present then render this page
 
-
+def login_pharmacy(request):
+        return render(request, "login_pharmacy.html")
 
 
 # def login(request):
