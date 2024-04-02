@@ -14,7 +14,10 @@ print(config.read('./drugs/config.conf'))
 # Access configuration values from the default section
 manufacturer_stream = config.get('Section1','manufacturer_stream')
 order_stream = config.get('Section1','order_stream')
-users_stream = config.get('Section1','users_stream') #Need to add different user stream for all users
+users_master_stream = config.get('Section1','users_master_stream') #Need to add different user stream for all users
+users_manufacturer_stream = config.get('Section1','users_manufacturer_stream') #Need to add different user stream for all users
+users_distributor_stream = config.get('Section1','users_distributor_stream') #Need to add different user stream for all users
+users_pharmacy_stream = config.get('Section1','users_pharmacy_stream') #Need to add different user stream for all users
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
 # print(manufacturer_stream)
