@@ -130,14 +130,14 @@ def email_check_manufacturer(request):
             if each_email==email:
                 print("present")
                 return render(request, "login.html") #if the email is present prompt to login master page
-        return render(request, "signup-manufacturer.html") #if the email is not present then render this page
+        return render(request, "signup-manufacturer.html",{'email': email}) #if the email is not present then render this page
     
 
 def process_registration_manufacturer(request):
     print("process_registration_manufacturer")
     if request.method == 'POST':
         # print("method check")
-
+        email = request.POST.get('email')
         company_info = request.POST['company_info']
         street_address = request.POST['street_address']
         business_details = request.POST['business_details']
@@ -154,6 +154,7 @@ def process_registration_manufacturer(request):
         print(zip_code)
         print(password)
         print(license_certification)
+        print(email)
         return HttpResponse("process_registration_manufacturer")
 
 def signup_distributor(request):
