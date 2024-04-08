@@ -201,11 +201,22 @@ def login_manufacturer(request):
 def login_check_manufacturer(request): #Implement Password authentication
     print('login_check_manufacturer')
     if request.method == 'POST':
-        name = request.POST.get('name')
-        password = request.POST.get('passw')
-        print(name)
-        print(password)
-        return render(request, "manufacturer.html")
+        email_rcvd = request.POST.get('email')
+        password_rcvd = request.POST.get('passw')
+        result = rpc_connection.liststreamkeyitems('users_manufacturer_stream', email_rcvd)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        email_frm_chain = json_load[0]['keys'][0]
+        passw_frm_chain = json_load[0]['data']['json']['password']
+        print(data)
+        print("Email from front end: ",email_rcvd)
+        print("Email from stream: ",email_frm_chain)
+        print(password_rcvd)
+        print(passw_frm_chain)
+        if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+            return render(request, "manufacturer.html",{'email_rcvd': email_rcvd})
+        else:
+            return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
 
 def manufacturer(request): # Manufacturer Input
     if request.method == 'POST':
