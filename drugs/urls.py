@@ -15,6 +15,7 @@ urlpatterns = [
     path('login_check_manufacturer', views.login_check_manufacturer, name='login_check_manufacturer'),
     path('login_check_master', views.login_check_master, name='login_check_master'),
     path('login_check_distributor', views.login_check_distributor, name='login_check_distributor'),
+    path('login_check_pharmacy', views.login_check_pharmacy, name='login_check_pharmacy'),
     path('signup-master', views.signup_master, name='signup-master'),
     path('signup-manufacturer', views.signup_manufacturer, name='signup-manufacturer'),
     path('signup-distributor', views.signup_distributor, name='signup-distributor'),
@@ -35,4 +36,5 @@ urlpatterns = [
     path('process_registration_manufacturer', views.process_registration_manufacturer, name='process_registration_manufacturer'),
     path('process_registration_master', views.process_registration_master, name='process_registration_master'),
     path('process_registration_distributor', views.process_registration_distributor, name='process_registration_distributor'),
+    path('process_registration_pharmacy', views.process_registration_pharmacy, name='process_registration_pharmacy'),
 ]

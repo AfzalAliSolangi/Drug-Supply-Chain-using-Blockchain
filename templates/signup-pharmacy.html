@@ -27,7 +27,7 @@
 </head>
 <body>
     <h1>User Pharmacy Registration Form</h1>
-    <form action="process_registration.php" method="post" onsubmit="return validateForm()">
+    <form action="process_registration_pharmacy" method="post" onsubmit="return validateForm()">
         <fieldset>
             <legend>Personal Details</legend>
             <label for="company_info">Company Name<span class="required">*</span>:</label><br>
@@ -85,7 +85,7 @@
             <label for="agree_terms">I agree to the Terms and Conditions<span class="required"></span>:</label>
             <input type="checkbox" id="agree_terms" name="agree_terms" required><br><br>
         </fieldset>
-        
+        <input type="hidden" name="email" value="{{ email }}">
         <input type="submit" value="Submit">
     </form>
 

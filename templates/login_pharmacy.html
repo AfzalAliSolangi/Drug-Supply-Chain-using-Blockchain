@@ -14,11 +14,11 @@
       <div class="form">
         <div class="login">
           <div class="login-header">
-            <h3>LOGIN</h3>
+            <h3>LOGIN PHARMACY</h3>
             <p>Please enter your credentials to login.</p>
           </div>
         </div>
-        <form class="login-form" action="login" method="post">
+        <form class="login-form" action="login_check_pharmacy" method="post">
           {%csrf_token%}
           <input name='name' type="text" placeholder="username" />
           <input name='passw' type="password" placeholder="password" />

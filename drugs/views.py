@@ -262,6 +262,8 @@ def login_check_distributor(request): #Implement Password authentication
         print(password)
         return HttpResponse("log in distributor success!")
 
+
+####Pharmacy#####
 def signup_pharmacy(request):
     print("Signup-pharmacy check")
     return render(request, "email_check_pharmacy.html")
@@ -281,13 +283,42 @@ def email_check_pharmacy(request):
         for each_email in email_keys:
             if each_email==email:
                 print("present")
-                return render(request, "login.html") #if the email is present prompt to login master page
-        return render(request, "Signup-pharmacy.html") #if the email is not present then render this page
+                return render(request, "login_pharmacy.html") #if the email is present prompt to login master page
+        return render(request, "Signup-pharmacy.html",{'email': email}) #if the email is not present then render this page
+
+def process_registration_pharmacy(request):
+    print("process_registration_pharmacy")
+    if request.method == 'POST':
+        # print("method check")
+        email = request.POST.get('email')
+        request_data = {
+            "email": request.POST.get('email'),
+            "company_info": request.POST.get('company_info'),
+            "street_address": request.POST.get('street_address'),
+            "business_details": request.POST.get('business_details'),
+            "state": request.POST.get('state'),
+            "city": request.POST.get('city'),
+            "zip_code": request.POST.get('zip_code'),
+            "password": request.POST.get('password'),
+            "license_certification": request.POST.get('license_certification')
+        }
+        data = json.dumps(request_data)
+        data = json.loads(data)
+        txid = rpc_connection.publish('users_pharmacy_stream', '{}'.format(email), {'json' : data})
+        if txid:
+            return HttpResponse("process_registration_pharmacy")
 
 def login_pharmacy(request):
         return render(request, "login_pharmacy.html")
 
-
+def login_check_pharmacy(request): #Implement Password authentication
+    print('login_check_manufacturer')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        password = request.POST.get('passw')
+        print(name)
+        print(password)
+        return HttpResponse("log in pharmacy success!")
 
 def getdetails(request):
     patid = int(request.GET['patid'])
