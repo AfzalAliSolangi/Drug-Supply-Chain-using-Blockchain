@@ -89,6 +89,8 @@ def pricing(request):
 def contact(request):
     return render(request, "contact.html")
 
+
+### MASTER ###
 def signup_master(request):
     print("signup-master check")
     return render(request, "email_check_master.html")
@@ -144,6 +146,8 @@ def login_check_master(request): #Implement Password authentication
         print(name)
         print(password)
         return render(request, "master.html")
+
+## MANUFACTURER ##
 
 def signup_manufacturer(request):
     print("signup-manufacturer check")
@@ -203,6 +207,52 @@ def login_check_manufacturer(request): #Implement Password authentication
         print(password)
         return render(request, "manufacturer.html")
 
+def manufacturer(request): # Manufacturer Input
+    if request.method == 'POST':
+        data = json.loads(request.POST.get('product_data'))
+        print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
+        print(data)
+        print("--------\n")
+
+        #NOTE:
+        # Currently we a re getting it from the Manufacturer screen as an input
+        # Implement the logic where the USERS are present in a stream, while logging in
+        # the password and user is verified using the stream, and from the stream the Manufacturer name
+        # is fetched.
+
+        manufacturer = data["manufacturer"]
+        print("----MANUFACTURER NAME----")
+        print(manufacturer)
+        print("--------\n")
+        #Manufacturer name will be a key when publishing in the MANUFACTURER stream
+
+        structured_json = {
+            "address": data["address"],
+            "products": []
+        }
+
+        for product in data["products"]:
+            structured_product = {
+                "product_name": product["product_name"],
+                "product_code": product["product_code"],
+                "description": product["description"],
+                "ingredients": product["ingredients"],
+                "dosage": product["dosage"],
+                "quantity_in_stock": product["quantity_in_stock"],
+                "unit_price": product["unit_price"],
+                "manufacturing_date": product["manufacturing_date"],
+                "expiry_date": product["expiry_date"]
+            }
+            structured_json["products"].append(structured_product)
+
+        print(structured_json)
+        x = rpc_connection.subscribe('{}'.format(manufacturer_stream))
+        #publish data on the chain
+        txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(manufacturer), {'json': data})
+    if txid:
+        return render(request, "manufacturer.html", {"txid": txid})
+    else:
+        return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})    
 
 ####Distributor#####
 def signup_distributor(request):
@@ -229,7 +279,7 @@ def email_check_distributor(request):
         return render(request, "signup-distributor.html",{'email': email}) #if the email is not present then render this page
 
 def process_registration_distributor(request):
-    print("process_registration_manufacturer")
+    print("process_registration_distributor")
     if request.method == 'POST':
         # print("method check")
         email = request.POST.get('email')
@@ -254,7 +304,7 @@ def login_distributor(request):
         return render(request, "login_distributor.html")
 
 def login_check_distributor(request): #Implement Password authentication
-    print('login_check_manufacturer')
+    print('login_check_distributor')
     if request.method == 'POST':
         name = request.POST.get('name')
         password = request.POST.get('passw')
@@ -353,52 +403,7 @@ def prddata(request):
         return render(request, "dealerinput.html")
 
 
-def manufacturer(request): # Manufacturer Input
-    if request.method == 'POST':
-        data = json.loads(request.POST.get('product_data'))
-        print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
-        print(data)
-        print("--------\n")
-
-        #NOTE:
-        # Currently we a re getting it from the Manufacturer screen as an input
-        # Implement the logic where the USERS are present in a stream, while logging in
-        # the password and user is verified using the stream, and from the stream the Manufacturer name
-        # is fetched.
-
-        manufacturer = data["manufacturer"]
-        print("----MANUFACTURER NAME----")
-        print(manufacturer)
-        print("--------\n")
-        #Manufacturer name will be a key when publishing in the MANUFACTURER stream
-
-        structured_json = {
-            "address": data["address"],
-            "products": []
-        }
-
-        for product in data["products"]:
-            structured_product = {
-                "product_name": product["product_name"],
-                "product_code": product["product_code"],
-                "description": product["description"],
-                "ingredients": product["ingredients"],
-                "dosage": product["dosage"],
-                "quantity_in_stock": product["quantity_in_stock"],
-                "unit_price": product["unit_price"],
-                "manufacturing_date": product["manufacturing_date"],
-                "expiry_date": product["expiry_date"]
-            }
-            structured_json["products"].append(structured_product)
-
-        print(structured_json)
-        x = rpc_connection.subscribe('{}'.format(manufacturer_stream))
-        #publish data on the chain
-        txid = rpc_connection.publish('{}'.format(manufacturer_stream), '{}'.format(manufacturer), {'json': data})
-    if txid:
-        return render(request, "manufacturer.html", {"txid": txid})
-    else:
-        return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})               
+           
         
 
 def hostpitalinput(request):
