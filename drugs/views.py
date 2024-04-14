@@ -333,7 +333,20 @@ def login_check_distributor(request): #Implement Password authentication
         print(password_rcvd)
         print(passw_frm_chain)
         if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            return render(request, "manufacturer.html",{'comp_info': comp_info})
+            # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen
+            response = rpc_connection.liststreamitems(users_manufacturer_stream)
+            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+            print(json_string)
+            json_load = json.loads(json_string)
+            keys_company_info = {}
+
+            for item in json_load:
+                for key in item['keys']:
+                    keys_company_info[key] = item['data']['json']['company_info']
+
+            print(keys_company_info)
+
+            return render(request, "Distributor.html", {'keys_company_info': keys_company_info})
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 

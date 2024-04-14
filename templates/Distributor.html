@@ -68,8 +68,9 @@
                 <option value="" disabled selected>Select a manufacturer</option>
                 
                 <!-- Use Django template tag to directly loop through the list -->
-                {% for manufacturer in json_string %}
-                    <option value="{{ manufacturer }}">{{ manufacturer }}</option>
+                {% for key, company_info in keys_company_info.items %}
+                    <!-- Use key as the value and company_info as the displayed text -->
+                    <option value="{{ key }}">{{ company_info }}</option>
                 {% endfor %}
             </select>
 
