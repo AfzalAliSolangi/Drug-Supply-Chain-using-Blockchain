@@ -310,19 +310,34 @@ def process_registration_distributor(request):
         data = json.loads(data)
         txid = rpc_connection.publish('users_distributor_stream', '{}'.format(email), {'json' : data})
         if txid:
-            return HttpResponse("process_registration_distributor")
+            return render(request, "login_distributor.html")
 
 def login_distributor(request):
         return render(request, "login_distributor.html")
 
 def login_check_distributor(request): #Implement Password authentication
-    print('login_check_distributor')
+    print('login_check_manufacturer')
     if request.method == 'POST':
-        name = request.POST.get('name')
-        password = request.POST.get('passw')
-        print(name)
-        print(password)
-        return HttpResponse("log in distributor success!")
+        email_rcvd = request.POST.get('email')
+        password_rcvd = request.POST.get('passw')
+        result = rpc_connection.liststreamkeyitems(users_distributor_stream, email_rcvd)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        email_frm_chain = json_load[0]['keys'][0]
+        passw_frm_chain = json_load[0]['data']['json']['password']
+        comp_info = json_load[0]['data']['json']['company_info']
+        print(data)
+        print(comp_info)
+        print("Email from front end: ",email_rcvd)
+        print("Email from stream: ",email_frm_chain)
+        print(password_rcvd)
+        print(passw_frm_chain)
+        if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+            return render(request, "manufacturer.html",{'comp_info': comp_info})
+        else:
+            return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
+
+
 
 
 ####Pharmacy#####
