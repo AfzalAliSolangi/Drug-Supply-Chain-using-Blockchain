@@ -6,127 +6,124 @@
         /* Your CSS styles here */
     </style>
     <script>
-        // Define the function globally
-        function updateAddProductButton() {
-            const productSections = document.querySelectorAll('.product-section');
-            const addButton = document.getElementById('add-product-button');
-            let allProductFieldsFilled = true;
+      // Define the function globally
+      function updateAddProductButton() {
+          const productSections = document.querySelectorAll('.product-section');
+          const addButton = document.getElementById('add-product-button');
+          let allProductFieldsFilled = true;
 
-            // Check if all fields for the current product are filled
-            productSections.forEach((section) => {
-                const inputElements = section.querySelectorAll('input');
-                inputElements.forEach((input) => {
-                    if (!input.value) {
-                        allProductFieldsFilled = false;
-                    }
-                });
-            });
+          // Check if all fields for the current product are filled
+          productSections.forEach((section) => {
+              const inputElements = section.querySelectorAll('input');
+              inputElements.forEach((input) => {
+                  if (!input.value) {
+                      allProductFieldsFilled = false;
+                  }
+              });
+          });
 
-            // Enable or disable the "Add Product" button accordingly
-            addButton.disabled = !allProductFieldsFilled;
-        }
+          // Enable or disable the "Add Product" button accordingly
+          addButton.disabled = !allProductFieldsFilled;
+      }
 
-        // Function to gather and format the product data as JSON
-        function collectProductData() {
-            const manufacturer = document.getElementById('manufacturer').value;
-            const address = document.getElementById('address').value;
-            const products = [];
+      // Function to gather and format the product data as JSON
+      function collectProductData() {
+          const manufacturer = document.getElementById('manufacturer').value;
+          const products = [];
 
-            const productSections = document.querySelectorAll('.product-section');
-            let allFieldsFilled = true;
+          const productSections = document.querySelectorAll('.product-section');
+          let allFieldsFilled = true;
 
-            productSections.forEach((section) => {
-                const product = {
-                    product_name: section.querySelector('[name="PrdName"]').value,
-                    product_code: section.querySelector('[name="PrdCode"]').value,
-                    description: section.querySelector('[name="Desc"]').value,
-                    ingredients: section.querySelector('[name="Ingredients"]').value.split(',').map(ingredient => ingredient.trim()),
-                    dosage: section.querySelector('[name="dosage"]').value,
-                    quantity_in_stock: parseInt(section.querySelector('[name="instock"]').value),
-                    unit_price: parseFloat(section.querySelector('[name="PripU"]').value),
-                    manufacturing_date: section.querySelector('[name="mfgdate"]').value,
-                    expiry_date: section.querySelector('[name="expdate"]').value,
-                };
+          productSections.forEach((section) => {
+              const product = {
+                  product_name: section.querySelector('[name="PrdName"]').value,
+                  product_code: section.querySelector('[name="PrdCode"]').value,
+                  description: section.querySelector('[name="Desc"]').value,
+                  ingredients: section.querySelector('[name="Ingredients"]').value.split(',').map(ingredient => ingredient.trim()),
+                  dosage: section.querySelector('[name="dosage"]').value,
+                  quantity_in_stock: parseInt(section.querySelector('[name="instock"]').value),
+                  unit_price: parseFloat(section.querySelector('[name="PripU"]').value),
+                  manufacturing_date: section.querySelector('[name="mfgdate"]').value,
+                  expiry_date: section.querySelector('[name="expdate"]').value,
+              };
 
-                // Check if any field is empty
-                for (const key in product) {
-                    if (!product[key]) {
-                        allFieldsFilled = false;
-                        break;
-                    }
-                }
+              // Check if any field is empty
+              for (const key in product) {
+                  if (!product[key]) {
+                      allFieldsFilled = false;
+                      break;
+                  }
+              }
 
-                products.push(product);
-            });
+              products.push(product);
+          });
 
-            if (!manufacturer || !address) {
-                allFieldsFilled = false;
-            }
+          if (!manufacturer) {
+              allFieldsFilled = false;
+          }
 
-            if (!allFieldsFilled) {
-                alert('Please fill in all fields before submitting the form.');
-            } else {
-                const jsonData = {
-                    manufacturer,
-                    address,
-                    products
-                };
+          if (!allFieldsFilled) {
+              alert('Please fill in all fields before submitting the form.');
+          } else {
+              const jsonData = {
+                  manufacturer,
+                  products
+              };
 
-                // Output the JSON data to the console (you can send it to your server instead)
-                console.log(JSON.stringify(jsonData, null, 2));
+              // Output the JSON data to the console (you can send it to your server instead)
+              console.log(JSON.stringify(jsonData, null, 2));
 
-                // Submit the form using JavaScript
-                submitForm(jsonData);
+              // Submit the form using JavaScript
+              submitForm(jsonData);
 
-                // Reset the form
-                resetForm();
-            }
-        }
+              // Reset the form
+              resetForm();
+          }
+      }
 
-        // Function to reset the form
-        function resetForm() {
-            document.getElementById('manufacturer').value = '';
-            document.getElementById('address').value = '';
-            const productSection = document.getElementById('product-section');
-            while (productSection.firstChild) {
-                productSection.removeChild(productSection.firstChild);
-            }
-            // Call the addProduct function to initially display the first product input section
-            addProduct();
-        }
+      // Function to reset the form
+      function resetForm() {
+          document.getElementById('manufacturer').value = '';
+          const productSection = document.getElementById('product-section');
+          while (productSection.firstChild) {
+              productSection.removeChild(productSection.firstChild);
+          }
+          // Call the addProduct function to initially display the first product input section
+          addProduct();
+      }
 
-        // Function to add a new product input section
-        function addProduct() {
-            const productSection = document.getElementById('product-section');
-            const productTemplate = document.getElementById('product-template');
-            const newProductSection = productTemplate.cloneNode(true);
+      // Function to add a new product input section
+      function addProduct() {
+          const productSection = document.getElementById('product-section');
+          const productTemplate = document.getElementById('product-template');
+          const newProductSection = productTemplate.cloneNode(true);
 
-            // Reset the input values in the new product section
-            const inputElements = newProductSection.querySelectorAll('input');
-            inputElements.forEach((input) => {
-                input.value = '';
-            });
+          // Reset the input values in the new product section
+          const inputElements = newProductSection.querySelectorAll('input');
+          inputElements.forEach((input) => {
+              input.value = '';
+          });
 
-            newProductSection.style.display = 'block';
-            productSection.appendChild(newProductSection);
+          newProductSection.style.display = 'block';
+          productSection.appendChild(newProductSection);
 
-            // Enable or disable the "Add Product" button based on whether all fields are filled
-            updateAddProductButton();
-        }
+          // Enable or disable the "Add Product" button based on whether all fields are filled
+          updateAddProductButton();
+      }
 
-        function submitForm(data) {
-          const form = document.getElementById('product-form');
-          const jsonInput = document.createElement('input');
-          jsonInput.type = 'hidden';
-          jsonInput.name = 'product_data';  // Name to use in Django for the JSON data
-          jsonInput.value = JSON.stringify(data);
-          form.appendChild(jsonInput);
-          form.submit();
-        }
+      function submitForm(data) {
+        const form = document.getElementById('product-form');
+        const jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'product_data';  // Name to use in Django for the JSON data
+        jsonInput.value = JSON.stringify(data);
+        form.appendChild(jsonInput);
+        form.submit();
+      }
 
-        // Call the addProduct function to initially display the first product input section
-        addProduct();
-    </script>
+      // Call the addProduct function to initially display the first product input section
+      addProduct();
+  </script>
 </head>
 <body>
     <div class="formbold-main-wrapper">
@@ -135,12 +132,8 @@
                 {%csrf_token%}
                 <div class="formbold-input-flex">
                     <div>
-                        <label for="manufacturer" class="formbold-form-label">Manufacturer</label>
-                        <input type="text" id="manufacturer" placeholder="Manufacturer" class="formbold-form-input" onchange="updateAddProductButton()"/>
-                    </div>
-                    <div>
-                        <label for="address" class="formbold-form-label">Address</label>
-                        <input type="text" id="address" placeholder="Address" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                      <label for="manufacturer" class="formbold-form-label">Manufacturer</label>
+                      <input type="text" id="manufacturer" placeholder="Manufacturer" class="formbold-form-input" value="{{ comp_info }}" disabled/>
                     </div>
                 </div>
 

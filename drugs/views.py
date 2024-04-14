@@ -203,18 +203,20 @@ def login_check_manufacturer(request): #Implement Password authentication
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
         password_rcvd = request.POST.get('passw')
-        result = rpc_connection.liststreamkeyitems('users_manufacturer_stream', email_rcvd)
+        result = rpc_connection.liststreamkeyitems(users_manufacturer_stream, email_rcvd)
         data = json.dumps(result)
         json_load = json.loads(data)
         email_frm_chain = json_load[0]['keys'][0]
         passw_frm_chain = json_load[0]['data']['json']['password']
+        comp_info = json_load[0]['data']['json']['company_info']
         print(data)
+        print(comp_info)
         print("Email from front end: ",email_rcvd)
         print("Email from stream: ",email_frm_chain)
         print(password_rcvd)
         print(passw_frm_chain)
         if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            return render(request, "manufacturer.html",{'email_rcvd': email_rcvd})
+            return render(request, "manufacturer.html",{'comp_info': comp_info})
         else:
             return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
 
@@ -238,7 +240,6 @@ def manufacturer(request): # Manufacturer Input
         #Manufacturer name will be a key when publishing in the MANUFACTURER stream
 
         structured_json = {
-            "address": data["address"],
             "products": []
         }
 
