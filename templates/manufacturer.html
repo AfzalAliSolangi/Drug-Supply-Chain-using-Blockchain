@@ -29,6 +29,7 @@
       // Function to gather and format the product data as JSON
       function collectProductData() {
           const manufacturer = document.getElementById('manufacturer').value;
+          const email = document.getElementById('email').value;
           const products = [];
 
           const productSections = document.querySelectorAll('.product-section');
@@ -67,6 +68,7 @@
           } else {
               const jsonData = {
                   manufacturer,
+                  email,
                   products
               };
 
@@ -181,10 +183,11 @@
                             <div>
                                 <label for="expdate" class="formbold-form-label">Expiry Date</label>
                                 <input type="date" name="expdate" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
+                <input type="hidden" id="email" name="email" value="{{ email }}">
                 <button type="button" id="add-product-button" onclick="addProduct()" disabled>Add Product</button>
                 <button type="button" onclick="collectProductData()">Apply Now</button>
             </form>
