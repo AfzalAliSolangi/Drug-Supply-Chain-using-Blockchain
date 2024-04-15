@@ -147,6 +147,16 @@
 </head>
 
 <body>
+    {% if message %}
+    <div class="container">
+        <h2>Manufacturer: {{ manufacturer }}</h2>
+        <div class="row p-2 bg-white border rounded product">
+            <div class="col-md-12 mt-1">
+                <p>{{ message }}</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div class="container">
         <h2>Manufacturer: {{ manufacturer }}</h2>
         <div class="cart-icon" onclick="viewCart()">
@@ -222,6 +232,7 @@
         </div>
     </div>
     </div>
+    {% endif %}
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
