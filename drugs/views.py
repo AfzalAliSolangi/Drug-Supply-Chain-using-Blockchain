@@ -20,29 +20,6 @@ users_distributor_stream = config.get('Section1','users_distributor_stream') #Ne
 users_pharmacy_stream = config.get('Section1','users_pharmacy_stream') #Need to add different user stream for all users
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
-# print(manufacturer_stream)
-# print(key)
-# print(publisher)  
-
-#Only password required to login users
-#Fix it before production
-password = {'prd': ['monk', "monk123"],
-            'mas': ['manufacturer', 'manufacturer'], 
-            'buyd': ['distributor', 'distributor'], 
-            }
-
-
-
-
-
-
-
-
-
-
-temp = ['patientid', 'doctorId', 'Time', 'Drug Id', 'Amount Paid']
-
-
 
 # Configure your MultiChain connection here
 rpcuser = config.get('Section1','rpcuser')
@@ -52,19 +29,6 @@ rpcport = config.get('Section1','rpcport')
 chainname = config.get('Section1','chainname')
 rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassword)
 
-# def lst_of_mfg():#Distributor Fetch screen, fetches the data from the chain and displays
-#     x = rpc_connection.subscribe('{}'.format(manufacturer_stream)) #subscribing
-#     response = rpc_connection.liststreamkeys(manufacturer_stream)
-#     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-#     print(json_string)
-#     json_load = json.loads(json_string)
-#     numOfMfg = len(json_load)
-#     lstMfg = [] # list to save the name of the manufactuers
-#     for i in range(numOfMfg):
-#         lstMfg.append(json_load[i]['key'])
-
-#     print(lstMfg)
-#     return lstMfg
 
 def index(request):
     return render(request, "index.html")
@@ -466,20 +430,6 @@ def hostpitalinput(request):
     else:
         return render(request, "hospitalinput.html", {"error": "Failed to publish data to MultiChain"})
 
-
-# def distributor(request):#Distributor Fetch screen, fetches the data from the chain and displays
-#     x = rpc_connection.subscribe('{}'.format(manufacturer_stream)) #subscribing
-#     response = rpc_connection.liststreamkeys(manufacturer_stream)
-#     json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-#     print(json_string)
-#     json_load = json.loads(json_string)
-#     numOfMfg = len(json_load)
-#     lstMfg = [] # list to save the name of the manufactuers
-
-#     for i in range(numOfMfg):
-#         lstMfg.append(json_load[i]['key'])
-
-#     return render(request, "Distributor.html", {'json_string': lstMfg})
 
 def products(request):
     selected_manufacturer = request.GET.get('manufacturer', None) #Manufacturer name being passed from Distributor.html
