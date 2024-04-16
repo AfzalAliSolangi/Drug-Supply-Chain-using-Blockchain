@@ -29,7 +29,9 @@
       // Function to gather and format the product data as JSON
       function collectProductData() {
           const manufacturer = document.getElementById('manufacturer').value;
+          const batchId = document.getElementById('batchId').value; // New line to get batch ID value
           const email = document.getElementById('email').value;
+
           const products = [];
 
           const productSections = document.querySelectorAll('.product-section');
@@ -69,6 +71,7 @@
               const jsonData = {
                   manufacturer,
                   email,
+                  batchId,
                   products
               };
 
@@ -137,6 +140,10 @@
                       <label for="manufacturer" class="formbold-form-label">Manufacturer</label>
                       <input type="text" id="manufacturer" placeholder="Manufacturer" class="formbold-form-input" value="{{ comp_info }}" disabled/>
                     </div>
+                    <div>
+                      <label for="batchId" class="formbold-form-label">Batch ID</label>
+                      <input type="text" id="batchId" placeholder="Batch ID" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                  </div>
                 </div>
 
                 <div id="product-section">
