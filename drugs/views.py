@@ -223,7 +223,8 @@ def manufacturer(request): # Manufacturer Input
                 "quantity_in_stock": product["quantity_in_stock"],
                 "unit_price": product["unit_price"],
                 "manufacturing_date": product["manufacturing_date"],
-                "expiry_date": product["expiry_date"]
+                "expiry_date": product["expiry_date"],
+                "time_published": timestamp_utc
             }
             structured_json["products"].append(structured_product)
         
@@ -235,7 +236,7 @@ def manufacturer(request): # Manufacturer Input
                                                                                      product["product_code"],
                                                                                      batchid,
                                                                                      product["product_name"],
-                                                                                     timestamp_utc],
+                                                                                     ],
                                                                                      {'json': data})
     if txid:
         return render(request, "manufacturer.html", {"txid": txid})
