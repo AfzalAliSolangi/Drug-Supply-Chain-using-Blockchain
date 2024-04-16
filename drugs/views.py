@@ -456,19 +456,19 @@ def hostpitalinput(request):
 
 
 def products(request):
-    selected_manufacturer = request.GET.get('manufacturer', None) #Manufacturer name being passed from Distributor.html
+    selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)
-    x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) #subscribing
-    response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer))#Based on the manufacturer KEY the data is being fetched
+    x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
+    response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
     print(len(response))
-    if len(response)>0:
-        response = response[-1]# always fetches the latest record of medicines from the manufacturer stream
-        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-        response = {} #Cleaning the unused response
-        print(json_string)
-        json_load = json.loads(json_string)
-        products = json_load['data']['json']['products']
-        return render(request, 'products.html', {'products': products,'manufacturer' : selected_manufacturer})
+    if len(response) > 0:
+        products = [] # Initialize an empty list to store products
+        for item in response:
+            data = item['data']['json']
+            manufacturer = data['manufacturer']
+            products.extend(data['products']) # Add products to the list
+        print(products)
+        return render(request, 'products.html', {'products': products, 'manufacturer': selected_manufacturer})
     else:
         return render(request, 'products.html', {'message': 'No products available'})
 
