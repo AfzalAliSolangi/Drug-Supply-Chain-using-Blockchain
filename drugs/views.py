@@ -192,23 +192,16 @@ def manufacturer(request): # Manufacturer Input
         print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
         print(data)
         print("--------\n")
-
-        #NOTE:
-        # Currently we a re getting it from the Manufacturer screen as an input
-        # Implement the logic where the USERS are present in a stream, while logging in
-        # the password and user is verified using the stream, and from the stream the Manufacturer name
-        # is fetched.
         timestamp_utc = datetime.datetime.utcnow().isoformat()
-        manufacturer = data["manufacturer"]
-        email = data["email"]
-        batchid = data["batchId"]
+        manufacturer = data["manufacturer"] #key
+        email = data["email"] #key
+        batchid = data["batchId"] #key
+         #product_code key
         print("----MANUFACTURER NAME----")
         print(manufacturer)
         print("----EMAIL----")
         print(email)
         print("--------\n")
-        #Manufacturer name will be a key when publishing in the MANUFACTURER stream
-
         structured_json = {
             "products": []
         }
