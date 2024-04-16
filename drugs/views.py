@@ -200,6 +200,7 @@ def manufacturer(request): # Manufacturer Input
 
         manufacturer = data["manufacturer"]
         email = data["email"]
+        batchid = data["batchId"]
         print("----MANUFACTURER NAME----")
         print(manufacturer)
         print("----EMAIL----")
@@ -229,7 +230,7 @@ def manufacturer(request): # Manufacturer Input
 
         x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream))
         #publish data on the chain
-        txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), '{}'.format(email), {'json': data})
+        txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,batchid], {'json': data})
     if txid:
         return render(request, "manufacturer.html", {"txid": txid})
     else:
