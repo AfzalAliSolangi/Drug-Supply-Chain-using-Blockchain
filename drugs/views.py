@@ -5,6 +5,7 @@ from django.http import JsonResponse
 import multichain
 import json
 import configparser
+import datetime
 
 config = configparser.ConfigParser()
 
@@ -197,7 +198,7 @@ def manufacturer(request): # Manufacturer Input
         # Implement the logic where the USERS are present in a stream, while logging in
         # the password and user is verified using the stream, and from the stream the Manufacturer name
         # is fetched.
-
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
         manufacturer = data["manufacturer"]
         email = data["email"]
         batchid = data["batchId"]
@@ -230,7 +231,12 @@ def manufacturer(request): # Manufacturer Input
 
         x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream))
         #publish data on the chain
-        txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,batchid], {'json': data})
+        txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,
+                                                                                     product["product_code"],
+                                                                                     batchid,
+                                                                                     product["product_name"],
+                                                                                     timestamp_utc],
+                                                                                     {'json': data})
     if txid:
         return render(request, "manufacturer.html", {"txid": txid})
     else:
