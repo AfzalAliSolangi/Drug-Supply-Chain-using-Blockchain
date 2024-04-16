@@ -222,19 +222,42 @@ def manufacturer(request): # Manufacturer Input
             structured_json["products"].append(structured_product)
         
         print(structured_json)
+        response = rpc_connection.liststreamitems(users_manufacturer_items_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        print('\n\nimp')
+        # print(json_string)
+        # Initialize an empty list to store keys
+        all_keys = []
 
-        x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream))
-        #publish data on the chain
-        txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,
-                                                                                     product["product_code"],
-                                                                                     batchid,
-                                                                                     product["product_name"],
-                                                                                     ],
-                                                                                     {'json': data})
-    if txid:
-        return render(request, "manufacturer.html", {"txid": txid})
-    else:
-        return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})    
+        # Loop through each dictionary in the list and extract keys
+        for item in json_string:
+            keys = item['keys']
+            all_keys.append(keys)
+            
+        print(all_keys)
+
+        input_key = [email,product["product_code"],batchid,product["product_name"]]
+        # Convert the list to a set for comparison
+        input_key_set = set(input_key)
+
+        # Check if any inner list in all_keys matches input_key
+        for key_list in all_keys:
+            if set(key_list) == input_key_set:
+                print("Match found:", key_list)
+                return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})#Output a pop up on the screen saying the item exists
+                #also return a page show the exact details of the existing item
+        else:
+            print("No match found")
+            x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream))
+            #publish data on the chain
+            txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,
+                                                                                         product["product_code"],
+                                                                                         batchid,
+                                                                                         product["product_name"],
+                                                                                         ],
+                                                                                         {'json': data})
+            return render(request, "manufacturer.html", {"txid": txid})
 
 ####Distributor#####
 def signup_distributor(request):
