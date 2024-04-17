@@ -217,7 +217,7 @@ def manufacturer(request): # Manufacturer Input
                 "unit_price": product["unit_price"],
                 "manufacturing_date": product["manufacturing_date"],
                 "expiry_date": product["expiry_date"],
-                "time_published": timestamp_utc
+                "published_on": timestamp_utc
             }
             structured_json["products"].append(structured_product)
         
@@ -236,7 +236,7 @@ def manufacturer(request): # Manufacturer Input
         # Loop through each dictionary in the list and extract keys
 
         for item in json_string:
-            keys = item['keys']
+            keys = item['keys'][:-1]  # Remove the last element (timestamp)
             all_keys.append(keys)
             
         print(all_keys)
@@ -249,7 +249,9 @@ def manufacturer(request): # Manufacturer Input
         for key_list in all_keys:
             if set(key_list) == input_key_set:
                 print("Match found:", key_list)
-                return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})#Output a pop up on the screen saying the item exists
+                # return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})
+                return HttpResponse("This item Already exists!")
+                #Output a pop up on the screen saying the item exists
                 #also return a page show the exact details of the existing item
         else:
             print("No match found")
@@ -259,6 +261,7 @@ def manufacturer(request): # Manufacturer Input
                                                                                          product["product_code"],
                                                                                          batchid,
                                                                                          product["product_name"],
+                                                                                         timestamp_utc
                                                                                          ],
                                                                                          {'json': data})#Add a timestamp for sub logic
             return render(request, "manufacturer.html", {"txid": txid})
