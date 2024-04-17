@@ -230,7 +230,11 @@ def manufacturer(request): # Manufacturer Input
         # Initialize an empty list to store keys
         all_keys = []
 
+        #NOTE:
+        #Convert the logic to not consider the last index of each key array
+        #And adjust the check if for the keys
         # Loop through each dictionary in the list and extract keys
+
         for item in json_string:
             keys = item['keys']
             all_keys.append(keys)
@@ -256,7 +260,7 @@ def manufacturer(request): # Manufacturer Input
                                                                                          batchid,
                                                                                          product["product_name"],
                                                                                          ],
-                                                                                         {'json': data})
+                                                                                         {'json': data})#Add a timestamp for sub logic
             return render(request, "manufacturer.html", {"txid": txid})
 
 ####Distributor#####
@@ -454,12 +458,14 @@ def hostpitalinput(request):
     else:
         return render(request, "hospitalinput.html", {"error": "Failed to publish data to MultiChain"})
 
-
+#Code developed need to replace it. After replacing pass the keys from distributor.html to this func
+#Use user_manufacturer_item_stream2(with timestamp included)
 def products(request):
     selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)
     x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
     response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
+    #Have a logic which fetches out items based on latest_timestamp
     print(len(response))
     if len(response) > 0:
         products = [] # Initialize an empty list to store products
@@ -516,6 +522,7 @@ def publish(request):
             print("--------\n")
 
             #Fetching the products from the MANUFACTURER STREAM to update their quantity
+            #NOTE:From Products->Checkout->Publish pass [email,product["product_code"],batchid,product["product_name"]]
             prev_products = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
             prev_products = prev_products[-1]
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
