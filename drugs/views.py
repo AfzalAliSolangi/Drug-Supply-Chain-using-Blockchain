@@ -468,11 +468,10 @@ def products(request):
     print(selected_manufacturer)
     x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
     response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
-    pr_keys = response[0]['keys'][:-1]
-
+    # Have a logic which fetches out items based on latest_timestamp
     print(len(response))
     if len(response) > 0:
-        product_map = {} # Initialize a dictionary to store product data for each unique key
+        product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
         
         for item in response:
             data = item['data']['json']
@@ -482,16 +481,26 @@ def products(request):
             if key not in product_map or timestamp > product_map[key]['timestamp']:
                 product_map[key] = {
                     'product_data': data['products'][0],
-                    'timestamp': timestamp
+                    'timestamp': timestamp,
+                    'email': key[0],
+                    'product_code': key[1],
+                    'batchId': key[2],
+                    'product_name': key[3]
                 }
         
-        products = [value['product_data'] for value in product_map.values()]
+        products_with_timestamp = [{
+            'timestamp': value['timestamp'],
+            'email': value['email'],
+            'product_code': value['product_code'],
+            'batchId': value['batchId'],
+            'product_name': value['product_name'],
+            'product_data': value['product_data']
+        } for value in product_map.values()]
         
-        # print(products)
-        return render(request, 'products.html', {'products': products, 'manufacturer': selected_manufacturer, 'pr_keys':pr_keys})
+        print(products_with_timestamp)
+        return render(request, 'products.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer})
     else:
         return render(request, 'products.html', {'message': 'No products available'})
-
 
 @csrf_protect
 def checkout(request):
@@ -519,6 +528,7 @@ def publish(request):
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         pr_keys = request.POST.get('prKeys', None)
+        pr_keys = json.loads(pr_keys)
         print("key dada  :  ",pr_keys)
         #NOTE:
         # Please implement the flow in which whenever the distributor places an order,
@@ -541,7 +551,8 @@ def publish(request):
 
             #Fetching the products from the MANUFACTURER STREAM to update their quantity
             #NOTE:From Products->Checkout->Publish pass [email,product["product_code"],batchid,product["product_name"]]
-            prev_products = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(manufacturer))#Based on the manufacturer KEY the data is being fetched
+            prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys':[pr_keys[2]]})#Based on the manufacturer KEY the data is being fetched
+            # prev_products = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(pr_keys[2]))#Based on the manufacturer KEY the data is being fetched
             prev_products = prev_products[-1]
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
             prev_products = {} 

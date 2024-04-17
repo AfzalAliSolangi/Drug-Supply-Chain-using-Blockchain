@@ -174,19 +174,23 @@
                         <div class="col-md-9 mt-1">
                             <h5>{{ product.product_name }}</h5>
                             <div class="read-more-content">
-                                <p>{{ product.description | slice:":89" }}</p>
+                                <p>Descirption    :{{ product.product_data.description | slice:":89" }}</p>
                             </div>
-                            {% if product.description.length > 89 %}
-                                <p class="read-more-toggle" onclick="toggleReadMore('{{ product.id }}')">Read more...</p>
-                                <div id="readMoreContent{{ product.id }}" style="display: none;">{{ product.description | slice:"89:" }}</div>
+                            {% if product.product_data.description.length > 89 %}
+                                <p class="read-more-toggle" onclick="toggleReadMore('{{ product.product_data.product_code }}')">Read more...</p>
+                                <div id="readMoreContent{{ product.product_data.product_code }}" style="display: none;">{{ product.description | slice:"89:" }}</div>
                             {% endif %}
-                            <p>Quantity: {{ product.quantity_in_stock }}</p>
+                            <p>Quantity    : {{ product.product_data.quantity_in_stock }}</p>
+                            <p>Product Code: {{ product.product_data.product_code }}</p>
+                            <input type="hidden" name="email" value="{{ product.email }}">
+                            <input type="hidden" name="batch_id" value="{{ product.batchId }}">
+                            <input type="hidden" name="timestamp" value="{{ product.timestamp }}">
                             <div class="d-flex flex-row align-items-center justify-content-between">
                                 <div>
-                                    <h4 class="mr-1">${{ product.unit_price }}</h4>
+                                    <h4 class="mr-1">${{ product.product_data.unit_price }}</h4>
                                 </div>
                                 <div class="d-flex flex-column">
-                                    <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.product_code }}">
+                                    <button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.batchId }}">
                                         Buy
                                     </button>
                                 </div>
@@ -195,7 +199,7 @@
                     </div>
 
                     <!-- Add to Cart Modal -->
-                    <div class="modal fade" id="addToCartModal{{ product.product_code }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="addToCartModal{{ product.batchId }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -208,9 +212,9 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="quantity">Quantity:</label>
-                                            <input type="number" class="form-control" id="quantity{{ product.product_code }}" name="quantity" value="0" min="1" max="{{ product.quantity_in_stock }}">
+                                            <input type="number" class="form-control" id="quantity{{ product.batchId }}" name="quantity" value="0" min="1" max="{{ product.product_data.quantity_in_stock }}">
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.product_code }}', '{{ product.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_code }}', '{{ product.unit_price }}')">Add to Cart</button>
+                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.email }}','{{ product.timestamp }}','{{ manufacturer }}','{{ product.batchId }}','{{ product.product_code }}', '{{ product.product_data.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_data.unit_price }}','{{ product.product_data.description }}', {{ product.product_data.ingredients | safe }} ,'{{ product.product_data.dosage }}','{{ product.product_data.manufacturing_date }}','{{ product.product_data.expiry_date }}')">Add to Cart</button>
                                     </form>
                                 </div>
                             </div>
@@ -231,7 +235,6 @@
             </div>
         </div>
     </div>
-    <input type="hidden" id="prKeys" name="pr_keys" value="{{ pr_keys|safe }}">
     {% endif %}
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -239,16 +242,18 @@
 
     <script>
         var cartItems = [];
-        var prKeys = {{ pr_keys|safe }};
 
         function toggleReadMore(productId) {
             var readMoreContent = document.getElementById('readMoreContent' + productId);
             readMoreContent.style.display = (readMoreContent.style.display === 'none' || readMoreContent.style.display === '') ? 'block' : 'none';
         }
-
-        function addToCart(productCode, maxQuantity, productName, productCode, unitPrice) {
-            var quantityInput = document.getElementById('quantity' + productCode);
+        function addToCart(manu_email,timestamp,manu_name,batchId,productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
+            var quantityInput = document.getElementById('quantity'+batchId);
+            console.log(quantityInput)
             var quantity = parseInt(quantityInput.value, 10);
+            console.log(quantity)
+            console.log(maxQuantity)
+            console.log(cartItems)
         
             if (quantity > 0 && quantity <= maxQuantity) {
                 // Check if the product is already in the cart
@@ -261,10 +266,20 @@
                     // Create a new cart item for each product
                     
                     var cartItem = {
+                        expiry_date: expiry_date,
+                        manufacturing_date: manufacturing_date,
+                        dosage: dosage,
+                        ingredients: ingredients,
+                        description: description,
+                        batchId: batchId,
+                        manu_name: manu_name,
+                        timestamp: timestamp,
+                        manu_email: manu_email,
                         productName: productName,
                         productCode: productCode,
                         unitPrice: unitPrice,
                         quantity: quantity,
+
                         totalprice : quantity*unitPrice
                         // Add other properties if needed
                     };
@@ -282,7 +297,7 @@
                 quantityInput.value = 0;
         
                 // Hide the modal
-                $('#addToCartModal' + productCode).modal('hide');
+                $('#addToCartModal' + batchId).modal('hide');
                 
                 // Additional logic here to update the cart or perform other actions
             } else {
@@ -361,12 +376,7 @@
             manufacturerInput.value = '{{ manufacturer }}';  // Use Django template syntax to get the manufacturer value
             form.appendChild(manufacturerInput);
             // Append the input fields to the form
-                // Add an input field for prKeys
-            const prKeysInput = document.createElement('input');
-            prKeysInput.type = 'hidden';
-            prKeysInput.name = 'prKeys';  // Name to use in Django for the prKeys data
-            prKeysInput.value = JSON.stringify(prKeys);  // Serialize prKeys array to JSON
-            form.appendChild(prKeysInput);
+        
             // Append the form to the document body
             document.body.appendChild(form);
         
