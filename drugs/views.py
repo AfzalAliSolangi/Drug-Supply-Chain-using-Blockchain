@@ -468,18 +468,30 @@ def products(request):
     print(selected_manufacturer)
     x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
     response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
-    #Have a logic which fetches out items based on latest_timestamp
+    pr_keys = response[0]['keys'][:-1]
+
     print(len(response))
     if len(response) > 0:
-        products = [] # Initialize an empty list to store products
+        product_map = {} # Initialize a dictionary to store product data for each unique key
+        
         for item in response:
             data = item['data']['json']
-            manufacturer = data['manufacturer']
-            products.extend(data['products']) # Add products to the list
-        print(products)
-        return render(request, 'products.html', {'products': products, 'manufacturer': selected_manufacturer})
+            key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+            timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
+            
+            if key not in product_map or timestamp > product_map[key]['timestamp']:
+                product_map[key] = {
+                    'product_data': data['products'][0],
+                    'timestamp': timestamp
+                }
+        
+        products = [value['product_data'] for value in product_map.values()]
+        
+        # print(products)
+        return render(request, 'products.html', {'products': products, 'manufacturer': selected_manufacturer, 'pr_keys':pr_keys})
     else:
         return render(request, 'products.html', {'message': 'No products available'})
+
 
 @csrf_protect
 def checkout(request):
@@ -487,7 +499,8 @@ def checkout(request):
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
-        # print(manufacturer)
+        pr_keys = request.POST.get('prKeys', None)
+        print(pr_keys)
 
         if cart_items_json and manufacturer:
             # Parse the JSON data
