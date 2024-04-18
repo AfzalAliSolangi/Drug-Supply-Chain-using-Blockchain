@@ -542,56 +542,46 @@ def publish(request):
         if cart_items_json:
             print("----CART ITEMS from frontEND----")
             cart_items = json.loads(cart_items_json)
-            print(cart_items)
+            print(len(cart_items))
             print("--------\n")
-            manu_email = cart_items[0]['manu_email']
-            batchId = cart_items[0]['batchId']
-            productCode = cart_items[0]['productCode']
-            productName = cart_items[0]['productName']
-            timestamp = cart_items[0]['timestamp']
-            print(manu_email)
-            print(batchId)
-            print(productCode)
-            print(productName)
-            print(timestamp)
-            timestamp_utc = datetime.datetime.utcnow().isoformat()
-            #Fetching the products from the MANUFACTURER STREAM to update their quantity
-            #NOTE:From Products->Checkout->Publish pass [email,product["product_code"],batchid,product["product_name"]]
-            prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys' : [manu_email,batchId,productCode,productName,timestamp]})#Based on the manufacturer KEY the data is being fetched
-            # prev_products = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(pr_keys[2]))#Based on the manufacturer KEY the data is being fetched
-            # prev_products = prev_products[-1]
-            print(prev_products)
-            prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
-            json_load = json.loads(prev_products_str)
-            print(json_load)
-            prev_products = json_load[0]['data']['json']
-            print("----PRODCUCTS fetched from MANUFACTURER stream----")
-            print(prev_products_str)
-            print("--------\n")
+            for cart_item in cart_items:
+                manu_email = cart_item['manu_email']
+                batchId = cart_item['batchId']
+                productCode = cart_item['productCode']
+                productName = cart_item['productName']
+                timestamp = cart_item['timestamp']
+                print(manu_email)
+                print(batchId)
+                print(productCode)
+                print(productName)
+                print(timestamp)
 
-            #Logic for subtracting the quantity of the products from the order stream 
-            for item_a in cart_items:
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
+
+                # Fetching the products from the MANUFACTURER STREAM to update their quantity
+                prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys': [manu_email, batchId, productCode, productName, timestamp]})
+                prev_products_str = json.dumps(prev_products, indent=4)  # Converts OrderedDict to JSON String
+                json_load = json.loads(prev_products_str)
+                prev_products = json_load[0]['data']['json']
+                print("----PRODUCTS fetched from MANUFACTURER stream----")
+                print(prev_products_str)
+
+                # Logic for subtracting the quantity of the products from the order stream
                 for item_b in prev_products['products']:
-                    if item_a['productCode'] == item_b['product_code']:
-                        item_b['quantity_in_stock'] -= item_a['quantity']
-            updated_items_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
-            updated_items = json.loads(updated_items_str)
-            print("----Updated PRODCUCTS quantity publised to MANUFACTURER STEAM----")
-            print(updated_items_str)
-            print("--------\n")
+                    if cart_item['productCode'] == item_b['product_code']:
+                        item_b['quantity_in_stock'] -= cart_item['quantity']
 
-            #Publishes the updated quantity of the products into the MANUFACTURER stream
-            txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email,
-                                                                                         batchId,
-                                                                                         productCode,
-                                                                                         productName,
-                                                                                         timestamp_utc
-                                                                                         ], {'json': updated_items})
-           
-            #Publises the ordered products into the PRODUCT stream
-            # txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order' : cart_items}})
+                updated_items_str = json.dumps(prev_products, indent=4)  # Converts OrderedDict to JSON String
+                updated_items = json.loads(updated_items_str)
+                print("----Updated PRODUCTS quantity published to MANUFACTURER STREAM----")
+                print(updated_items_str)
+
+                # Publishes the updated quantity of the products into the MANUFACTURER stream
+                txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email, batchId, productCode, productName, timestamp_utc], {'json': updated_items})
+
+                # Publishes the ordered products into the PRODUCT stream
+                # txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
 
             print("ITEMS UPDATED!!")
-
             #render a template or return an appropriate HTTP response, still to be decided
             return HttpResponse("Purchase completed. Thank you!")
