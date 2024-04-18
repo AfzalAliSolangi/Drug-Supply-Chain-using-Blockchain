@@ -508,7 +508,7 @@ def checkout(request):
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
-        
+
         if cart_items_json and manufacturer:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
@@ -525,9 +525,7 @@ def publish(request):
     if request.method == 'POST':
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
-        pr_keys = request.POST.get('prKeys', None)
-        pr_keys = json.loads(pr_keys)
-        print("key dada  :  ",pr_keys)
+
         #NOTE:
         # Please implement the flow in which whenever the distributor places an order,
         # it first goes to the order confirmation page of the MANUFACTURER.
@@ -536,7 +534,7 @@ def publish(request):
 
         # Retrieve the manufacturer name from checkout.html from the POST request
         manufacturer = request.POST.get('manufacturer', None)
-        print("----MANUFACTURER NAME----")
+        print("\n\n----MANUFACTURER NAME----")
         print(manufacturer)
         print("--------\n")
 
@@ -546,16 +544,25 @@ def publish(request):
             cart_items = json.loads(cart_items_json)
             print(cart_items)
             print("--------\n")
-
+            manu_email = cart_items[0]['manu_email']
+            batchId = cart_items[0]['batchId']
+            productCode = cart_items[0]['productCode']
+            productName = cart_items[0]['productName']
+            timestamp = cart_items[0]['timestamp']
+            print(manu_email)
+            print(batchId)
+            print(productCode)
+            print(productName)
+            print(timestamp)
             #Fetching the products from the MANUFACTURER STREAM to update their quantity
             #NOTE:From Products->Checkout->Publish pass [email,product["product_code"],batchid,product["product_name"]]
-            prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys':[pr_keys[2]]})#Based on the manufacturer KEY the data is being fetched
+            prev_products = rpc_connection.liststreamqueryitems('{}'.format('users_manufacturer_items_stream2'), {'keys' : [manu_email,batchId,productCode,productName,timestamp]})#Based on the manufacturer KEY the data is being fetched
             # prev_products = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(pr_keys[2]))#Based on the manufacturer KEY the data is being fetched
-            prev_products = prev_products[-1]
+            # prev_products = prev_products[-1]
+            print(prev_products)
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
-            prev_products = {} 
             json_load = json.loads(prev_products_str)
-            prev_products = json_load['data']['json']
+            prev_products = json_load[0]['data']['json']
             print("----PRODCUCTS fetched from MANUFACTURER stream----")
             print(prev_products_str)
             print("--------\n")

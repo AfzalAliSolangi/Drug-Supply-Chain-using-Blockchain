@@ -57,8 +57,18 @@
                     <li>
                         <p>Product: {{ item.productName }}</p>
                         <p>Quantity: {{ item.quantity }}</p>
-                        <p>Price: ${{ item.unitPrice}}</p>
-                        <p>Price: ${{ item.totalprice }}</p>
+                        <p>Unit Price: ${{ item.unitPrice }}</p>
+                        <p>Total Price: ${{ item.totalprice }}</p>
+                        <!-- Hidden fields for additional item information -->
+                        <input type="hidden" name="manufacturing_date[]" value="{{ item.manufacturing_date }}">
+                        <input type="hidden" name="expiry_date[]" value="{{ item.expiry_date }}">
+                        <input type="hidden" name="dosage[]" value="{{ item.dosage }}">
+                        <input type="hidden" name="ingredients[]" value="{{ item.ingredients|join:", " }}">
+                        <input type="hidden" name="description[]" value="{{ item.description }}">
+                        <input type="hidden" name="batchId[]" value="{{ item.batchId }}">
+                        <input type="hidden" name="manu_name[]" value="{{ item.manu_name }}">
+                        <input type="hidden" name="manu_email[]" value="{{ item.manu_email }}">
+                        <input type="hidden" name="productCode[]" value="{{ item.productCode }}">
                     </li>
                 {% endfor %}
             </ul>
@@ -69,9 +79,8 @@
             <!-- Add your payment form here -->
         </section>
 
-        <button onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}', '{{ pr_keys }}')">Complete Purchase</button>
+        <button onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}')">Complete Purchase</button>
     </main>
-    <!-- Add this hidden input field for pr_keys -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
