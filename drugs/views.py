@@ -508,10 +508,9 @@ def checkout(request):
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
-        pr_keys = request.POST.get('prKeys', None)
-        print(pr_keys)
 
-        if cart_items_json and manufacturer and pr_keys:
+
+        if cart_items_json and manufacturer:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
 
@@ -520,7 +519,7 @@ def checkout(request):
             print(cart_items)
 
             # You can also render a template or return an appropriate HTTP response
-            return render(request, 'checkout.html', {'cart_items': cart_items,'manufacturer' : manufacturer, 'pr_keys':pr_keys})
+            return render(request, 'checkout.html', {'cart_items': cart_items,'manufacturer' : manufacturer})
     
 @csrf_protect
 def publish(request):

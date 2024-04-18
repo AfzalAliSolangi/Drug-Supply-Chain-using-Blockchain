@@ -72,17 +72,15 @@
         <button onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}', '{{ pr_keys }}')">Complete Purchase</button>
     </main>
     <!-- Add this hidden input field for pr_keys -->
-    <input type="hidden" name="prKeys" value="{{ pr_keys }}">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
-        function submitForm(cartItems, manufacturer, prKeys) {
+        function submitForm(cartItems, manufacturer) {
             // Log the cart items to the console
             console.log(cartItems);
             console.log(manufacturer);
-            console.log(prKeys);
         
             // Create a form dynamically
             const form = document.createElement('form');
@@ -110,13 +108,6 @@
             manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
             manufacturerInput.value = manufacturer;  // Use the manufacturer value passed as argument
             form.appendChild(manufacturerInput);
-        
-            // Add an input field for the prKeys
-            const prKeysInput = document.createElement('input');
-            prKeysInput.type = 'hidden';
-            prKeysInput.name = 'prKeys';  // Name to use in Django for the prKeys
-            prKeysInput.value = prKeys;  // Use the prKeys value passed as argument
-            form.appendChild(prKeysInput);
         
             // Append the form to the document body
             document.body.appendChild(form);
