@@ -554,14 +554,16 @@ def publish(request):
             print(productCode)
             print(productName)
             print(timestamp)
+            timestamp_utc = datetime.datetime.utcnow().isoformat()
             #Fetching the products from the MANUFACTURER STREAM to update their quantity
             #NOTE:From Products->Checkout->Publish pass [email,product["product_code"],batchid,product["product_name"]]
-            prev_products = rpc_connection.liststreamqueryitems('{}'.format('users_manufacturer_items_stream2'), {'keys' : [manu_email,batchId,productCode,productName,timestamp]})#Based on the manufacturer KEY the data is being fetched
+            prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys' : [manu_email,batchId,productCode,productName,timestamp]})#Based on the manufacturer KEY the data is being fetched
             # prev_products = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(pr_keys[2]))#Based on the manufacturer KEY the data is being fetched
             # prev_products = prev_products[-1]
             print(prev_products)
             prev_products_str = json.dumps(prev_products, indent=4) #Converts OrderedDict to JSON String
             json_load = json.loads(prev_products_str)
+            print(json_load)
             prev_products = json_load[0]['data']['json']
             print("----PRODCUCTS fetched from MANUFACTURER stream----")
             print(prev_products_str)
@@ -579,7 +581,12 @@ def publish(request):
             print("--------\n")
 
             #Publishes the updated quantity of the products into the MANUFACTURER stream
-            # txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), '{}'.format(manufacturer), {'json': updated_items})
+            txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email,
+                                                                                         batchId,
+                                                                                         productCode,
+                                                                                         productName,
+                                                                                         timestamp_utc
+                                                                                         ], {'json': updated_items})
            
             #Publises the ordered products into the PRODUCT stream
             # txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order' : cart_items}})
