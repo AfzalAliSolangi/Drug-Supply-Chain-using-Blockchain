@@ -232,6 +232,7 @@
             <div class="cart-buttons">
                 <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
                 <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Proceed to Checkout</button>
+                <input type="hidden" name="email_dist" value="{{ email_dist }}">
             </div>
         </div>
     </div>
@@ -348,6 +349,10 @@
             // Log the cart items to the console
             console.log(cartItems);
             console.log(manufacturer);
+            
+            // Retrieve the value of email_dist from the input field
+            var email_dist = document.querySelector('input[name="email_dist"]').value;
+            console.log(email_dist);
         
             // Create a form dynamically
             const form = document.createElement('form');
@@ -368,14 +373,20 @@
             jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
             jsonInput.value = JSON.stringify(cartItems);
             form.appendChild(jsonInput);
-            
-             // Add an input field for the manufacturer name
+        
+            // Add an input field for the manufacturer name
             const manufacturerInput = document.createElement('input');
             manufacturerInput.type = 'hidden';
             manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
-            manufacturerInput.value = '{{ manufacturer }}';  // Use Django template syntax to get the manufacturer value
+            manufacturerInput.value = manufacturer;  // Pass the manufacturer value
             form.appendChild(manufacturerInput);
-            // Append the input fields to the form
+        
+            // Add an input field for the email_dist value
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.value = email_dist;  // Pass the email_dist value
+            form.appendChild(emailInput);
         
             // Append the form to the document body
             document.body.appendChild(form);

@@ -14,9 +14,9 @@ print(config.read('./drugs/config.conf'))
 
 # Access configuration values from the default section
 users_manufacturer_items_stream = config.get('Section1','users_manufacturer_items_stream')
-order_stream = config.get('Section1','order_stream')
 users_master_stream = config.get('Section1','users_master_stream') #Need to add different user stream for all users
 users_manufacturer_stream = config.get('Section1','users_manufacturer_stream') #Need to add different user stream for all users
+manufacturer_orders_stream = config.get('Section1','manufacturer_orders_stream') #Set a default for Manufacturer, add another for distributors
 users_distributor_stream = config.get('Section1','users_distributor_stream') #Need to add different user stream for all users
 users_pharmacy_stream = config.get('Section1','users_pharmacy_stream') #Need to add different user stream for all users
 key = config.get('Section1','key') #Key - for manufacturer
@@ -346,7 +346,7 @@ def login_check_distributor(request): #Implement Password authentication
 
             print(keys_company_info)
 
-            return render(request, "Distributor.html", {'keys_company_info': keys_company_info})
+            return render(request, "Distributor.html", {'keys_company_info': keys_company_info, 'email_dist': email_rcvd})
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
@@ -464,8 +464,10 @@ def hostpitalinput(request):
 #Code developed need to replace it. After replacing pass the keys from distributor.html to this func
 #Use user_manufacturer_item_stream2(with timestamp included)
 def products(request):
+    email_dist = request.GET.get('email_dist', None)
     selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)
+    print("Distributor emails: ",email_dist)
     x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
     response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
     # Have a logic which fetches out items based on latest_timestamp
@@ -498,17 +500,19 @@ def products(request):
         } for value in product_map.values()]
         
         print(products_with_timestamp)
-        return render(request, 'products.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer})
+        return render(request, 'products.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist})
     else:
         return render(request, 'products.html', {'message': 'No products available'})
 
 @csrf_protect
 def checkout(request):
+    print("\n\ncheckout\n\n")
     if request.method == 'POST':
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
-
+        email_dist = request.POST.get('email_dist', None)
+        print(email_dist)
         if cart_items_json and manufacturer:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
@@ -580,7 +584,7 @@ def publish(request):
                 txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email, batchId, productCode, productName, timestamp_utc], {'json': updated_items})
 
                 # Publishes the ordered products into the PRODUCT stream
-                # txid = rpc_connection.publish('{}'.format(order_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
 
             print("ITEMS UPDATED!!")
             #render a template or return an appropriate HTTP response, still to be decided
