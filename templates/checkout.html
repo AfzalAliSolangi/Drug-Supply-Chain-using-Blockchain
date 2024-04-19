@@ -73,13 +73,13 @@
                 {% endfor %}
             </ul>
         </section>
-
         <section>
             <h2>Payment</h2>
             <!-- Add your payment form here -->
         </section>
-
-        <button onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}')">Complete Purchase</button>
+        
+        <input type="hidden" name="email_dist" value="{{ email_dist }}">
+        <button onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}', '{{ email_dist }}')">Complete Purchase</button>
     </main>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -90,7 +90,7 @@
             // Log the cart items to the console
             console.log(cartItems);
             console.log(manufacturer);
-        
+            var email_dist = document.querySelector('input[name="email_dist"]').value;
             // Create a form dynamically
             const form = document.createElement('form');
             form.method = 'POST';
@@ -117,6 +117,13 @@
             manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
             manufacturerInput.value = manufacturer;  // Use the manufacturer value passed as argument
             form.appendChild(manufacturerInput);
+
+            // Add an input field for the email_dist value
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.value = email_dist;  // Pass the email_dist value
+            form.appendChild(emailInput);
         
             // Append the form to the document body
             document.body.appendChild(form);

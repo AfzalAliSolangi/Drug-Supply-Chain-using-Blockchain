@@ -522,14 +522,16 @@ def checkout(request):
             print(cart_items)
 
             # You can also render a template or return an appropriate HTTP response
-            return render(request, 'checkout.html', {'cart_items': cart_items,'manufacturer' : manufacturer})
+            return render(request, 'checkout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist})
     
 @csrf_protect
 def publish(request):
+    print('\npublish')
     if request.method == 'POST':
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
-
+        email_dist = request.POST.get('email_dist', None)
+        print(email_dist)
         #NOTE:
         # Please implement the flow in which whenever the distributor places an order,
         # it first goes to the order confirmation page of the MANUFACTURER.
@@ -581,10 +583,10 @@ def publish(request):
                 print(updated_items_str)
 
                 # Publishes the updated quantity of the products into the MANUFACTURER stream
-                txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email, batchId, productCode, productName, timestamp_utc], {'json': updated_items})
+                # txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email, batchId, productCode, productName, timestamp_utc], {'json': updated_items})
 
                 # Publishes the ordered products into the PRODUCT stream
-                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
+                # txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
 
             print("ITEMS UPDATED!!")
             #render a template or return an appropriate HTTP response, still to be decided
