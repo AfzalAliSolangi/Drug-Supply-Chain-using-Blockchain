@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .btn {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% if company_info %}
+        <h2>Welcome, {{ company_info }}</h2>
+        {% endif %}
+        <div class="d-grid gap-2">
+            <button class="btn" type="button" onclick="completePurchase('{{ cart_items|safe }}', '{{ manufacturer }}', '{{ email_dist }}')">Complete Purchase</button>
+            <button class="btn" type="button" onclick="viewInventory()">View Inventory</button>
+            <button class="btn" type="button" onclick="addDrug('{{ email }}','{{ company_info }}')">Add Drug</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        function completePurchase(cartItems, manufacturer, email_dist) {
+            console.log("Completing purchase...");
+            console.log("Cart Items:", cartItems);
+            console.log("Manufacturer:", manufacturer);
+            console.log("Email Distribution:", email_dist);
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/complete-purchase';  // Replace with the actual URL for completing purchase
+            form.style.display = 'none';
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();
+            form.appendChild(csrfInput);
+
+            const cartItemsInput = document.createElement('input');
+            cartItemsInput.type = 'hidden';
+            cartItemsInput.name = 'cartItems';
+            cartItemsInput.value = cartItems;
+            form.appendChild(cartItemsInput);
+
+            const manufacturerInput = document.createElement('input');
+            manufacturerInput.type = 'hidden';
+            manufacturerInput.name = 'manufacturer';
+            manufacturerInput.value = manufacturer;
+            form.appendChild(manufacturerInput);
+
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';
+            emailInput.value = email_dist;
+            form.appendChild(emailInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function viewInventory() {
+            console.log("Viewing inventory...");
+            window.location.href = '/view-inventory';  // Replace with the actual URL for viewing inventory
+        }
+
+        function placeOrder() {
+            console.log("Placing order...");
+            window.location.href = '/place-order';  // Replace with the actual URL for placing order
+        }
+
+        function addDrug(email,company_info) {
+          console.log("Adding drug...");
+          window.location.href = '/adddrugmenu';  // Replace with the actual URL for adding drug
+
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/adddrugmenu';  // Replace with the actual URL for adding drug
+          form.style.display = 'none';
+
+          const emailInput = document.createElement('input');
+          emailInput.type = 'hidden';
+          emailInput.name = 'email';
+          emailInput.value = email;
+          form.appendChild(emailInput);
+
+          const companyinfoInput = document.createElement('input');
+          companyinfoInput.type = 'hidden';
+          companyinfoInput.name = 'company_info';
+          companyinfoInput.value = company_info;
+          form.appendChild(companyinfoInput); 
+
+          document.body.appendChild(form);
+          form.submit();
+      }
+
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>
