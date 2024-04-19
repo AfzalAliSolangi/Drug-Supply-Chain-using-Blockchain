@@ -196,7 +196,7 @@ def manuorders(request):
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
         print(json_string)
-        return HttpResponse("manuorders!")
+        return render(request, "manufacturer_orders.html",{'orders': json_string})
 
 
 def adddrugmenu(request):
@@ -368,7 +368,7 @@ def login_check_distributor(request): #Implement Password authentication
 
             print(keys_company_info)
 
-            return render(request, "Distributor.html", {'keys_company_info': keys_company_info, 'email_dist': email_rcvd})
+            return render(request, "Distributor.html", {'keys_company_info': keys_company_info, 'email_dist': email_rcvd, 'comp_info' : comp_info})
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
@@ -488,8 +488,10 @@ def hostpitalinput(request):
 def products(request):
     email_dist = request.GET.get('email_dist', None)
     selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
+    comp_info = request.GET.get('comp_info', None) # Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)
     print("Distributor emails: ",email_dist)
+    print("comp_info :" ,comp_info) 
     x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
     response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
     # Have a logic which fetches out items based on latest_timestamp
@@ -522,7 +524,7 @@ def products(request):
         } for value in product_map.values()]
         
         print(products_with_timestamp)
-        return render(request, 'products.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist})
+        return render(request, 'products.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist, 'comp_info': comp_info})
     else:
         return render(request, 'products.html', {'message': 'No products available'})
 
@@ -534,7 +536,9 @@ def checkout(request):
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
         email_dist = request.POST.get('email_dist', None)
+        comp_info = request.POST.get('comp_info', None)
         print(email_dist)
+        print(comp_info)
         if cart_items_json and manufacturer:
             # Parse the JSON data
             cart_items = json.loads(cart_items_json)
@@ -544,7 +548,7 @@ def checkout(request):
             print(cart_items)
 
             # You can also render a template or return an appropriate HTTP response
-            return render(request, 'checkout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist})
+            return render(request, 'checkout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
     
 @csrf_protect
 def publish(request):
@@ -553,7 +557,9 @@ def publish(request):
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         email_dist = request.POST.get('email_dist', None)
+        comp_info = request.POST.get('comp_info', None)
         print(email_dist)
+        print(comp_info)
         #NOTE:
         # Please implement the flow in which whenever the distributor places an order,
         # it first goes to the order confirmation page of the MANUFACTURER.
@@ -610,8 +616,7 @@ def publish(request):
                 # txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email, batchId, productCode, productName, timestamp_utc], {'json': updated_items})
 
                 # Publishes the ordered products into the PRODUCT stream
-                # txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
-                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
                                                                                                                                                                            'confirmed': 'False',
                                                                                                                                                                            }})
             #render a template or return an appropriate HTTP response, still to be decided

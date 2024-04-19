@@ -233,6 +233,7 @@
                 <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
                 <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Proceed to Checkout</button>
                 <input type="hidden" name="email_dist" value="{{ email_dist }}">
+                <input type="hidden" name="comp_info" value="{{ comp_info }}">
             </div>
         </div>
     </div>
@@ -353,6 +354,9 @@
             // Retrieve the value of email_dist from the input field
             var email_dist = document.querySelector('input[name="email_dist"]').value;
             console.log(email_dist);
+            // Retrieve the value of email_dist from the input field
+            var comp_info = document.querySelector('input[name="comp_info"]').value;
+            console.log(comp_info);
         
             // Create a form dynamically
             const form = document.createElement('form');
@@ -387,6 +391,13 @@
             emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
             emailInput.value = email_dist;  // Pass the email_dist value
             form.appendChild(emailInput);
+
+            // Add an input field for the email_dist value
+            const compinfoInput = document.createElement('input');
+            compinfoInput.type = 'hidden';
+            compinfoInput.name = 'comp_info';  // Name to use in Django for the email_dist
+            compinfoInput.value = comp_info;  // Pass the email_dist value
+            form.appendChild(compinfoInput);
         
             // Append the form to the document body
             document.body.appendChild(form);

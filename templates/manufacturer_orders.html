@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Font Awesome -->
+    <style>
+        /* Your CSS styles */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Orders</h2>
+        <div class="cart-icon" onclick="viewOrders()">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+
+        <!-- Cart Counter -->
+        <div class="cart-counter" id="cartCounter">0</div>
+
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-10">
+                {% for order in orders %}
+                    <div class="row p-2 bg-white border rounded product">
+                        <!-- Display order information here -->
+                        <div class="col-md-12 mt-1">
+                            <p>Publishers: {{ order.publishers }}</p>
+                            <p>Keys: {{ order.keys }}</p>
+                            <p>Confirmations: {{ order.confirmations }}</p>
+                            <!-- Add more order details as needed -->
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay and Popup -->
+    <div id="cartOverlay" class="cart-overlay" onclick="closeCartPopup()">
+        <div class="cart-popup" id="cartPopup">
+            <div id="cartContent"></div> <!-- Display cart items here -->
+            <div class="cart-buttons">
+                <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
+                <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Proceed to Checkout</button>
+                <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Your JavaScript Code -->
+    <script>
+        var orderItems = [];
+
+        function viewOrders() {
+            // Show the cart overlay
+            document.getElementById('cartOverlay').style.display = 'flex';
+
+            // Display order items
+            var cartContent = document.getElementById('cartContent');
+            cartContent.innerHTML = ''; // Clear previous content
+
+            if (orderItems.length === 0) {
+                cartContent.innerHTML = '<p>No orders available.</p>';
+            } else {
+                // Display each order item
+                orderItems.forEach(function (item) {
+                    var itemInfo = `
+                        <div>
+                            <p>Publishers: ${item.publishers}</p>
+                            <p>Keys: ${item.keys}</p>
+                            <p>Confirmations: ${item.confirmations}</p>
+                            <!-- Display more order details as needed -->
+                        </div>
+                        <hr>
+                    `;
+                    var itemElement = document.createElement('div');
+                    itemElement.innerHTML = itemInfo;
+                    cartContent.appendChild(itemElement);
+                });
+            }
+        }
+
+        // Function to close the cart popup
+        function closeCartPopup() {
+            document.getElementById('cartOverlay').style.display = 'none';
+        }
+
+        // Function to proceed to checkout
+        function proceedToCheckout(manufacturer) {
+            console.log(orderItems);
+            console.log(manufacturer);
+
+            // Retrieve the value of email_dist from the input field
+            var email_dist = document.querySelector('input[name="email_dist"]').value;
+            console.log(email_dist);
+
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/checkout';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+            form.appendChild(csrfInput);
+
+            // Create an input field to hold the orderItems data
+            const jsonInput = document.createElement('input');
+            jsonInput.type = 'hidden';
+            jsonInput.name = 'orderItems';  // Name to use in Django for the JSON data
+            jsonInput.value = JSON.stringify(orderItems);
+            form.appendChild(jsonInput);
+
+            // Add an input field for the manufacturer name
+            const manufacturerInput = document.createElement('input');
+            manufacturerInput.type = 'hidden';
+            manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+            manufacturerInput.value = manufacturer;  // Pass the manufacturer value
+            form.appendChild(manufacturerInput);
+
+            // Add an input field for the email_dist value
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.value = email_dist;  // Pass the email_dist value
+            form.appendChild(emailInput);
+
+            // Append the form to the document body
+            document.body.appendChild(form);
+
+            // Submit the form
+            form.submit();
+        }
+
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>
