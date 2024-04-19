@@ -194,10 +194,10 @@ def adddrugmenu(request):
         Company_name = request.POST.get('company_info')
         print("Email of the Manufacturer",email_rcvd)
         print("Name of the Manufacturer",Company_name)
-    return render(request, "manufacturer.html",{'comp_info': Company_name,'email':email_rcvd})
+    return render(request, "adddrug.html",{'comp_info': Company_name,'email':email_rcvd})
 
-def manufacturer(request): # Manufacturer Input
-    if request.method == 'POST':
+def adddrug(request): # Manufacturer Input
+    if request.method == 'POST':    
         data = json.loads(request.POST.get('product_data'))
         print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
         print(data)
@@ -274,7 +274,7 @@ def manufacturer(request): # Manufacturer Input
                                                                                          timestamp_utc
                                                                                          ],
                                                                                          {'json': data})#Add a timestamp for sub logic
-            return render(request, "manufacturer.html", {"txid": txid})
+            return render(request, "adddrug.html", {"txid": txid})
 
 ####Distributor#####
 def signup_distributor(request):
