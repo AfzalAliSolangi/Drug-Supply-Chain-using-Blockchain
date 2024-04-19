@@ -556,11 +556,13 @@ def publish(request):
                 productCode = cart_item['productCode']
                 productName = cart_item['productName']
                 timestamp = cart_item['timestamp']
+                quantity = cart_item['quantity']
                 print(manu_email)
                 print(batchId)
                 print(productCode)
                 print(productName)
                 print(timestamp)
+                print(quantity)
 
                 timestamp_utc = datetime.datetime.utcnow().isoformat()
 
@@ -587,7 +589,8 @@ def publish(request):
 
                 # Publishes the ordered products into the PRODUCT stream
                 # txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), '{}'.format('contract'), {'json': {'order': cart_items}})
-
-            print("ITEMS UPDATED!!")
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
+                                                                                                                                                                           'confirmed': 'False',
+                                                                                                                                                                           }})
             #render a template or return an appropriate HTTP response, still to be decided
             return HttpResponse("Purchase completed. Thank you!")
