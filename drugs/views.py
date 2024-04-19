@@ -183,9 +183,21 @@ def login_check_manufacturer(request): #Implement Password authentication
         print(password_rcvd)
         print(passw_frm_chain)
         if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            return render(request, "manufacturer1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
+            return render(request, "manufacturer.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
         else:
             return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
+
+def manuorders(request):
+    print('\nOrders From distributors\n')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email')
+        print(email_rcvd)
+        response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        print(json_string)
+        return HttpResponse("manuorders!")
+
 
 def adddrugmenu(request):
     print('\nAdd Drug Manufacturer\n')

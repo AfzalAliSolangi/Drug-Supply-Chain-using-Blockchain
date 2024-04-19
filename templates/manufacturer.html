@@ -45,7 +45,7 @@
         <h2>Welcome, {{ company_info }}</h2>
         {% endif %}
         <div class="d-grid gap-2">
-            <button class="btn" type="button" onclick="completePurchase('{{ cart_items|safe }}', '{{ manufacturer }}', '{{ email_dist }}')">Complete Purchase</button>
+            <button class="btn" type="button" onclick="distorders('{{ email }}')">Distributor Orders</button>
             <button class="btn" type="button" onclick="viewInventory()">View Inventory</button>
             <button class="btn" type="button" onclick="addDrug('{{ email }}','{{ company_info }}')">Add Drug</button>
         </div>
@@ -56,39 +56,18 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
-        function completePurchase(cartItems, manufacturer, email_dist) {
-            console.log("Completing purchase...");
-            console.log("Cart Items:", cartItems);
-            console.log("Manufacturer:", manufacturer);
-            console.log("Email Distribution:", email_dist);
+        function distorders(email) {
+            console.log("Email Distribution:", email);
 
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/complete-purchase';  // Replace with the actual URL for completing purchase
+            form.action = '/manuorders';  // Replace with the actual URL for completing purchase
             form.style.display = 'none';
-
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrfmiddlewaretoken';
-            csrfInput.value = getCSRFToken();
-            form.appendChild(csrfInput);
-
-            const cartItemsInput = document.createElement('input');
-            cartItemsInput.type = 'hidden';
-            cartItemsInput.name = 'cartItems';
-            cartItemsInput.value = cartItems;
-            form.appendChild(cartItemsInput);
-
-            const manufacturerInput = document.createElement('input');
-            manufacturerInput.type = 'hidden';
-            manufacturerInput.name = 'manufacturer';
-            manufacturerInput.value = manufacturer;
-            form.appendChild(manufacturerInput);
 
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
-            emailInput.name = 'email_dist';
-            emailInput.value = email_dist;
+            emailInput.name = 'email';
+            emailInput.value = email;
             form.appendChild(emailInput);
 
             document.body.appendChild(form);
