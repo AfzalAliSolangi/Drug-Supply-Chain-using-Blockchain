@@ -29,13 +29,16 @@
                     <div class="row p-2 bg-white border rounded product">
                         <div class="col-md-12 mt-1">
                             <p>Distributor : {{ order.Distributor_name }}</p>
-                            <p>Manufacturer email: {{ order.Manufacturer_email }}</p>
-                            <p>Distributor email: {{ order.distributor_email }}</p>
+                            <p>Product Name: {{ order.product_name }}</p> 
                             <p>Batch ID: {{ order.batchId }}</p>
-                            <p>Product Name: {{ order.product_name }}</p>
                             <p>Quantity: {{ order.quantity }}</p>
                             <p>Confirmed: {{ order.confirmed }}</p>
-                            <p>Timestamp: {{ order.timestamp }}</p>
+                            <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
+                            <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
+                            <input type="hidden" name="product_name" value="{{ order.product_name }}">
+                            <input type="hidden" name="quantity" value="{{ order.product_data.quantity }}">
+                            <input type="hidden" name="confirmed" value="{{ order.product_data.confirmed }}">
+                            <input type="hidden" name="timestamp" value="{{ order.product_data.timestamp }}">
                             <!-- Add more order details as needed -->
                         </div>
                     </div>
