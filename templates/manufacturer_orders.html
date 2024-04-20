@@ -79,7 +79,7 @@
             </div>
             <div class="cart-buttons">
                 <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
-                <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Proceed to Checkout</button>
+                <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Confirm Request</button>
                 <input type="hidden" name="email_dist" value="{{ email_dist }}">
             </div>
         </div>
@@ -102,9 +102,19 @@
             
                 // Iterate through selectedOrders array and create list items
                 selectedOrders.forEach(function(order) {
-                    var listItem = document.createElement('li');
-                    listItem.textContent = `${order.Distributor_name}: ${order.product_name}`;
-                    selectedOrdersList.appendChild(listItem);
+                    var listItem = `
+                                <div>
+                                    <p>Distributor: ${order.Distributor_name}</p>
+                                    <p>Product: ${order.product_name}</p>
+                                    <p>Product Code: ${order.product_code}</p>
+                                    <p>BatchID: ${order.batchId}</p>
+                                    <p>Quantity: ${order.quantity}</p>
+                                </div>
+                                <hr>`;
+
+                    var orderElement = document.createElement('div');
+                    orderElement.innerHTML = listItem;
+                    selectedOrdersList.appendChild(orderElement);
                 });
             }
         }
@@ -191,53 +201,50 @@
 
         // Function to proceed to checkout
         function proceedToCheckout(manufacturer) {
-            console.log(orderItems);
-            console.log(manufacturer);
-
             // Retrieve the value of email_dist from the input field
             var email_dist = document.querySelector('input[name="email_dist"]').value;
-            console.log(email_dist);
 
             // Create a form dynamically
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/checkout';  // Replace with the actual URL of your Django view
+            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
             form.style.display = 'none';
-
+        
             // Add CSRF token
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
             csrfInput.name = 'csrfmiddlewaretoken';
             csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
             form.appendChild(csrfInput);
-
-            // Create an input field to hold the orderItems data
-            const jsonInput = document.createElement('input');
-            jsonInput.type = 'hidden';
-            jsonInput.name = 'orderItems';  // Name to use in Django for the JSON data
-            jsonInput.value = JSON.stringify(orderItems);
-            form.appendChild(jsonInput);
-
+        
+            // Add an input field for the selectedOrders data
+            const selectedOrdersInput = document.createElement('input');
+            selectedOrdersInput.type = 'hidden';
+            selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
+            selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+            form.appendChild(selectedOrdersInput);
+        
             // Add an input field for the manufacturer name
             const manufacturerInput = document.createElement('input');
             manufacturerInput.type = 'hidden';
             manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
             manufacturerInput.value = manufacturer;  // Pass the manufacturer value
             form.appendChild(manufacturerInput);
-
+        
             // Add an input field for the email_dist value
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
             emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
             emailInput.value = email_dist;  // Pass the email_dist value
             form.appendChild(emailInput);
-
+        
             // Append the form to the document body
             document.body.appendChild(form);
-
+        
             // Submit the form
             form.submit();
         }
+        
 
         // Function to get CSRF token from cookies
         function getCSRFToken() {

@@ -232,6 +232,13 @@ def manuorders(request):
         print(orders)
 
         return render(request, "manufacturer_orders.html",{'orders': orders})
+    
+
+def manuorderconfirm(request):
+    print('\nConfirm Orders From distributors\n')
+    if request.method == 'POST':
+        selectedOrders = request.POST.get('selectedOrders', None)
+        print(selectedOrders)
 
 
 def adddrugmenu(request):
