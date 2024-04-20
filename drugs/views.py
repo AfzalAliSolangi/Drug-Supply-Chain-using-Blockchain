@@ -195,8 +195,41 @@ def manuorders(request):
         response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
-        print(json_string)
-        return render(request, "manufacturer_orders.html",{'orders': json_string})
+        combined_list = []
+
+        for item in json_string:
+            # Extract keys from the dictionary
+            keys = item['keys']
+
+            # Extract data part from the dictionary
+            data_part = [item['data']['json'][key] for key in ['quantity', 'confirmed']]
+
+            # Combine keys and data_part into a single list
+            combined_list.append(keys + data_part)
+        print(combined_list)
+        orders = []
+
+        # Iterate over the combined_list
+        for index, item in enumerate(combined_list):
+            # Create a dictionary for each element in the combined_list
+            order = {
+                'Distributor_name': item[0],
+                'Manufacturer_email': item[1],
+                'distributor_email': item[2],
+                'batchId': item[4],
+                'product_name': item[6],
+                'product_code': item[5],
+                'timestamp': item[7],
+                'quantity': item[8],
+                'confirmed': item[9],
+            }
+            # Append the dictionary to the orders list
+            orders.append(order)
+
+        # Print the resulting list of dictionaries
+        print(orders)
+
+        return render(request, "manufacturer_orders.html",{'orders': orders})
 
 
 def adddrugmenu(request):

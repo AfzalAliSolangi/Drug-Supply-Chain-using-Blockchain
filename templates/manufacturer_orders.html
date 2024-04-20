@@ -24,13 +24,18 @@
 
         <div class="d-flex justify-content-center row">
             <div class="col-md-10">
+                <!-- Inside the for loop for orders -->
                 {% for order in orders %}
                     <div class="row p-2 bg-white border rounded product">
-                        <!-- Display order information here -->
                         <div class="col-md-12 mt-1">
-                            <p>Publishers: {{ order.publishers }}</p>
-                            <p>Keys: {{ order.keys }}</p>
-                            <p>Confirmations: {{ order.confirmations }}</p>
+                            <p>Distributor : {{ order.Distributor_name }}</p>
+                            <p>Manufacturer email: {{ order.Manufacturer_email }}</p>
+                            <p>Distributor email: {{ order.distributor_email }}</p>
+                            <p>Batch ID: {{ order.batchId }}</p>
+                            <p>Product Name: {{ order.product_name }}</p>
+                            <p>Quantity: {{ order.quantity }}</p>
+                            <p>Confirmed: {{ order.confirmed }}</p>
+                            <p>Timestamp: {{ order.timestamp }}</p>
                             <!-- Add more order details as needed -->
                         </div>
                     </div>
