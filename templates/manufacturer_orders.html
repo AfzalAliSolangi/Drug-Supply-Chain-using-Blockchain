@@ -39,7 +39,7 @@
                             <input type="hidden" name="quantity" value="{{ order.product_data.quantity }}">
                             <input type="hidden" name="confirmed" value="{{ order.product_data.confirmed }}">
                             <input type="hidden" name="timestamp" value="{{ order.product_data.timestamp }}">
-                            <!-- Add more order details as needed -->
+                            <button class="btn btn-primary" onclick="selectOrder('{{ order.Distributor_name }}','{{ order.Manufacturer_email }}','{{ order.distributor_email }}','{{ order.batchId }}','{{ order.product_name }}','{{ order.product_code }}','{{ order.timestamp }}','{{ order.quantity }}','{{ order.confirmed }}')">Select</button>
                         </div>
                     </div>
                 {% endfor %}
@@ -66,16 +66,47 @@
 
     <!-- Your JavaScript Code -->
     <script>
-        var orderItems = [];
+        var selectedOrders = []; // Array to store selected orders
 
+        function selectOrder(Distributor_name, Manufacturer_email, distributor_email, batchId, product_name, product_code, timestamp, quantity, confirmed) {
+            // Create an object for the selected order
+            var order = {
+                'Distributor_name': Distributor_name,
+                'Manufacturer_email': Manufacturer_email,
+                'distributor_email': distributor_email,
+                'batchId': batchId,
+                'product_name': product_name,
+                'product_code': product_code,
+                'timestamp': timestamp,
+                'quantity': quantity,
+                'confirmed': confirmed
+            };
+        
+            // Check if the order is already selected
+            var index = selectedOrders.findIndex(function(item) {
+                return item.batchId === batchId; // Adjust based on your unique identifier for orders
+            });
+            
+            // If not selected, add it to selectedOrders
+            if (index === -1) {
+                selectedOrders.push(order);
+            } else { // If already selected, remove it
+                selectedOrders.splice(index, 1);
+            }
+        
+            console.log(selectedOrders); // Output selected orders to console (for testing)
+        
+            // You can perform further actions here, such as updating the UI to indicate the selected orders
+        }
+        
         function viewOrders() {
             // Show the cart overlay
             document.getElementById('cartOverlay').style.display = 'flex';
-
+        
             // Display order items
             var cartContent = document.getElementById('cartContent');
             cartContent.innerHTML = ''; // Clear previous content
-
+        
             if (orderItems.length === 0) {
                 cartContent.innerHTML = '<p>No orders available.</p>';
             } else {

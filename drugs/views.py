@@ -207,21 +207,23 @@ def manuorders(request):
             # Combine keys and data_part into a single list
             combined_list.append(keys + data_part)
         print(combined_list)
+
+        
         orders = []
 
         # Iterate over the combined_list
         for index, item in enumerate(combined_list):
             # Create a dictionary for each element in the combined_list
             order = {
-                'Distributor_name': item[0],
-                'Manufacturer_email': item[1],
-                'distributor_email': item[2],
-                'batchId': item[4],
-                'product_name': item[6],
-                'product_code': item[5],
-                'timestamp': item[7],
-                'quantity': item[8],
-                'confirmed': item[9],
+                "Distributor_name": item[0],
+                "Manufacturer_email": item[1],
+                "distributor_email": item[2],
+                "batchId": item[4],
+                "product_name": item[6],
+                "product_code": item[5],
+                "timestamp": item[6],
+                "quantity": item[8],
+                "confirmed": item[9],
             }
             # Append the dictionary to the orders list
             orders.append(order)
