@@ -19,9 +19,11 @@
             <i class="fas fa-shopping-cart"></i>
         </div>
 
-        <!-- Cart Counter -->
-        <div class="cart-counter" id="cartCounter">0</div>
-
+        <!-- Counter to display the count of selected orders -->
+        <!-- Counter to display the count of selected orders -->
+        <div id="orderCount" style="position: fixed; top: 10px; right: 10px; background-color: #007bff; color: #ffffff; padding: 5px 10px; border-radius: 50%;">
+            <i class="fas fa-shopping-cart"></i> <span id="selectedCount">0</span>
+        </div>
         <div class="d-flex justify-content-center row">
             <div class="col-md-10">
                 <!-- Inside the for loop for orders -->
@@ -90,15 +92,21 @@
             // If not selected, add it to selectedOrders
             if (index === -1) {
                 selectedOrders.push(order);
-            } else { // If already selected, remove it
-                selectedOrders.splice(index, 1);
             }
         
             console.log(selectedOrders); // Output selected orders to console (for testing)
-        
+            updateOrderCount();
             // You can perform further actions here, such as updating the UI to indicate the selected orders
         }
         
+        // Function to update the order count display
+        function updateOrderCount() {
+            var countElement = document.getElementById('selectedCount');
+            if (countElement) {
+                countElement.textContent = selectedOrders.length.toString();
+            }
+        }
+
         function viewOrders() {
             // Show the cart overlay
             document.getElementById('cartOverlay').style.display = 'flex';
