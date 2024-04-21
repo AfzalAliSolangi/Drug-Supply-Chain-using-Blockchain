@@ -26,6 +26,7 @@ urlpatterns = [
     path('adddrugmenu', views.adddrugmenu, name='adddrugmenu'),
     path('manuorders', views.manuorders, name='manuorders'),
     path('manuorderconfirm', views.manuorderconfirm, name='manuorderconfirm'),
+    path('viewmanuinvent', views.viewmanuinvent, name='viewmanuinvent'),
     path('hosup', views.hostpitalinput, name='hosup'),
     # path('drgby', views.distributor, name='drgby'),
     path('seedet', views.getdetails, name='seedet'),

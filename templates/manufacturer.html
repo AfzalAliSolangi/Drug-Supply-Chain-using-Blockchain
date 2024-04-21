@@ -46,7 +46,7 @@
         {% endif %}
         <div class="d-grid gap-2">
             <button class="btn" type="button" onclick="distorders('{{ email }}')">Distributor Orders</button>
-            <button class="btn" type="button" onclick="viewInventory()">View Inventory</button>
+            <button class="btn" type="button" onclick="viewInventory('{{ email }}')">View Inventory</button>
             <button class="btn" type="button" onclick="addDrug('{{ email }}','{{ company_info }}')">Add Drug</button>
         </div>
     </div>
@@ -74,9 +74,22 @@
             form.submit();
         }
 
-        function viewInventory() {
+        function viewInventory(email) {
             console.log("Viewing inventory...");
-            window.location.href = '/view-inventory';  // Replace with the actual URL for viewing inventory
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
+            form.style.display = 'none';
+
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = email;
+            form.appendChild(emailInput);
+            document.body.appendChild(form);
+
+            form.submit();
         }
 
         function placeOrder() {
