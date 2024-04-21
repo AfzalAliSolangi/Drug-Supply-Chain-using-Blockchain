@@ -453,6 +453,7 @@ def adddrug(request): # Manufacturer Input
                                                                                          {'json': data})#Add a timestamp for sub logic
             return render(request, "adddrug.html", {"txid": txid})
 
+
 ####Distributor#####
 def signup_distributor(request):
     print("signup-distributor check")
