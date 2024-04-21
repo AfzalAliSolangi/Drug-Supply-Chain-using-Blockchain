@@ -397,9 +397,9 @@ def viewmanuinvent(request):
             } for value in product_map.values()]
 
             print(products_with_timestamp)
-            return render(request, 'products1.html', {'products': products_with_timestamp})
+            return render(request, 'viewmanuinventory.html', {'products': products_with_timestamp})
         else:
-            return render(request, 'products1.html', {'message': 'No products available'})
+            return render(request, 'viewmanuinventory.html', {'message': 'No products available'})
 
 def adddrugmenu(request):
     print('\nAdd Drug Manufacturer\n')
