@@ -355,7 +355,7 @@ def manuorderconfirm(request):
                                                                                                  }
                                                                                                  })#Add a timestamp for sub logic
 
-                #publishing into the manufacturer_orders_stream 
+                #publishing into the manufacturer_orders_stream telling that order is confimed
                 txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [Distributor_name,Manufacturer_email,distributor_email,Manufacturer_email, batchId, product_code, product_name, timestamp_utc],{'json': {'quantity': quantity_frm_order,
                                                                                                                                                                                'confirmed': 'True',
                                                                                                                                                                                }})
@@ -777,10 +777,8 @@ def publish(request):
                 print("----Updated PRODUCTS quantity published to MANUFACTURER STREAM----")
                 print(updated_items_str)
 
-                # Publishes the updated quantity of the products into the MANUFACTURER stream
-                # txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [manu_email, batchId, productCode, productName, timestamp_utc], {'json': updated_items})
 
-                # Publishes the ordered products into the PRODUCT stream
+                # Publishes the ordered products into the manufacturer_orders_stream stream accessed by Manufacturer
                 txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
                                                                                                                                                                            'confirmed': 'False',
                                                                                                                                                                            }})
