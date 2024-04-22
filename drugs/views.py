@@ -360,7 +360,7 @@ def manuorderconfirm(request):
                                                                                                                                                                                'confirmed': 'True',
                                                                                                                                                                                }})
 
-        return render(request, 'products.html')
+        return render(request, 'manuproducts.html')
 
 def viewmanuinvent(request):
     print('Viewing Manufacturer Inventory')
@@ -559,27 +559,170 @@ def login_check_distributor(request): #Implement Password authentication
         print(password_rcvd)
         print(passw_frm_chain)
         if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen
-            response = rpc_connection.liststreamitems(users_manufacturer_stream)
-            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-            print(json_string)
-            json_load = json.loads(json_string)
-            keys_company_info = {}
-
-            for item in json_load:
-                for key in item['keys']:
-                    keys_company_info[key] = item['data']['json']['company_info']
-
-            print(keys_company_info)
-
-            return render(request, "Distributor.html", {'keys_company_info': keys_company_info, 'email_dist': email_rcvd, 'comp_info' : comp_info})
+            return render(request, "Distributor1.html", {'email': email_rcvd, 'comp_info' : comp_info})
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
 
 ##Started working from here on 2024/04/22##
+def distorderprod(request):
+    print("\nOrdering Products from Manufacturer")
+    if request.method == 'POST':
+        email_dist = request.POST.get('email',None)
+        print('\nDistributor Email: ',email_dist)
+        
+        #for fetching out the name of the Distributor name
+        result = rpc_connection.liststreamkeyitems(users_distributor_stream, email_dist)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        comp_info = json_load[0]['data']['json']['company_info'] 
+        
+        # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen
+        response = rpc_connection.liststreamitems(users_manufacturer_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        print(json_string)
+        json_load = json.loads(json_string)
+        keys_company_info = {}
+        for item in json_load:
+            for key in item['keys']:
+                keys_company_info[key] = item['data']['json']['company_info']
+        print("\nkeys_company_info:\n",keys_company_info)
+        return render(request, "distributor.html", {'keys_company_info': keys_company_info,'email_dist': email_dist, 'comp_info' : comp_info})
+
+def manuproducts(request):
+    email_dist = request.GET.get('email_dist', None)
+    selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
+    comp_info = request.GET.get('comp_info', None) # Manufacturer name being passed from Distributor.html
+    print(selected_manufacturer)
+    print("Distributor emails: ",email_dist)
+    print("comp_info :" ,comp_info) 
+    x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
+    response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
+    # Have a logic which fetches out items based on latest_timestamp
+    print(len(response))
+    if len(response) > 0:
+        product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
+        
+        for item in response:
+            data = item['data']['json']
+            key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+            timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
+            
+            if key not in product_map or timestamp > product_map[key]['timestamp']:
+                product_map[key] = {
+                    'product_data': data['products'][0],
+                    'timestamp': timestamp,
+                    'email': key[0],
+                    'product_code': key[1],
+                    'batchId': key[2],
+                    'product_name': key[3]
+                }
+        
+        products_with_timestamp = [{
+            'timestamp': value['timestamp'],
+            'email': value['email'],
+            'product_code': value['product_code'],
+            'batchId': value['batchId'],
+            'product_name': value['product_name'],
+            'product_data': value['product_data']
+        } for value in product_map.values()]
+        
+        print(products_with_timestamp)
+        return render(request, 'manuproducts.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist, 'comp_info': comp_info})
+    else:
+        return render(request, 'manuproducts.html', {'message': 'No products available'})
+
+@csrf_protect
+def distcheckout(request):
+    print("\n\ncheckout\n\n")
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+        manufacturer = request.POST.get('manufacturer', None)
+        email_dist = request.POST.get('email_dist', None)
+        comp_info = request.POST.get('comp_info', None)
+        print(email_dist)
+        print(comp_info)
+        if cart_items_json and manufacturer:
+            # Parse the JSON data
+            cart_items = json.loads(cart_items_json)
+
+            # Do something with the cart_items data (e.g., save to the database, process the order, etc.)
+            # For example, you can print it for demonstration purposes
+            print(cart_items)
+
+            # You can also render a template or return an appropriate HTTP response
+            return render(request, 'distcheckout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
+    
+@csrf_protect
+def distreqorder(request):
+    print('\npublish')
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+        email_dist = request.POST.get('email_dist', None)
+        comp_info = request.POST.get('comp_info', None)
+        print(email_dist)
+        print(comp_info)
+        #NOTE:
+        # Please implement the flow in which whenever the distributor places an order,
+        # it first goes to the order confirmation page of the MANUFACTURER.
+        # Once manufacturer confirms the order, the quantity of the medicine is minused from the MANUFACTURER stream
+        # and new Item is published in the MANUFACTURER stream.
+
+        # Retrieve the manufacturer name from checkout.html from the POST request
+        manufacturer = request.POST.get('manufacturer', None)
+        print("\n\n----MANUFACTURER NAME----")
+        print(manufacturer)
+        print("--------\n")
+
+        #Also getting the manufacturer name becuase it's a key in the MANUFACTURER 
+        if cart_items_json:
+            print("----CART ITEMS from frontEND----")
+            cart_items = json.loads(cart_items_json)
+            print(len(cart_items))
+            print("--------\n")
+            for cart_item in cart_items:
+                manu_email = cart_item['manu_email']
+                batchId = cart_item['batchId']
+                productCode = cart_item['productCode']
+                productName = cart_item['productName']
+                timestamp = cart_item['timestamp']
+                quantity = cart_item['quantity']
+                print(manu_email)
+                print(batchId)
+                print(productCode)
+                print(productName)
+                print(timestamp)
+                print(quantity)
+
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
+
+                # Fetching the products from the MANUFACTURER STREAM to update their quantity
+                prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys': [manu_email, batchId, productCode, productName, timestamp]})
+                prev_products_str = json.dumps(prev_products, indent=4)  # Converts OrderedDict to JSON String
+                json_load = json.loads(prev_products_str)
+                prev_products = json_load[0]['data']['json']
+                print("----PRODUCTS fetched from MANUFACTURER stream----")
+                print(prev_products_str)
+
+                # Logic for subtracting the quantity of the products from the order stream
+                for item_b in prev_products['products']:
+                    if cart_item['productCode'] == item_b['product_code']:
+                        item_b['quantity_in_stock'] -= cart_item['quantity']
+
+                updated_items_str = json.dumps(prev_products, indent=4)  # Converts OrderedDict to JSON String
+                updated_items = json.loads(updated_items_str)
+                print("----Updated PRODUCTS quantity published to MANUFACTURER STREAM----")
+                print(updated_items_str)
 
 
+                # Publishes the ordered products into the manufacturer_orders_stream stream accessed by Manufacturer
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
+                                                                                                                                                                           'confirmed': 'False',
+                                                                                                                                                                           }})
+            #render a template or return an appropriate HTTP response, still to be decided
+            return HttpResponse("Purchase completed. Thank you!")
 
 ####Pharmacy#####
 def signup_pharmacy(request):
@@ -691,137 +834,4 @@ def hostpitalinput(request):
 
 #Code developed need to replace it. After replacing pass the keys from distributor.html to this func
 #Use user_manufacturer_item_stream2(with timestamp included)
-def products(request):
-    email_dist = request.GET.get('email_dist', None)
-    selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
-    comp_info = request.GET.get('comp_info', None) # Manufacturer name being passed from Distributor.html
-    print(selected_manufacturer)
-    print("Distributor emails: ",email_dist)
-    print("comp_info :" ,comp_info) 
-    x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream)) # Subscribing
-    response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(selected_manufacturer)) # Based on the manufacturer KEY the data is being fetched
-    # Have a logic which fetches out items based on latest_timestamp
-    print(len(response))
-    if len(response) > 0:
-        product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
-        
-        for item in response:
-            data = item['data']['json']
-            key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
-            timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
-            
-            if key not in product_map or timestamp > product_map[key]['timestamp']:
-                product_map[key] = {
-                    'product_data': data['products'][0],
-                    'timestamp': timestamp,
-                    'email': key[0],
-                    'product_code': key[1],
-                    'batchId': key[2],
-                    'product_name': key[3]
-                }
-        
-        products_with_timestamp = [{
-            'timestamp': value['timestamp'],
-            'email': value['email'],
-            'product_code': value['product_code'],
-            'batchId': value['batchId'],
-            'product_name': value['product_name'],
-            'product_data': value['product_data']
-        } for value in product_map.values()]
-        
-        print(products_with_timestamp)
-        return render(request, 'products.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist, 'comp_info': comp_info})
-    else:
-        return render(request, 'products.html', {'message': 'No products available'})
 
-@csrf_protect
-def checkout(request):
-    print("\n\ncheckout\n\n")
-    if request.method == 'POST':
-        # Retrieve the cartItems data from the POST request
-        cart_items_json = request.POST.get('cartItems', None)
-        manufacturer = request.POST.get('manufacturer', None)
-        email_dist = request.POST.get('email_dist', None)
-        comp_info = request.POST.get('comp_info', None)
-        print(email_dist)
-        print(comp_info)
-        if cart_items_json and manufacturer:
-            # Parse the JSON data
-            cart_items = json.loads(cart_items_json)
-
-            # Do something with the cart_items data (e.g., save to the database, process the order, etc.)
-            # For example, you can print it for demonstration purposes
-            print(cart_items)
-
-            # You can also render a template or return an appropriate HTTP response
-            return render(request, 'checkout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
-    
-@csrf_protect
-def publish(request):
-    print('\npublish')
-    if request.method == 'POST':
-        # Retrieve the cartItems data from the POST request
-        cart_items_json = request.POST.get('cartItems', None)
-        email_dist = request.POST.get('email_dist', None)
-        comp_info = request.POST.get('comp_info', None)
-        print(email_dist)
-        print(comp_info)
-        #NOTE:
-        # Please implement the flow in which whenever the distributor places an order,
-        # it first goes to the order confirmation page of the MANUFACTURER.
-        # Once manufacturer confirms the order, the quantity of the medicine is minused from the MANUFACTURER stream
-        # and new Item is published in the MANUFACTURER stream.
-
-        # Retrieve the manufacturer name from checkout.html from the POST request
-        manufacturer = request.POST.get('manufacturer', None)
-        print("\n\n----MANUFACTURER NAME----")
-        print(manufacturer)
-        print("--------\n")
-
-        #Also getting the manufacturer name becuase it's a key in the MANUFACTURER 
-        if cart_items_json:
-            print("----CART ITEMS from frontEND----")
-            cart_items = json.loads(cart_items_json)
-            print(len(cart_items))
-            print("--------\n")
-            for cart_item in cart_items:
-                manu_email = cart_item['manu_email']
-                batchId = cart_item['batchId']
-                productCode = cart_item['productCode']
-                productName = cart_item['productName']
-                timestamp = cart_item['timestamp']
-                quantity = cart_item['quantity']
-                print(manu_email)
-                print(batchId)
-                print(productCode)
-                print(productName)
-                print(timestamp)
-                print(quantity)
-
-                timestamp_utc = datetime.datetime.utcnow().isoformat()
-
-                # Fetching the products from the MANUFACTURER STREAM to update their quantity
-                prev_products = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys': [manu_email, batchId, productCode, productName, timestamp]})
-                prev_products_str = json.dumps(prev_products, indent=4)  # Converts OrderedDict to JSON String
-                json_load = json.loads(prev_products_str)
-                prev_products = json_load[0]['data']['json']
-                print("----PRODUCTS fetched from MANUFACTURER stream----")
-                print(prev_products_str)
-
-                # Logic for subtracting the quantity of the products from the order stream
-                for item_b in prev_products['products']:
-                    if cart_item['productCode'] == item_b['product_code']:
-                        item_b['quantity_in_stock'] -= cart_item['quantity']
-
-                updated_items_str = json.dumps(prev_products, indent=4)  # Converts OrderedDict to JSON String
-                updated_items = json.loads(updated_items_str)
-                print("----Updated PRODUCTS quantity published to MANUFACTURER STREAM----")
-                print(updated_items_str)
-
-
-                # Publishes the ordered products into the manufacturer_orders_stream stream accessed by Manufacturer
-                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
-                                                                                                                                                                           'confirmed': 'False',
-                                                                                                                                                                           }})
-            #render a template or return an appropriate HTTP response, still to be decided
-            return HttpResponse("Purchase completed. Thank you!")

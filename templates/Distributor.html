@@ -61,7 +61,7 @@
     <div class="container">
         <h1>Select a Manufacturer</h1>
 
-        <form action="products" method="get" id="manufacturerForm">
+        <form action="manuproducts" method="get" id="manufacturerForm">
             {% csrf_token %}
             <input type="hidden" name="email_dist" value="{{ email_dist }}">
             <input type="hidden" name="comp_info" value="{{ comp_info }}">
