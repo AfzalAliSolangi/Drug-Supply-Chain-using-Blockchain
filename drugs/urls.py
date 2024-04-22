@@ -28,6 +28,7 @@ urlpatterns = [
     path('manuorderconfirm', views.manuorderconfirm, name='manuorderconfirm'),
     path('viewmanuinvent', views.viewmanuinvent, name='viewmanuinvent'),
     path('distorderprod', views.distorderprod, name='distorderprod'),
+    path('viewdistinvent', views.viewdistinvent, name='viewdistinvent'),
     path('hosup', views.hostpitalinput, name='hosup'),
     # path('drgby', views.distributor, name='drgby'),
     path('seedet', views.getdetails, name='seedet'),

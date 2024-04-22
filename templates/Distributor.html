@@ -56,7 +56,7 @@
         {% endif %}
         <div class="d-grid gap-2">
             <button class="btn" type="button" onclick="distorderprod('{{ email }}')">Order Drugs</button>
-            <button class="btn" type="button" onclick="viewInventory('{{ email }}')">View Inventory</button>
+            <button class="btn" type="button" onclick="viewdistinvent('{{ email }}')">View Inventory</button>
             <button class="btn" type="button" onclick="addDrug('{{ email }}','{{ company_info }}')">Add Drug</button>
         </div>
     </div>
@@ -77,11 +77,11 @@
             document.body.appendChild(form);
             form.submit();
         }
-        function viewInventory(email) {
+        function viewdistinvent(email) {
             console.log("Viewing inventory...");
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
+            form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
             form.style.display = 'none';
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
