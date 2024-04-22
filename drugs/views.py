@@ -401,6 +401,7 @@ def viewmanuinvent(request):
         else:
             return render(request, 'viewmanuinventory.html', {'message': 'No products available'})
 
+
 def adddrugmenu(request):
     print('\nAdd Drug Manufacturer\n')
     if request.method == 'POST':
@@ -575,6 +576,8 @@ def login_check_distributor(request): #Implement Password authentication
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
+
+##Started working from here on 2024/04/22##
 
 
 
