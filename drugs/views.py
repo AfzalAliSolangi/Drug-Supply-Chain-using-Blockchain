@@ -559,7 +559,7 @@ def login_check_distributor(request): #Implement Password authentication
         print(password_rcvd)
         print(passw_frm_chain)
         if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            return render(request, "Distributor1.html", {'email': email_rcvd, 'comp_info' : comp_info})
+            return render(request, "Distributor.html", {'email': email_rcvd, 'comp_info' : comp_info})
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
@@ -587,7 +587,7 @@ def distorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "distributor.html", {'keys_company_info': keys_company_info,'email_dist': email_dist, 'comp_info' : comp_info})
+        return render(request, "distorderprod.html", {'keys_company_info': keys_company_info,'email_dist': email_dist, 'comp_info' : comp_info})
 
 def manuproducts(request):
     email_dist = request.GET.get('email_dist', None)

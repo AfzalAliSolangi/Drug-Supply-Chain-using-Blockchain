@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributor Response</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add a specific style for the disabled state */
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<!-- ... (previous HTML code) ... -->
+
+<body>
+
+    <div class="container">
+        <h1>Select a Manufacturer</h1>
+
+        <form action="manuproducts" method="get" id="manufacturerForm">
+            {% csrf_token %}
+            <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            <input type="hidden" name="comp_info" value="{{ comp_info }}">
+            <label for="manufacturer">Choose a Manufacturer:</label>
+            <select id="manufacturer" name="manufacturer" onchange="enableSubmit()">
+                <option value="" disabled selected>Select a manufacturer</option>
+                
+                <!-- Use Django template tag to directly loop through the list -->
+                {% for key, company_info in keys_company_info.items %}
+                    <!-- Use key as the value and company_info as the displayed text -->
+                    <option value="{{ key }}">{{ company_info }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" id="submitButton" disabled>Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function enableSubmit() {
+            var manufacturerDropdown = document.getElementById('manufacturer');
+            var submitButton = document.getElementById('submitButton');
+
+            // Enable the submit button if a manufacturer is selected
+            submitButton.disabled = (manufacturerDropdown.value === "");
+        }
+    </script>
+
+</body>
+</html>
