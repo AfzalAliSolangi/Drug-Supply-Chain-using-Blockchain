@@ -61,12 +61,12 @@
     <div class="container">
         <h1>Select a Manufacturer</h1>
 
-        <form action="manuproducts" method="get" id="manufacturerForm">
+        <form action="distproducts" method="get" id="manufacturerForm">
             {% csrf_token %}
-            <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            <input type="hidden" name="email_pharm" value="{{ email_dist }}">
             <input type="hidden" name="comp_info" value="{{ comp_info }}">
             <label for="manufacturer">Choose a Manufacturer:</label>
-            <select id="manufacturer" name="manufacturer" onchange="enableSubmit()">
+            <select id="distributor" name="distributor" onchange="enableSubmit()">
                 <option value="" disabled selected>Select a manufacturer</option>
                 
                 <!-- Use Django template tag to directly loop through the list -->
@@ -82,7 +82,7 @@
 
     <script>
         function enableSubmit() {
-            var manufacturerDropdown = document.getElementById('manufacturer');
+            var manufacturerDropdown = document.getElementById('distributor');
             var submitButton = document.getElementById('submitButton');
 
             // Enable the submit button if a manufacturer is selected

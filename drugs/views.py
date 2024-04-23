@@ -919,9 +919,50 @@ def pharmorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "pharmorderprod.html", {'keys_company_info': keys_company_info,'email_dist': email_pharm, 'comp_info' : comp_info})
+        return render(request, "pharmorderprod.html", {'keys_company_info': keys_company_info,'email_pharm': email_pharm, 'comp_info' : comp_info})
 
-
+def distproducts(request):
+    email_pharm = request.GET.get('email_pharm', None)
+    selected_distributor = request.GET.get('distributor', None) # Manufacturer name being passed from Distributor.html
+    comp_info = request.GET.get('comp_info', None) # Manufacturer name being passed from Distributor.html
+    print(selected_distributor)
+    print("Distributor emails: ",email_pharm)
+    print("comp_info :" ,comp_info) 
+    x = rpc_connection.subscribe('{}'.format(users_distributor_items_stream)) # Subscribing
+    response = rpc_connection.liststreamkeyitems('{}'.format(users_distributor_items_stream), '{}'.format(selected_distributor)) # Based on the manufacturer KEY the data is being fetched
+    # Have a logic which fetches out items based on latest_timestamp
+    print(len(response))
+    if len(response) > 0:
+        product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
+        
+        for item in response:
+            data = item['data']['json']
+            key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+            timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
+            
+            if key not in product_map or timestamp > product_map[key]['timestamp']:
+                product_map[key] = {
+                    'product_data': data['products'][0],
+                    'timestamp': timestamp,
+                    'email': key[0],
+                    'product_code': key[1],
+                    'batchId': key[2],
+                    'product_name': key[3]
+                }
+        
+        products_with_timestamp = [{
+            'timestamp': value['timestamp'],
+            'email': value['email'],
+            'product_code': value['product_code'],
+            'batchId': value['batchId'],
+            'product_name': value['product_name'],
+            'product_data': value['product_data']
+        } for value in product_map.values()]
+        
+        print(products_with_timestamp)
+        return render(request, 'distproducts.html', {'products': products_with_timestamp, 'manufacturer': selected_distributor, 'email_dist': email_pharm, 'comp_info': comp_info})
+    else:
+        return render(request, 'distproducts.html', {'message': 'No products available'})
 
 def getdetails(request):
     patid = int(request.GET['patid'])
