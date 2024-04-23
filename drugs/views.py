@@ -919,7 +919,7 @@ def pharmorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "pharmorderprod.html", {'keys_company_info': keys_company_info,'email_pharm': email_pharm, 'comp_info' : comp_info})
+        return render(request, "pharmorderprod.html", {'keys_company_info': keys_company_info,'email_dist': email_pharm, 'comp_info' : comp_info})
 
 def distproducts(request):
     email_pharm = request.GET.get('email_pharm', None)
@@ -964,6 +964,29 @@ def distproducts(request):
     else:
         return render(request, 'distproducts.html', {'message': 'No products available'})
 
+@csrf_protect
+def pharmcheckout(request):
+    print("\n\npharmacy checkout\n\n")
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+        manufacturer = request.POST.get('manufacturer', None)
+        email_dist = request.POST.get('email_dist', None)
+        comp_info = request.POST.get('comp_info', None)
+        print(email_dist)
+        print(comp_info)
+        print(cart_items_json)
+        if cart_items_json and manufacturer:
+            # Parse the JSON data
+            cart_items = json.loads(cart_items_json)
+
+            # Do something with the cart_items data (e.g., save to the database, process the order, etc.)
+            # For example, you can print it for demonstration purposes
+            print(cart_items)
+
+            # You can also render a template or return an appropriate HTTP response
+            return render(request, 'pharmcheckout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
+    
 def getdetails(request):
     patid = int(request.GET['patid'])
     # k=webs3.retrive_data(patid)

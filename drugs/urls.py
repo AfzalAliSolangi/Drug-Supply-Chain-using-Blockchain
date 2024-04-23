@@ -31,6 +31,7 @@ urlpatterns = [
     path('viewdistinvent', views.viewdistinvent, name='viewdistinvent'),
     path('pharmorderprod', views.pharmorderprod, name='pharmorderprod'),
     path('distproducts', views.distproducts, name='distproducts'),
+    path('pharmcheckout', views.pharmcheckout, name='pharmcheckout'),
     path('hosup', views.hostpitalinput, name='hosup'),
     # path('drgby', views.distributor, name='drgby'),
     path('seedet', views.getdetails, name='seedet'),
