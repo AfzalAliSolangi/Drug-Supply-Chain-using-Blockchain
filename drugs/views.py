@@ -871,14 +871,57 @@ def process_registration_pharmacy(request):
 def login_pharmacy(request):
         return render(request, "login_pharmacy.html")
 
+#####Started working from here on 2024/04/23##
 def login_check_pharmacy(request): #Implement Password authentication
-    print('login_check_manufacturer')
+    print('login_check_pharmacy')
     if request.method == 'POST':
-        name = request.POST.get('name')
-        password = request.POST.get('passw')
-        print(name)
-        print(password)
-        return HttpResponse("log in pharmacy success!")
+        email_rcvd = request.POST.get('email')
+        password_rcvd = request.POST.get('passw')
+        result = rpc_connection.liststreamkeyitems(users_pharmacy_stream, email_rcvd)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        #apply length check for json_load
+        email_frm_chain = json_load[0]['keys'][0]
+        passw_frm_chain = json_load[0]['data']['json']['password']
+        pharmacy_name = json_load[0]['data']['json']['company_info']
+        comp_info = json_load[0]['data']['json']['company_info']
+        print(data)
+        print(comp_info)
+        print(pharmacy_name)
+        print("Email from front end: ",email_rcvd)
+        print("Email from stream: ",email_frm_chain)
+        print(password_rcvd)
+        print(passw_frm_chain)
+        if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+            return render(request, "pharmacy.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': pharmacy_name})
+        else:
+            return render(request, "login_pharmacy.html", {'error_message': "Incorrect email or password."})
+
+def pharmorderprod(request):
+    print("\nOrdering Products from Distributor")
+    if request.method == 'POST':
+        email_pharm = request.POST.get('email',None)
+        print('\Pharmacy Email: ',email_pharm)
+        
+        #for fetching out the name of the Distributor name
+        result = rpc_connection.liststreamkeyitems(users_pharmacy_stream, email_pharm)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        comp_info = json_load[0]['data']['json']['company_info'] 
+        
+        # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen
+        response = rpc_connection.liststreamitems(users_distributor_stream)
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        print(json_string)
+        json_load = json.loads(json_string)
+        keys_company_info = {}
+        for item in json_load:
+            for key in item['keys']:
+                keys_company_info[key] = item['data']['json']['company_info']
+        print("\nkeys_company_info:\n",keys_company_info)
+        return render(request, "pharmorderprod.html", {'keys_company_info': keys_company_info,'email_dist': email_pharm, 'comp_info' : comp_info})
+
+
 
 def getdetails(request):
     patid = int(request.GET['patid'])

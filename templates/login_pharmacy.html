@@ -20,7 +20,7 @@
         </div>
         <form class="login-form" action="login_check_pharmacy" method="post">
           {%csrf_token%}
-          <input name='name' type="text" placeholder="username" />
+          <input name='email' type="text" placeholder="username" />
           <input name='passw' type="password" placeholder="password" />
           <button>login</button>
           <p class="message">Not registered? <a href="#">Create an account</a></p>
