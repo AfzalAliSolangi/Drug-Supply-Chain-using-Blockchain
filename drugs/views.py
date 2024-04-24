@@ -1228,6 +1228,47 @@ def pharmcheckout(request):
             # You can also render a template or return an appropriate HTTP response
             return render(request, 'pharmcheckout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
 
+
+def viewpharminvent(request):
+    print('\nViewing Pharmacy Inventory')
+    if request.method == 'POST':
+        dist_key = request.POST.get('email')
+        print(dist_key)
+        response = rpc_connection.liststreamkeyitems('{}'.format(users_pharmacy_items_stream), '{}'.format(dist_key)) # Based on the manufacturer KEY the data is being fetched
+        print(len(response))
+        if len(response) > 0:
+            product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
+
+            for item in response:
+                data = item['data']['json']
+                key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+                timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
+
+                if key not in product_map or timestamp > product_map[key]['timestamp']:
+                    product_map[key] = {
+                        'product_data': data['products'][0],
+                        'timestamp': timestamp,
+                        'email': key[0],
+                        'product_code': key[1],
+                        'batchId': key[2],
+                        'product_name': key[3]
+                    }
+
+            products_with_timestamp = [{
+                'timestamp': value['timestamp'],
+                'email': value['email'],
+                'product_code': value['product_code'],
+                'batchId': value['batchId'],
+                'product_name': value['product_name'],
+                'product_data': value['product_data']
+            } for value in product_map.values()]
+
+            print(products_with_timestamp)
+            return render(request, 'viewdistinventory.html', {'products': products_with_timestamp})
+        else:
+            return render(request, 'viewdistinventory.html', {'message': 'No products available'})
+
+
 def pharmreqorder(request):
     print('\nPharmacy publish order request to Distributor')
     if request.method == 'POST':

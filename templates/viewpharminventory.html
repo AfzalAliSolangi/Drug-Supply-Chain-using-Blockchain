@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Font Awesome -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .product {
+            border: 1px solid #ccc;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 0.25rem;
+        }
+
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.25rem;
+        }
+
+        .strike-text {
+            text-decoration: line-through;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-outline-primary {
+            border: 1px solid #007bff;
+            color: #007bff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .read-more-content {
+            overflow: hidden;
+            height: 1.5em; /* Adjust as needed */
+        }
+
+        .read-more-toggle {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        /* Cart Icon */
+        .cart-icon {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        /* Cart Counter */
+        .cart-counter {
+            position: fixed;
+            top: 25px;
+            right: 30px;    
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 50%;
+        }
+
+        /* Add this to your existing CSS styles */
+        .cart-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .cart-popup {
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            max-width: 400px; /* Adjust as needed */
+            margin: 0 auto;
+            border-radius: 0.25rem;
+        }
+
+        /* Close button style */
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .cart-buttons button {
+            flex-grow: 1;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    {% if message %}
+    <div class="container">
+        <h2>manufacturer: {{ manufacturer }}</h2>
+        <div class="row p-2 bg-white border rounded product">
+            <div class="col-md-12 mt-1">
+                <p>{{ message }}</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="container">
+        <h2>manufacturer: {{ manufacturer }}</h2>
+        </div>
+
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-10">
+                {% for product in products %}
+                    <div class="row p-2 bg-white border rounded product">
+                        <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="{{ product.image_url }}"></div>
+                        <div class="col-md-9 mt-1">
+                            <h5>{{ product.product_name }}</h5>
+                            <div class="read-more-content">
+                                <p>Descirption    :{{ product.product_data.description | slice:":89" }}</p>
+                            </div>
+                            {% if product.product_data.description.length > 89 %}
+                                <p class="read-more-toggle" onclick="toggleReadMore('{{ product.product_data.product_code }}')">Read more...</p>
+                                <div id="readMoreContent{{ product.product_data.product_code }}" style="display: none;">{{ product.description | slice:"89:" }}</div>
+                            {% endif %}
+                            <p>Quantity    : {{ product.product_data.quantity_in_stock }}</p>
+                            <p>Product Code: {{ product.product_data.product_code }}</p>
+                            <input type="hidden" name="email" value="{{ product.email }}">
+                            <input type="hidden" name="batch_id" value="{{ product.batchId }}">
+                            <input type="hidden" name="timestamp" value="{{ product.timestamp }}">
+                            <div class="d-flex flex-row align-items-center justify-content-between">
+                                <div>
+                                    <h4 class="mr-1">${{ product.product_data.unit_price }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        var cartItems = [];
+
+        function toggleReadMore(productId) {
+            var readMoreContent = document.getElementById('readMoreContent' + productId);
+            readMoreContent.style.display = (readMoreContent.style.display === 'none' || readMoreContent.style.display === '') ? 'block' : 'none';
+        }
+        function addToCart(manu_email,timestamp,manu_name,batchId,productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
+            var quantityInput = document.getElementById('quantity'+batchId);
+            console.log(quantityInput)
+            var quantity = parseInt(quantityInput.value, 10);
+            console.log(quantity)
+            console.log(maxQuantity)
+            console.log(cartItems)
+        
+            if (quantity > 0 && quantity <= maxQuantity) {
+                // Check if the product is already in the cart
+                var existingItem = cartItems.find(item => item.productCode === productCode);
+        
+                if (existingItem) {
+                    // Product already in the cart, update the quantity
+                    existingItem.quantity += quantity;
+                } else {
+                    // Create a new cart item for each product
+                    
+                    var cartItem = {
+                        expiry_date: expiry_date,
+                        manufacturing_date: manufacturing_date,
+                        dosage: dosage,
+                        ingredients: ingredients,
+                        description: description,
+                        batchId: batchId,
+                        manu_name: manu_name,
+                        timestamp: timestamp,
+                        manu_email: manu_email,
+                        productName: productName,
+                        productCode: productCode,
+                        unitPrice: unitPrice,
+                        quantity: quantity,
+
+                        totalprice : quantity*unitPrice
+                        // Add other properties if needed
+                    };
+        
+                    // Add the cart item to the cartItems array
+                    cartItems.push(cartItem);
+        
+                    // Update the cart counter only for new products
+                    var cartCounter = document.getElementById('cartCounter');
+                    var currentCount = parseInt(cartCounter.innerText, 10);
+                    cartCounter.innerText = currentCount + 1;
+                }
+        
+                // Reset quantity input
+                quantityInput.value = 0;
+        
+                // Hide the modal
+                $('#addToCartModal' + batchId).modal('hide');
+                
+                // Additional logic here to update the cart or perform other actions
+            } else {
+                alert('Invalid quantity. Please enter a valid quantity.');
+            }
+        }
+        
+
+        function viewCart() {
+            // Show the cart overlay
+            document.getElementById('cartOverlay').style.display = 'flex';
+        
+            // Display cart items
+            var cartContent = document.getElementById('cartContent');
+            cartContent.innerHTML = ''; // Clear previous content
+        
+            if (cartItems.length === 0) {
+                cartContent.innerHTML = '<p>Your cart is empty.</p>';
+            } else {
+                // Display each cart item
+                cartItems.forEach(function (item) {
+                    var itemInfo = `
+                        <div>
+                            <p>Product: ${item.productName}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                            <p>Total Price: $${item.unitPrice * item.quantity}</p>
+                        </div>
+                        <hr>
+                    `;
+                    var itemElement = document.createElement('div');
+                    itemElement.innerHTML = itemInfo;
+                    cartContent.appendChild(itemElement);
+                });
+            }
+        }
+        
+        function closeCartPopup() {
+            // Hide the cart overlay
+            document.getElementById('cartOverlay').style.display = 'none';
+        }
+
+        function proceedToCheckout() {
+            // Log the cart items to the console
+            console.log(cartItems);
+        }
+
+        function proceedToCheckout(manufacturer) {
+            // Log the cart items to the console
+            console.log(cartItems);
+            console.log(manufacturer);
+            
+            // Retrieve the value of email_dist from the input field
+            var email_dist = document.querySelector('input[name="email_dist"]').value;
+            console.log(email_dist);
+            // Retrieve the value of email_dist from the input field
+            var comp_info = document.querySelector('input[name="comp_info"]').value;
+            console.log(comp_info);
+        
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/checkout';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+        
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+            form.appendChild(csrfInput);
+        
+            // Create an input field to hold the cartItems data
+            const jsonInput = document.createElement('input');
+            jsonInput.type = 'hidden';
+            jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
+            jsonInput.value = JSON.stringify(cartItems);
+            form.appendChild(jsonInput);
+        
+            // Add an input field for the manufacturer name
+            const manufacturerInput = document.createElement('input');
+            manufacturerInput.type = 'hidden';
+            manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+            manufacturerInput.value = manufacturer;  // Pass the manufacturer value
+            form.appendChild(manufacturerInput);
+        
+            // Add an input field for the email_dist value
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.value = email_dist;  // Pass the email_dist value
+            form.appendChild(emailInput);
+
+            // Add an input field for the email_dist value
+            const compinfoInput = document.createElement('input');
+            compinfoInput.type = 'hidden';
+            compinfoInput.name = 'comp_info';  // Name to use in Django for the email_dist
+            compinfoInput.value = comp_info;  // Pass the email_dist value
+            form.appendChild(compinfoInput);
+        
+            // Append the form to the document body
+            document.body.appendChild(form);
+        
+            // Submit the form
+            form.submit();
+        }
+        
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>

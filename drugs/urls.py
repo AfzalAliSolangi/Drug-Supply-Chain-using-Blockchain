@@ -35,6 +35,7 @@ urlpatterns = [
     path('pharmreqorder', views.pharmreqorder, name='pharmreqorder'),
     path('pharmorders', views.pharmorders, name='pharmorders'),
     path('distorderconfirm', views.distorderconfirm, name='distorderconfirm'),
+    path('viewpharminvent', views.viewpharminvent, name='viewpharminvent'),
     path('hosup', views.hostpitalinput, name='hosup'),
     # path('drgby', views.distributor, name='drgby'),
     path('seedet', views.getdetails, name='seedet'),
