@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Font Awesome -->
+    <style>
+        /* Your CSS styles */
+        .cart-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            z-index: 9999; /* Ensure it appears above other content */
+        }
+        
+        .cart-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+            z-index: 10000; /* Ensure it appears above overlay */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Orders</h2>
+
+        <!-- Counter button to display the count of selected orders -->
+        <button id="orderCount" style="position: fixed; top: 10px; right: 10px; background-color: #007bff; color: #ffffff; padding: 5px 10px; border: none; border-radius: 50%; cursor: pointer;">
+            <i class="fas fa-shopping-cart"></i> <span id="selectedCount">0</span>
+        </button>
+        <div class="d-flex justify-content-center row">
+            <div class="col-md-10">
+                <!-- Inside the for loop for orders -->
+                {% for order in orders %}
+                    <div class="row p-2 bg-white border rounded product">
+                        <div class="col-md-12 mt-1">
+                            <p>Pharmacy : {{ order.Distributor_name }}</p>
+                            <p>Product Name: {{ order.product_name }}</p> 
+                            <p>Batch ID: {{ order.batchId }}</p>
+                            <p>Quantity: {{ order.quantity }}</p>
+                            <p>Confirmed: {{ order.confirmed }}</p>
+                            <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
+                            <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
+                            <input type="hidden" name="product_name" value="{{ order.product_name }}">
+                            <input type="hidden" name="quantity" value="{{ order.product_data.quantity }}">
+                            <input type="hidden" name="confirmed" value="{{ order.product_data.confirmed }}">
+                            <input type="hidden" name="timestamp" value="{{ order.product_data.timestamp }}">
+                            <button class="btn btn-primary" onclick="selectOrder('{{ order.Distributor_name }}','{{ order.Manufacturer_email }}','{{ order.distributor_email }}','{{ order.batchId }}','{{ order.product_name }}','{{ order.product_code }}','{{ order.timestamp }}','{{ order.quantity }}','{{ order.confirmed }}')">Select</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay and Popup -->
+    <div id="cartOverlay" class="cart-overlay" onclick="closeCartPopup()">
+        <div class="cart-popup" id="cartPopup">
+            <div id="cartContent">
+                <!-- Display selected orders here -->
+                <h3>Selected Orders</h3>
+                <ul id="selectedOrdersList">
+                    <!-- Selected orders will be dynamically added here -->
+                </ul>
+            </div>
+            <div class="cart-buttons">
+                <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
+                <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}')">Confirm Request</button>
+                <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Your JavaScript Code -->
+    <script>
+        var selectedOrders = []; // Array to store selected orders
+        // Function to update the popup with selected orders
+        function updateSelectedOrdersPopup() {
+            var selectedOrdersList = document.getElementById('selectedOrdersList');
+            if (selectedOrdersList) {
+                // Clear previous content
+                selectedOrdersList.innerHTML = '';
+            
+                // Iterate through selectedOrders array and create list items
+                selectedOrders.forEach(function(order) {
+                    var listItem = `
+                                <div>
+                                    <p>Pharmacy: ${order.Distributor_name}</p>
+                                    <p>Product: ${order.product_name}</p>
+                                    <p>Product Code: ${order.product_code}</p>
+                                    <p>BatchID: ${order.batchId}</p>
+                                    <p>Quantity: ${order.quantity}</p>
+                                </div>
+                                <hr>`;
+
+                    var orderElement = document.createElement('div');
+                    orderElement.innerHTML = listItem;
+                    selectedOrdersList.appendChild(orderElement);
+                });
+            }
+        }
+        function selectOrder(Distributor_name, Manufacturer_email, distributor_email, batchId, product_name, product_code, timestamp, quantity, confirmed) {
+            // Create an object for the selected order
+            var order = {
+                'Distributor_name': Distributor_name,
+                'Manufacturer_email': Manufacturer_email,
+                'distributor_email': distributor_email,
+                'batchId': batchId,
+                'product_name': product_name,
+                'product_code': product_code,
+                'timestamp': timestamp,
+                'quantity': quantity,
+                'confirmed': confirmed
+            };
+        
+            // Check if the order is already selected
+            var index = selectedOrders.findIndex(function(item) {
+                return item.batchId === batchId; // Adjust based on your unique identifier for orders
+            });
+            
+            // If not selected, add it to selectedOrders
+            if (index === -1) {
+                selectedOrders.push(order);
+            }
+        
+            console.log(selectedOrders); // Output selected orders to console (for testing)
+            updateOrderCount();
+            updateSelectedOrdersPopup();
+            // You can perform further actions here, such as updating the UI to indicate the selected orders
+        }
+        
+                // Function to handle click on the counter button
+        document.getElementById('orderCount').addEventListener('click', function() {
+            // Perform some action when the counter button is clicked
+            document.getElementById('cartOverlay').style.display = 'flex';
+            console.log('Counter button clicked!');
+            updateSelectedOrdersPopup();
+            // You can add your logic here, such as displaying a popup with selected orders, etc.
+        });
+
+        // Function to update the order count display
+        function updateOrderCount() {
+            var countElement = document.getElementById('selectedCount');
+            if (countElement) {
+                countElement.textContent = selectedOrders.length.toString();
+            }
+        }
+        
+        function viewOrders() {
+            // Show the cart overlay
+            document.getElementById('cartOverlay').style.display = 'flex';
+        
+            // Display order items
+            var cartContent = document.getElementById('cartContent');
+            cartContent.innerHTML = ''; // Clear previous content
+        
+            if (orderItems.length === 0) {
+                cartContent.innerHTML = '<p>No orders available.</p>';
+            } else {
+                // Display each order item
+                orderItems.forEach(function (item) {
+                    var itemInfo = `
+                        <div>
+                            <p>Publishers: ${item.publishers}</p>
+                            <p>Keys: ${item.keys}</p>
+                            <p>Confirmations: ${item.confirmations}</p>
+                            <!-- Display more order details as needed -->
+                        </div>
+                        <hr>
+                    `;
+                    var itemElement = document.createElement('div');
+                    itemElement.innerHTML = itemInfo;
+                    cartContent.appendChild(itemElement);
+                });
+            }
+        }
+
+        // Function to close the cart popup
+        function closeCartPopup() {
+            document.getElementById('cartOverlay').style.display = 'none';
+        }
+
+        // Function to proceed to checkout
+        function proceedToCheckout(manufacturer) {
+            // Retrieve the value of email_dist from the input field
+            var email_dist = document.querySelector('input[name="email_dist"]').value;
+
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+        
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+            form.appendChild(csrfInput);
+        
+            // Add an input field for the selectedOrders data
+            const selectedOrdersInput = document.createElement('input');
+            selectedOrdersInput.type = 'hidden';
+            selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
+            selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+            form.appendChild(selectedOrdersInput);
+        
+            // Add an input field for the manufacturer name
+            const manufacturerInput = document.createElement('input');
+            manufacturerInput.type = 'hidden';
+            manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+            manufacturerInput.value = manufacturer;  // Pass the manufacturer value
+            form.appendChild(manufacturerInput);
+        
+            // Add an input field for the email_dist value
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.value = email_dist;  // Pass the email_dist value
+            form.appendChild(emailInput);
+        
+            // Append the form to the document body
+            document.body.appendChild(form);
+        
+            // Submit the form
+            form.submit();
+        }
+        
+
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>

@@ -18,6 +18,7 @@ users_distributor_items_stream = config.get('Section1','users_distributor_items_
 users_master_stream = config.get('Section1','users_master_stream') #Need to add different user stream for all users
 users_manufacturer_stream = config.get('Section1','users_manufacturer_stream') #Need to add different user stream for all users
 manufacturer_orders_stream = config.get('Section1','manufacturer_orders_stream') #Set a default for Manufacturer, add another for distributors
+distributor_orders_stream = config.get('Section1','distributor_orders_stream') #Set a default for Manufacturer, add another for distributors
 users_distributor_stream = config.get('Section1','users_distributor_stream') #Need to add different user stream for all users
 users_pharmacy_stream = config.get('Section1','users_pharmacy_stream') #Need to add different user stream for all users
 key = config.get('Section1','key') #Key - for manufacturer
@@ -823,6 +824,54 @@ def distreqorder(request):
             #render a template or return an appropriate HTTP response, still to be decided
             return HttpResponse("Purchase completed. Thank you!")
 
+def pharmorders(request):
+    print('\nOrders From Pharmacies\n')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email')
+        print(email_rcvd)
+        response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        combined_list = []
+
+        for item in json_string:
+            # Extract keys from the dictionary
+            keys = item['keys']
+
+            # Extract data part from the dictionary
+            data_part = [item['data']['json'][key] for key in ['quantity', 'confirmed']]
+
+            # Combine keys and data_part into a single list
+            combined_list.append(keys + data_part)
+        print(combined_list)
+
+        
+        orders = []
+
+        # Iterate over the combined_list
+        for index, item in enumerate(combined_list):
+            # Create a dictionary for each element in the combined_list
+            order = {
+                "Distributor_name": item[0],
+                "Manufacturer_email": item[1],
+                "distributor_email": item[2],
+                "batchId": item[4],
+                "product_name": item[6],
+                "product_code": item[5],
+                "timestamp": item[7],
+                "quantity": item[8],
+                "confirmed": item[9],
+            }
+            # Append the dictionary to the orders list
+            orders.append(order)
+
+        # Print the resulting list of dictionaries
+        print(orders)
+
+        return render(request, "distributor_orders.html",{'orders': orders})
+    
+
+
 ####Pharmacy#####
 def signup_pharmacy(request):
     print("Signup-pharmacy check")
@@ -973,6 +1022,7 @@ def pharmcheckout(request):
         manufacturer = request.POST.get('manufacturer', None)
         email_dist = request.POST.get('email_dist', None)
         comp_info = request.POST.get('comp_info', None)
+        print(manufacturer)
         print(email_dist)
         print(comp_info)
         print(cart_items_json)
@@ -986,7 +1036,58 @@ def pharmcheckout(request):
 
             # You can also render a template or return an appropriate HTTP response
             return render(request, 'pharmcheckout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
-    
+
+def pharmreqorder(request):
+    print('\nPharmacy publish order request to Distributor')
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+        email_dist = request.POST.get('email_dist', None)
+        comp_info = request.POST.get('comp_info', None)
+        print(email_dist)
+        print(comp_info)
+        #NOTE:
+        # Please implement the flow in which whenever the distributor places an order,
+        # it first goes to the order confirmation page of the MANUFACTURER.
+        # Once manufacturer confirms the order, the quantity of the medicine is minused from the MANUFACTURER stream
+        # and new Item is published in the MANUFACTURER stream.
+
+        # Retrieve the manufacturer name from checkout.html from the POST request
+        manufacturer = request.POST.get('manufacturer', None)
+        print("\n\n----MANUFACTURER NAME----")
+        print(manufacturer)
+        print("--------\n")
+
+        #Also getting the manufacturer name becuase it's a key in the MANUFACTURER 
+        if cart_items_json:
+            print("----CART ITEMS from frontEND----")
+            cart_items = json.loads(cart_items_json)
+            print(len(cart_items))
+            print("--------\n")
+            for cart_item in cart_items:
+                manu_email = cart_item['manu_email']
+                batchId = cart_item['batchId']
+                productCode = cart_item['productCode']
+                productName = cart_item['productName']
+                timestamp = cart_item['timestamp']
+                quantity = cart_item['quantity']
+                print(manu_email)
+                print(batchId)
+                print(productCode)
+                print(productName)
+                print(timestamp)
+                print(quantity)
+
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
+
+
+                # Publishes the ordered products into the distributor_orders_stream stream accessed by Pharmacy
+                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
+                                                                                                                                                                           'confirmed': 'False',
+                                                                                                                                                                           }})
+            #render a template or return an appropriate HTTP response, still to be decided
+            return HttpResponse("Purchase completed. Thank you!")
+
 def getdetails(request):
     patid = int(request.GET['patid'])
     # k=webs3.retrive_data(patid)

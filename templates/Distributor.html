@@ -55,9 +55,9 @@
         <h2>Welcome, {{ company_info }}</h2>
         {% endif %}
         <div class="d-grid gap-2">
-            <button class="btn" type="button" onclick="distorderprod('{{ email }}')">Order Drugs</button>
+            <button class="btn" type="button" onclick="pharmorders('{{ email }}')">Pharmacy Orders</button>
             <button class="btn" type="button" onclick="viewdistinvent('{{ email }}')">View Inventory</button>
-            <button class="btn" type="button" onclick="addDrug('{{ email }}','{{ company_info }}')">Add Drug</button>
+            <button class="btn" type="button" onclick="distorderprod('{{ email }}')">Order Drugs</button>
         </div>
     </div>
     <!-- Bootstrap JS with Popper -->
@@ -91,23 +91,17 @@
             document.body.appendChild(form);
             form.submit();
         }
-        function addDrug(email, company_info) {
-            console.log("Adding drug...");
-            window.location.href = '/adddrugmenu';  // Replace with the actual URL for adding drug
+        function pharmorders(email) {
+            console.log("Email Distribution:", email);
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/adddrugmenu';  // Replace with the actual URL for adding drug
+            form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
             form.style.display = 'none';
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
             emailInput.name = 'email';
             emailInput.value = email;
             form.appendChild(emailInput);
-            const companyinfoInput = document.createElement('input');
-            companyinfoInput.type = 'hidden';
-            companyinfoInput.name = 'company_info';
-            companyinfoInput.value = company_info;
-            form.appendChild(companyinfoInput);
             document.body.appendChild(form);
             form.submit();
         }
