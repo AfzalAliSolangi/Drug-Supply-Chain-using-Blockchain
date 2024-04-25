@@ -51,11 +51,22 @@
     font-size: 16px; /* Adjust font size as needed */
     margin-right: 20px; /* Adds spacing between the name and the logout button */
   }
-  .table {
+  .table-container table{
     margin-left: 80px; /* Same as sidebar width */
     padding: 20px;
+    border-spacing: 0px;
+    border-collapse: collapse;
     margin-top: 60px; /* Adds margin to top to account for the fixed top bar */
-  }
+}
+
+th, td {
+    padding: 15px;
+    border: 1px solid transparent; /* Specify a default transparent border */
+}
+
+.table-row td {
+    border-bottom: 2px solid black !important; /* Adding !important to ensure this style is prioritized */
+}
   .button {
     background-color: #4CAF50; /* Green */
     border: none;
@@ -153,16 +164,29 @@
 </div>
 
 
-<div class="table">
-  <table>
-    <tr>
-      <th>Order ID</th>
-      <th>Date</th>
-      <th>Status</th>
-      <th>Total</th>
-    </tr>
-    <!-- Add rows here -->
-  </table>
+<div class="table-container">
+    <table>
+        <thead>
+          <tr>
+            <th scope="col">Distributor</th>
+            <th scope="col">Product</th>
+            <th scope="col">Batch ID</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Confirmed</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr class="table-row">
+                <td>{{ order.Distributor_name }}</td>
+                <td>{{ order.product_name }}</td>
+                <td>{{ order.batchId }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.confirmed }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
