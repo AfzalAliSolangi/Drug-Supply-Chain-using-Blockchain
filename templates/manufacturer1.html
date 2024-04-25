@@ -51,21 +51,29 @@
     font-size: 16px; /* Adjust font size as needed */
     margin-right: 20px; /* Adds spacing between the name and the logout button */
   }
-  .table-container table{
-    margin-left: 80px; /* Same as sidebar width */
+  .table-container table {
+    margin-left: 80px;
     padding: 20px;
-    border-spacing: 0px;
+    border-spacing: 0;
     border-collapse: collapse;
-    margin-top: 60px; /* Adds margin to top to account for the fixed top bar */
+    margin-top: 60px;
+    width: calc(100% - 100px); /* Adjust based on your layout */
+    background-color: #fff; /* Optional: sets a clean background */
 }
 
 th, td {
-    padding: 15px;
-    border: 1px solid transparent; /* Specify a default transparent border */
+    padding: 15px 10px; /* Increased padding for a modern look */
+    text-align: left; /* Typically modern tables align text to the left */
+    font-size: 14px; /* Adjust font size for readability */
+}
+
+th {
+    background-color: #f8f8f8; /* Light background for header */
+    color: #333; /* Soft black for text */
 }
 
 .table-row td {
-    border-bottom: 2px solid black !important; /* Adding !important to ensure this style is prioritized */
+    border-bottom: 1px solid #cccccc !important; /* Lighter and thinner border */
 }
   .button {
     background-color: #4CAF50; /* Green */
