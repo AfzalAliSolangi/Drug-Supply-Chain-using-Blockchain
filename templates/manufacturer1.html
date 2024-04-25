@@ -69,6 +69,64 @@
     cursor: pointer;
     border-radius: 4px;
   }
+  /* Style for the dropdown button */
+  .dropbtn {
+    background-color: #FFFFFF; /* White background */
+    color: black; /* Black text/icon */
+    padding: 8px 12px; /* Adjust padding to balance the button size */
+    font-size: 16px; /* Font size of the text/icon */
+    border: none; /* No border */
+    cursor: pointer; /* Indicates it's clickable */
+    border-radius: 4px; /* Rounded corners */
+    line-height: 1; /* Line height for text alignment */
+    display: flex; /* Use flex to center content */
+    align-items: center; /* Align items vertically */
+    justify-content: center; /* Center content horizontally */
+    height: 40px; /* Match height with other elements like image */
+    overflow: visible; /* Prevents clipping */
+}
+
+  
+  
+  /* Container for the dropdown content. Hidden by default. */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0;                  /* Aligns the dropdown to the right of the button */
+}
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #f1f1f1}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {
+      display: block;
+  }
+  
+  /* Change the dropdown button style on hover */
+  .dropdown:hover .dropbtn {
+      background-color: #E8E8E8; /* Light gray to indicate hover */
+  }
+  /* Ensure the dropdown menu is correctly positioned */
+  .dropdown {
+    position: relative; /* Ensures the dropdown content is positioned relative to this container */
+    display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
+    margin-left: 5px; /* Minimal left margin for tight spacing */
+    margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+}
+
 </style>
 </head>
 <body>
@@ -80,13 +138,20 @@
 </div>
 
 <div class="top-bar">
-    <img src="logo.png" alt="Company Logo" style="height: 40px;">
+    <b>Welcome, {{ company_info }}</b>
     <div style="display: flex; align-items: center;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" style="height: 40px; border-radius: 50%; margin-right: 10px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" style="height: 40px; border-radius: 50%; margin-right: 5px;">
       <span>{{ company_info }}</span>
-      <button class="button">Logout</button>
+      <!-- Dropdown Menu -->
+      <div class="dropdown">
+        <button class="dropbtn">▼</button>
+        <div class="dropdown-content">
+          <a href="#logout">Logout</a>
+        </div>
+      </div>
     </div>
-  </div>
+</div>
+
 
 <div class="table">
   <table>
