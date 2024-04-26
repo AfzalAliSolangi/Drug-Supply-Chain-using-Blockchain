@@ -73,7 +73,7 @@ th {
 }
 
 .table-row td {
-    border-bottom: 1px solid #cccccc !important; /* Lighter and thinner border */
+    border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
 }
   .button {
     background-color: #4CAF50; /* Green */
@@ -154,6 +154,17 @@ th {
 #ordersLink:hover {
   background-color: #43a047; /* Slightly darker green on hover for feedback */
 }
+
+.oval-box {
+  width: 90px; /* Adjust according to your requirement */
+  height: 30px; /* Adjust according to your requirement */
+  border-radius: 15px; /* Half of the height for smoother corners */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: black; /* Text color */
+  font-weight: bold; /* Make text bold */
+}
 </style>
 </head>
 <body>
@@ -190,7 +201,7 @@ th {
             <th scope="col">Batch ID</th>
             <th scope="col">Product Code</th>
             <th scope="col">Quantity</th>
-            <th scope="col">Confirmed</th>
+            <th scope="col">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -202,7 +213,11 @@ th {
                 <td>{{ order.batchId }}</td>
                 <td>{{ order.product_code }}</td>
                 <td>{{ order.quantity }}</td>
-                <td>{{ order.confirmed }}</td>
+                <td>
+                  <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
+                    {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
+                  </div>
+              </td>
             </tr>
             {% endfor %}
         </tbody>
