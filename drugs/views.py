@@ -197,7 +197,7 @@ def login_check_manufacturer(request): #Implement Password authentication
                 keys = item['keys']
 
                 # Extract data part from the dictionary
-                data_part = [item['data']['json'][key] for key in ['quantity', 'confirmed']]
+                data_part = [item['data']['json'][key] for key in ['confirmed']]
 
                 # Combine keys and data_part into a single list
                 combined_list.append(keys + data_part)
@@ -209,6 +209,10 @@ def login_check_manufacturer(request): #Implement Password authentication
             # Iterate over the combined_list
             for index, item in enumerate(combined_list):
                 # Create a dictionary for each element in the combined_list
+
+                orderPlaceOn = datetime.datetime.fromisoformat(item[7])
+                # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+                orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
                 order = {
                     "Distributor_name": item[0],
                     "Manufacturer_email": item[1],
@@ -216,8 +220,8 @@ def login_check_manufacturer(request): #Implement Password authentication
                     "batchId": item[4],
                     "product_name": item[6],
                     "product_code": item[5],
-                    "timestamp": item[7],
-                    "quantity": item[8],
+                    "orderPlaceOn": str(orderPlaceOn),
+                    "quantity": item[3],
                     "confirmed": item[9],
                 }
                 # Append the dictionary to the orders list
@@ -811,12 +815,15 @@ def distreqorder(request):
                 print("----Updated PRODUCTS quantity published to MANUFACTURER STREAM----")
                 print(updated_items_str)
 
-
+                time_of_order=timestamp_utc
                 # Publishes the ordered products into the manufacturer_orders_stream stream accessed by Manufacturer
-                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
-                                                                                                                                                                           'confirmed': 'False',
-                                                                                                                                                                           }})
+                # before publishing have SLA Logic
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manu_email,email_dist,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
+                                                                                                                                                                           'confirmed': '',
+                                                                                                                                                                      }
+                                                                                                                                                                    })
             #render a template or return an appropriate HTTP response, still to be decided
+            print(txid) 
             return HttpResponse("Purchase completed. Thank you!")
 
 def pharmorders(request):
