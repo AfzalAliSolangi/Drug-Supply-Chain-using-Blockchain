@@ -185,8 +185,10 @@ th {
         <thead>
           <tr>
             <th scope="col">Distributor</th>
+            <th scope="col">Date</th>
             <th scope="col">Product</th>
             <th scope="col">Batch ID</th>
+            <th scope="col">Product Code</th>
             <th scope="col">Quantity</th>
             <th scope="col">Confirmed</th>
           </tr>
@@ -195,8 +197,10 @@ th {
             {% for order in orders %}
             <tr class="table-row">
                 <td>{{ order.Distributor_name }}</td>
+                <td>{{ order.orderPlaceOn }}</td>
                 <td>{{ order.product_name }}</td>
                 <td>{{ order.batchId }}</td>
+                <td>{{ order.product_code }}</td>
                 <td>{{ order.quantity }}</td>
                 <td>{{ order.confirmed }}</td>
             </tr>
