@@ -195,19 +195,18 @@ def login_check_manufacturer(request): #Implement Password authentication
             json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
             json_string = json.loads(json_string) #Converts OrderedDict to JSON String
             
-            # print(json_string)
+            print(json_string)
             combined_list = []
 
             for item in json_string:
-                # Extract keys from the dictionary
                 keys = item['keys']
-                # Extract data part from the dictionary
-                data_part = [item['data']['json'][key] for key in ['confirmed']]
-                # Combine keys and data_part into a single list
-                combined_list.append(keys + data_part)
+                traxid = item['txid']
+                confirmed_status = item['data']['json']['confirmed']
+                modified_keys = keys[:9] + [traxid] + keys[9:] + [confirmed_status]
+                combined_list.append(modified_keys)
 
             # print("\nCombined list\n")
-            # print(combined_list)
+            print(combined_list)
 
             # Sort the list based on the timestamp (second last index)
             combined_list.sort(key=lambda x: x[-2], reverse=True)
@@ -220,7 +219,7 @@ def login_check_manufacturer(request): #Implement Password authentication
             
             # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
             for order in combined_list:
-                key = tuple(order[:8])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+                key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
                 if key not in distinct_orders:
                     distinct_orders[key] = order
             
@@ -244,6 +243,7 @@ def login_check_manufacturer(request): #Implement Password authentication
                 orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
                 order = {
                     "orderid":item[0],
+                    "trxid": item[9],
                     "Distributor_name": item[1],
                     "Manufacturer_email": item[2],
                     "distributor_email": item[3],
@@ -252,7 +252,7 @@ def login_check_manufacturer(request): #Implement Password authentication
                     "product_code": item[6],
                     "orderPlaceOn": str(orderPlaceOn),
                     "quantity": item[4],
-                    "confirmed": item[10],
+                    "confirmed": item[11],
                 }
                 # Append the dictionary to the orders list
                 orders.append(order)
