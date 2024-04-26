@@ -146,12 +146,20 @@ th {
     margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
 }
 
+#ordersLink {
+  background-color: #4CAF50; /* Green color */
+  color: white; /* Ensures text is visible on the green background */
+}
+
+#ordersLink:hover {
+  background-color: #43a047; /* Slightly darker green on hover for feedback */
+}
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <a href="#" class="btn" onclick="event.preventDefault(); distorders('{{ email }}')">Orders</a>
+    <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); distorders('{{ email }}')">Orders</a>
     <a href="#" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}')">Inventory</a>
     <a href="#" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
 </div>
