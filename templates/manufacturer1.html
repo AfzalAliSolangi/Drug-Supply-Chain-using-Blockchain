@@ -51,26 +51,36 @@
     font-size: 16px; /* Adjust font size as needed */
     margin-right: 20px; /* Adds spacing between the name and the logout button */
   }
-  .table-container table {
+  .table-container {
+    overflow-y: auto; /* Enables vertical scrolling */
     margin-left: 80px;
+    margin-top: 60px;
+    width: calc(100% - 100px); /* Adjust based on your layout */
+    height: 400px; /* Adjust the height to fit your needs */
+}
+
+.table-container table {
     padding: 20px;
     border-spacing: 0;
     border-collapse: collapse;
-    margin-top: 60px;
-    width: calc(100% - 100px); /* Adjust based on your layout */
-    background-color: #fff; /* Optional: sets a clean background */
+    width: 100%; /* Ensures the table fills the container width */
+    background-color: #fff; /* Sets a clean background */
 }
 
 th, td {
     padding: 15px 10px; /* Increased padding for a modern look */
-    text-align: left; /* Typically modern tables align text to the left */
+    text-align: Center; /* Typically modern tables align text to the left */
     font-size: 14px; /* Adjust font size for readability */
 }
 
 th {
-    background-color: #f8f8f8; /* Light background for header */
+    position: sticky;
+    top: 0;
+    background-color: #f8f8f8; /* Light background for the header */
     color: #333; /* Soft black for text */
+    z-index: 2; /* Ensures the header is above other content */
 }
+
 
 .table-row td {
     border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
@@ -217,6 +227,12 @@ th {
                   <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
                     {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
                   </div>
+                  <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
+                  <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
+                  <input type="hidden" name="product_name" value="{{ order.product_name }}">
+                  <input type="hidden" name="quantity" value="{{ order.product_data.quantity }}">
+                  <input type="hidden" name="confirmed" value="{{ order.product_data.confirmed }}">
+                  <input type="hidden" name="timestamp" value="{{ order.product_data.timestamp }}">
               </td>
             </tr>
             {% endfor %}
