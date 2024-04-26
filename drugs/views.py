@@ -6,7 +6,7 @@ import multichain
 import json
 import configparser
 import datetime
-
+from collections import defaultdict
 config = configparser.ConfigParser()
 
 # Load the .conf file
@@ -190,24 +190,49 @@ def login_check_manufacturer(request): #Implement Password authentication
             response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
             json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
             json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+            
+            # print(json_string)
             combined_list = []
 
             for item in json_string:
                 # Extract keys from the dictionary
                 keys = item['keys']
-
                 # Extract data part from the dictionary
                 data_part = [item['data']['json'][key] for key in ['confirmed']]
-
                 # Combine keys and data_part into a single list
                 combined_list.append(keys + data_part)
-            print(combined_list)
+
+            # print("\nCombined list\n")
+            # print(combined_list)
+
+            # Sort the list based on the timestamp (second last index)
+            combined_list.sort(key=lambda x: x[-2], reverse=True)
 
             
-            orders = []
+########################################################################################################            
+            #NOTE: This is the logic for finding the latest order based on timestamp
+            # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
+            distinct_orders = {}
+            
+            # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
+            for order in combined_list:
+                key = tuple(order[:8])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+                if key not in distinct_orders:
+                    distinct_orders[key] = order
+            
+            # Convert the dictionary to a list of lists
+            distinct_orders_list = list(distinct_orders.values())
+
+########################################################################################################
+            
+            
+            # # Print the distinct orders
+            # for order in distinct_orders_list:
+            #     print(order)
 
             # Iterate over the combined_list
-            for index, item in enumerate(combined_list):
+            orders = []
+            for index, item in enumerate(distinct_orders_list):
                 # Create a dictionary for each element in the combined_list
 
                 orderPlaceOn = datetime.datetime.fromisoformat(item[7])
