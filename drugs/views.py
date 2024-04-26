@@ -7,6 +7,10 @@ import json
 import configparser
 import datetime
 from collections import defaultdict
+import random
+import string
+import hashlib
+
 config = configparser.ConfigParser()
 
 # Load the .conf file
@@ -227,27 +231,28 @@ def login_check_manufacturer(request): #Implement Password authentication
             
             
             # # Print the distinct orders
-            # for order in distinct_orders_list:
-            #     print(order)
+            for order in distinct_orders_list:
+                print(order)
 
             # Iterate over the combined_list
             orders = []
             for index, item in enumerate(distinct_orders_list):
                 # Create a dictionary for each element in the combined_list
 
-                orderPlaceOn = datetime.datetime.fromisoformat(item[7])
+                orderPlaceOn = datetime.datetime.fromisoformat(item[8])
                 # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
                 orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
                 order = {
-                    "Distributor_name": item[0],
-                    "Manufacturer_email": item[1],
-                    "distributor_email": item[2],
-                    "batchId": item[4],
-                    "product_name": item[6],
-                    "product_code": item[5],
+                    "orderid":item[0],
+                    "Distributor_name": item[1],
+                    "Manufacturer_email": item[2],
+                    "distributor_email": item[3],
+                    "batchId": item[5],
+                    "product_name": item[7],
+                    "product_code": item[6],
                     "orderPlaceOn": str(orderPlaceOn),
-                    "quantity": item[3],
-                    "confirmed": item[9],
+                    "quantity": item[4],
+                    "confirmed": item[10],
                 }
                 # Append the dictionary to the orders list
                 orders.append(order)
@@ -799,7 +804,7 @@ def distreqorder(request):
         print("\n\n----MANUFACTURER NAME----")
         print(manufacturer)
         print("--------\n")
-
+        
         #Also getting the manufacturer name becuase it's a key in the MANUFACTURER 
         if cart_items_json:
             print("----CART ITEMS from frontEND----")
@@ -841,9 +846,15 @@ def distreqorder(request):
                 print(updated_items_str)
 
                 time_of_order=timestamp_utc
+
+                # Generate OrderId based on various attributes
+                base_string = f"{email_dist}{manu_email}{quantity}{batchId}{productCode}{productName}{timestamp_utc}"
+                hashed = hashlib.sha256(base_string.encode()).hexdigest()
+                orderid = ''.join(random.choices(hashed, k=6))
+                
                 # Publishes the ordered products into the manufacturer_orders_stream stream accessed by Manufacturer
                 # before publishing have SLA Logic
-                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [comp_info,manu_email,email_dist,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [orderid,comp_info,manu_email,email_dist,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
                                                                                                                                                                            'confirmed': '',
                                                                                                                                                                       }
                                                                                                                                                                     })

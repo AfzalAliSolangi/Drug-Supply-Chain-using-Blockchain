@@ -206,6 +206,7 @@ th {
         <thead>
           <tr>
             <th scope="col">Select</th>
+            <th scope="col">OrderID</th>
             <th scope="col">Distributor</th>
             <th scope="col">Date</th>
             <th scope="col">Product</th>
@@ -219,6 +220,7 @@ th {
             {% for order in orders %}
             <tr class="table-row">
                 <td><input type="checkbox" name="selected" value="{{ order.id }}"></td>
+                <td>{{ order.orderid }}</td>
                 <td>{{ order.Distributor_name }}</td>
                 <td>{{ order.orderPlaceOn }}</td>
                 <td>{{ order.product_name }}</td>
