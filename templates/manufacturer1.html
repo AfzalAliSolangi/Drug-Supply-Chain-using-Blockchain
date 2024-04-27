@@ -205,15 +205,20 @@ th {
   <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
   <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
 
-  <input type="date" id="dateInput" onchange="filterByDate()" style="margin-left: 10px; height: 20px; border: 2px solid #333333;">
+  <input type="date" id="dateInput" onchange="filterByDate()" style="margin-left: 10px; height: 20px; border: 2px solid #333333; margin-right: 10px;">
 
   <!-- Status Filter Dropdown -->
-  <select id="statusFilter" onchange="filterByStatus()" style="margin-left: 10px; height: 24px; border: 2px solid #333333;">
+  <label for="statusFilter" style="margin-right: 5px;">Filter by Status:</label>
+  <select id="statusFilter" onchange="filterByStatus()" style="height: 24px; border: 2px solid #333333;">
     <option value="">All</option>
     <option value="Confirmed">Confirmed</option>
     <option value="Pending">Pending</option>
     <option value="Cancelled">Cancelled</option>
   </select>
+  <div>
+    <button id="confirmButton" onclick="handleConfirm()" style="margin-left: 180px; margin-right: 10px;">Confirm</button>
+    <button id="cancelButton" onclick="handleCancel()">Cancel</button>
+  </div>
 </div>
 
 
@@ -230,7 +235,9 @@ th {
             <th scope="col">Batch</th>
             <th scope="col">Product Code</th>
             <th scope="col">Quantity</th>
-            <th scope="col">Total Price</th>
+            <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
+              Total Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+          </th>
             <th scope="col">Status</th>
           </tr>
         </thead>
@@ -419,13 +426,67 @@ th {
 }
 
 function toggleSelectAll(source) {
-  var checkboxes = document.querySelectorAll('#ordersTable tbody input[type="checkbox"]:not(:disabled)');
+  // Select all checkboxes within table rows that are not disabled and are visible
+  var checkboxes = document.querySelectorAll('#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)');
   for (var i = 0; i < checkboxes.length; i++) {
       checkboxes[i].checked = source.checked;
-      updateSelection(checkboxes[i]); // Call updateSelection to adjust the selectedOrders array
+      updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
   }
 }
 
+let priceSortAsc = true; // Initialize sort direction
+
+function sortTableByPrice() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    var sortIcon = document.getElementById('priceSortIcon');
+    table = document.getElementById("ordersTable");
+    switching = true;
+
+    // Update icon based on current sort direction
+    if (priceSortAsc) {
+        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
+    } else {
+        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+    }
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[9];
+            y = rows[i + 1].getElementsByTagName("TD")[9];
+            if (priceSortAsc) {
+                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+}
+
+
+function handleConfirm() {
+  console.log("Confirmed Orders:", selectedOrders);
+  // Additional logic for confirming orders can be added here
+}
+
+function handleCancel() {
+  console.log("Cancelled Action");
+  console.log("Confirmed Orders:", selectedOrders);
+  // Logic to handle a cancellation or clear selections can be added here
+}
     function distorders(email) {
         console.log("Email Distribution:", email);
         const form = document.createElement('form');
