@@ -375,7 +375,7 @@ th {
                 </div>
                 <div>
                   <label for="batchId" class="formbold-form-label">Batch ID</label>
-                  <input type="text" id="batchId" placeholder="Batch ID" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                  <input type="text" id="batchId" placeholder="Batch ID" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                 </div>
             </div>
 
@@ -384,56 +384,56 @@ th {
                     <div class="formbold-input-flex">
                         <div>
                             <label for="PrdName" class="formbold-form-label">Product Name</label>
-                            <input type="text" name="PrdName" placeholder="Product Name" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="text" name="PrdName" placeholder="Product Name" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="PrdCode" class="formbold-form-label">Product Code</label>
-                            <input type="text" name="PrdCode" placeholder="Product Code" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="text" name="PrdCode" placeholder="Product Code" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                     </div>
                     <div class="formbold-input-flex">
                         <div>
                             <label for="Desc" class="formbold-form-label">Description</label>
-                            <input type="text" name="Desc" placeholder="Description" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="text" name="Desc" placeholder="Description" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="Ingredients" class="formbold-form-label">Ingredients (comma-separated)</label>
-                            <input type="text" name="Ingredients" placeholder="Ingredients" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="text" name="Ingredients" placeholder="Ingredients" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                     </div>
                     <div class="formbold-input-flex">
                         <div>
                             <label for="dosage" class="formbold-form-label">Dosage</label>
-                            <input type="text" name="dosage" placeholder="Dosage" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="text" name="dosage" placeholder="Dosage" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="instock" class="formbold-form-label">Quantity in Stock</label>
-                            <input type="text" name="instock" placeholder="Quantity in Stock" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="number" name="instock" id="instock" placeholder="Quantity in Stock" class="formbold-form-input" min="1" onchange="updateAddProductButton()" required>
                         </div>
                     </div>
                     <div class="formbold-input-flex">
                         <div>
                             <label for="PripU" class="formbold-form-label">Unit Price</label>
-                            <input type="text" name="PripU" placeholder="Unit Price" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="number" name="PripU" placeholder="Unit Price" min=1 class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="mfgdate" class="formbold-form-label">Manufacturing Date</label>
-                            <input type="date" name="mfgdate" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="date" name="mfgdate" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="expdate" class="formbold-form-label">Expiry Date</label>
-                            <input type="date" name="expdate" class="formbold-form-input" onchange="updateAddProductButton()"/>
+                            <input type="date" name="expdate" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                     </div>
                     <!-- New fields added for the drug specific attributes -->
                     <div class="formbold-input-flex">
                         <div>
                             <label for="drugbankId" class="formbold-form-label">DrugBank ID</label>
-                            <input type="text" id="drugbankId" placeholder="DrugBank ID" class="formbold-form-input"/>
+                            <input type="text" name="drugbankId" id="drugbankId" placeholder="DrugBank ID" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="form" class="formbold-form-label">Form</label>
-                            <select id="form" class="formbold-form-input" onchange="updateAddProductButton()">
+                            <select id="form" class="formbold-form-input" onchange="updateAddProductButton()"  required>
                                 <option value="Tablet">Tablet</option>
                                 <option value="Liquid">Liquid</option>
                                 <option value="Capsule">Capsule</option>
@@ -449,267 +449,30 @@ th {
                         </div>
                         <div>
                             <label for="strength" class="formbold-form-label">Strength</label>
-                            <input type="text" id="strength" placeholder="Strength (e.g., 300 mg)" class="formbold-form-input"/>
+                            <input type="text" name="strength" id="strength" placeholder="Strength (e.g., 300 mg)" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="route" class="formbold-form-label">Route</label>
-                            <input type="text" id="route" placeholder="Route of Administration" class="formbold-form-input"/>
+                            <input type="text" name="route" id="route" placeholder="Route of Administration" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                         <div>
                             <label for="images" class="formbold-form-label">Image Link</label>
-                            <input type="url" id="images" placeholder="URL for the image" class="formbold-form-input"/>
+                            <input type="url" name="images" id="images" placeholder="URL for the image" class="formbold-form-input" onchange="updateAddProductButton()" required/>
                         </div>
                     </div>
                 </div>
             </div>
             <input type="hidden" id="email" name="email" value="{{ email }}">
             <div class="button-container">
-                <button type="button" onclick="collectProductData()">Add Drug</button>
-            </div>            
+                <!-- Change button type to 'submit' and adjust the event handler -->
+                <button type="submit" onclick="event.preventDefault(); collectProductData();">Add Drug</button>
+            </div>       
         </form>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  var selectedOrders = []; // Array to store selected orders' data
-
-    function updateSelection(checkbox) {
-        var row = checkbox.closest('tr');
-        var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
-    
-        if (checkbox.checked) {
-            // If checked, gather data and add to the selectedOrders
-            var orderData = {
-                orderId: orderId,
-                trxId: row.cells[2].textContent.trim(),
-                distributor: row.cells[3].textContent.trim(),
-                date: row.cells[4].textContent.trim(),
-                product: row.cells[5].textContent.trim(),
-                batchId: row.cells[6].textContent.trim(),
-                productCode: row.cells[7].textContent.trim(),
-                quantity: row.cells[8].textContent.trim(),
-                status: row.cells[9].textContent.trim()
-            };
-          
-            // Collect hidden inputs within the row for additional data
-            row.querySelectorAll('td:last-child input[type="hidden"]').forEach(function(input) {
-                orderData[input.name] = input.value;
-            });
-          
-            selectedOrders.push(orderData); // Add the new order data to the array
-        } else {
-            // If unchecked, remove the order from the array
-            selectedOrders = selectedOrders.filter(function(order) {
-                return order.orderId !== orderId; // Correct filtering using orderId
-            });
-        }
-      
-        console.log(selectedOrders); // Logs to console to monitor the selected orders
-    }
-
-    // Attach event listeners to checkboxes on document load
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.table-row input[type="checkbox"]').forEach(function(checkbox) {
-            checkbox.onclick = function() { updateSelection(this); };
-        });
-    });
-
-    // Function to filter the table based on search input
-    function filterTable() {
-      var input = document.getElementById('searchInput');
-      var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
-      var table = document.getElementById('ordersTable');
-      var tr = table.getElementsByTagName('tr');
-    
-      if (filter === "") {
-          // If the filter is empty, display all rows
-          for (var i = 1; i < tr.length; i++) { // Skip the header row
-              tr[i].style.display = "";
-          }
-          return; // Exit the function early
-      }
-    
-      // Continue with filtering only if there is some text in the input
-      for (var i = 1; i < tr.length; i++) {
-          var display = false; // Assume the row does not match
-          // Define which columns to search (OrderID, Trx ID, Distributor, Product)
-          var tds = [tr[i].getElementsByTagName('td')[1], // OrderID (adjust index as necessary)
-                     tr[i].getElementsByTagName('td')[2], // Trx ID
-                     tr[i].getElementsByTagName('td')[3], // Distributor
-                     tr[i].getElementsByTagName('td')[5], // Product
-                     tr[i].getElementsByTagName('td')[6], // Batch ID	
-                     tr[i].getElementsByTagName('td')[7], // Product Code
-                     ]; // Product
-      
-          for (var j = 0; j < tds.length; j++) {
-              var td = tds[j];
-              if (td) {
-                  var txtValue = td.textContent || td.innerText;
-                  if (txtValue.toUpperCase().trim() === filter) {
-                      display = true; // Show the row if the cell matches exactly
-                      break; // Stop checking further cells if a match is found
-                  }
-              }
-          }
-          tr[i].style.display = display ? "" : "none"; // Apply the display setting
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var input = document.getElementById('searchInput');
-      input.addEventListener('keyup', function(event) {
-          if (event.key === "Enter") {
-              filterTable();
-          }
-      });
-    });
-
-    function filterByDate() {
-      var dateInput = document.getElementById('dateInput').value;
-      var table = document.getElementById('ordersTable');
-      var tr = table.getElementsByTagName('tr');
-  
-      if (!dateInput) {
-          // If no date is entered, show all rows
-          for (var i = 1; i < tr.length; i++) {
-              tr[i].style.display = "";
-          }
-          return;
-      }
-  
-      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
-  
-      for (var i = 1; i < tr.length; i++) {
-          var td = tr[i].getElementsByTagName('td')[4]; // Assuming Date is the 5th column
-          if (td) {
-              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
-              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
-          }
-      }
-  }
-
-  function filterByStatus() {
-    var statusInput = document.getElementById('statusFilter').value;
-    var table = document.getElementById('ordersTable');
-    var tr = table.getElementsByTagName('tr');
-
-    for (var i = 1; i < tr.length; i++) {
-        var td = tr[i].getElementsByTagName('td')[10]; // Adjust if the index changes
-        var div = td.querySelector('.oval-box'); // Assuming this is the div with the color
-        if (div) {
-            // Determine the status based on background color
-            var style = window.getComputedStyle(div);
-            var backgroundColor = style.backgroundColor;
-
-            // Map background colors to statuses
-            var status = '';
-            if (backgroundColor === 'rgb(255, 0, 0)') { // Example RGB for red
-                status = 'Cancelled';
-            } else if (backgroundColor === 'rgb(0, 128, 0)') { // Example RGB for green
-                status = 'Confirmed';
-            } else if (backgroundColor === 'rgb(255, 255, 0)') { // Example RGB for yellow
-                status = 'Pending';
-            }
-
-            if (statusInput === "" || status === statusInput) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-}
-
-function toggleSelectAll(source) {
-  // Select all checkboxes within table rows that are not disabled and are visible
-  var checkboxes = document.querySelectorAll('#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)');
-  for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = source.checked;
-      updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
-  }
-}
-
-let priceSortAsc = true; // Initialize sort direction
-
-function sortTableByPrice() {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    var sortIcon = document.getElementById('priceSortIcon');
-    table = document.getElementById("ordersTable");
-    switching = true;
-
-    // Update icon based on current sort direction
-    if (priceSortAsc) {
-        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
-    } else {
-        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
-    }
-
-    while (switching) {
-        switching = false;
-        rows = table.getElementsByTagName("TR");
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[9];
-            y = rows[i + 1].getElementsByTagName("TD")[9];
-            if (priceSortAsc) {
-                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
-                    shouldSwitch = true;
-                    break;
-                }
-            } else {
-                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        }
-    }
-    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
-}
-
-
-function handleConfirm() {
-  console.log("Confirmed Orders:", selectedOrders);
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
-            form.style.display = 'none';
-
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
-function handleCancel() {
-  console.log("Cancelled Action");
-  console.log("Confirmed Orders:", selectedOrders);
-  // Logic to handle a cancellation or clear selections can be added here
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/manuordercancel';  // Replace with the actual URL of your Django view
-  form.style.display = 'none';
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-  document.body.appendChild(form);
-  form.submit();
-}
     function distorders(email,company_info) {
         console.log("Email Distribution:", email);
         const form = document.createElement('form');
@@ -766,6 +529,94 @@ function handleCancel() {
         document.body.appendChild(form);
         form.submit();
     }
+    
+    function collectProductData() {
+        const form = document.getElementById('product-form');
+        const isValidForm = form.checkValidity();
+    
+        if (!isValidForm) {
+            // If form is not valid, this will show built-in browser validation messages
+            form.reportValidity();
+            return;
+        }
+    
+        const manufacturer = document.getElementById('manufacturer').value;
+        const batchId = document.getElementById('batchId').value;
+        const email = document.getElementById('email').value;
+    
+        const products = [];
+    
+        const productSections = document.querySelectorAll('#product-section .product-section');
+        productSections.forEach((section) => {
+            const product = {
+                product_name: section.querySelector('[name="PrdName"]').value,
+                product_code: section.querySelector('[name="PrdCode"]').value,
+                description: section.querySelector('[name="Desc"]').value,
+                ingredients: section.querySelector('[name="Ingredients"]').value.split(',').map(ingredient => ingredient.trim()),
+                dosage: section.querySelector('[name="dosage"]').value,
+                quantity_in_stock: parseInt(section.querySelector('[name="instock"]').value, 10),
+                unit_price: parseFloat(section.querySelector('[name="PripU"]').value),
+                manufacturing_date: section.querySelector('[name="mfgdate"]').value,
+                expiry_date: section.querySelector('[name="expdate"]').value,
+                drugbank_id: section.querySelector('[name="drugbankId"]').value,
+                form: section.querySelector('#form').value,
+                strength: section.querySelector('[name="strength"]').value,
+                route: section.querySelector('[name="route"]').value,
+                images: section.querySelector('[name="images"]').value,
+            };
+            products.push(product);
+        });
+    
+        const jsonData = {
+            manufacturer,
+            batchId,
+            email,
+            products
+        };
+    
+        form.method = 'POST';
+        form.action = '/adddrug';  // Replace with the actual URL of your Django 
+        form.style.display = 'none';
+        const selectedOrdersInput = document.createElement('input');
+        selectedOrdersInput.type = 'hidden';
+        selectedOrdersInput.name = 'product_data';  // Name to use in Django for the se
+        selectedOrdersInput.value = JSON.stringify(jsonData); // Serialize selected
+        form.appendChild(selectedOrdersInput);
+        document.body.appendChild(form);
+        form.submit();
+        // You can proceed to submit jsonData to your server here
+    }
+    
+    document.getElementById('product-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        collectProductData();
+    });
+
+    function updateAddProductButton() {
+        const productSections = document.querySelectorAll('.product-section');
+        const addButton = document.getElementById('add-product-button');
+        let allProductFieldsFilled = true;
+
+        // Check if all fields for the current product are filled
+        productSections.forEach((section) => {
+            const inputElements = section.querySelectorAll('input');
+            inputElements.forEach((input) => {
+                if (!input.value) {
+                    allProductFieldsFilled = false;
+                }
+            });
+        });
+    }
+
+    function submitForm(data) {
+        const form = document.getElementById('product-form');
+        const jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'product_data';  // Name to use in Django for the JSON data
+        jsonInput.value = JSON.stringify(data);
+        form.appendChild(jsonInput);
+        form.submit();
+      }
 </script>
 </body>
 </html>
