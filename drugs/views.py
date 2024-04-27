@@ -497,7 +497,7 @@ def manuorderconfirm(request):
                                                                                                                                                                                'totalprice' : totalprice
                                                                                                                                                                                }})
 
-        return render(request, 'manuproducts.html')
+        return HttpResponse("Order Confirmed!")
 
 def viewmanuinvent(request):
     print('Viewing Manufacturer Inventory')
