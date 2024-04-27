@@ -617,11 +617,11 @@ def viewmanuinvent(request):
             } for value in product_map.values()]
 
             print(products_with_timestamp)
-            return render(request, 'viewmanuinventory.html', {'products': products_with_timestamp})
+            return render(request, 'viewmanuinventory1.html', {'products': products_with_timestamp})
         else:
             return render(request, 'viewmanuinventory.html', {'message': 'No products available'})
 
-##########################33
+########################## Adding Drugs In Manufacturer Item Stream ################################################
 def adddrugmenu(request):
     print('\nAdd Drug Manufacturer\n')
     if request.method == 'POST':
