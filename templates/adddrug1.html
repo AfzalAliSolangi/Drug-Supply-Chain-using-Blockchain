@@ -201,14 +201,16 @@ th {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 48px;
+      padding: 20px;
+      margin: 10px 5px;
     }
     .formbold-form-wrapper {
       margin: 0 auto;
-      max-width: 800px;
+      max-width: 1200px;
       width: 100%;
       background: linear-gradient(to bottom, #0077be, #00a0e9); /* Change the background color to a blue gradient */
-      padding: 40px;
+      padding: 35px;
+      margin: 10px 5px;
     } 
    .formbold-img {
       display: block;
@@ -318,6 +320,23 @@ th {
     .formbold-w-45 {
       width: 45%;
     }
+
+    .button-container button {
+        padding: 10px 50px; /* Adjust padding as needed */
+        background-color: #4CAF50; /* A nice green color */
+        color: white; /* Text color */
+        border: none; /* Removes the border */
+        border-radius: 5px; /* Rounded corners */
+        cursor: pointer; /* Cursor changes to pointer when hovered */
+        font-size: 16px; /* Larger font size for better readability */
+        transition: background-color 0.3s; /* Smooth transition for hover effect */
+        margin-left: 500px;
+    }
+    
+    .button-container button:hover {
+        background-color: #45a049; /* Slightly darker shade on hover */
+    }
+
 </style>
 </head>
 <body>
@@ -343,10 +362,12 @@ th {
     </div>
 </div>
 
+
+<!-- Form For Adding Drug -->
 <div class="formbold-main-wrapper">
     <div class="formbold-form-wrapper">
         <form id="product-form" action="adddrug" method="POST">
-            {%csrf_token%}
+            {% csrf_token %}
             <div class="formbold-input-flex">
                 <div>
                   <label for="manufacturer" class="formbold-form-label">Manufacturer</label>
@@ -355,7 +376,7 @@ th {
                 <div>
                   <label for="batchId" class="formbold-form-label">Batch ID</label>
                   <input type="text" id="batchId" placeholder="Batch ID" class="formbold-form-input" onchange="updateAddProductButton()"/>
-              </div>
+                </div>
             </div>
 
             <div id="product-section">
@@ -402,13 +423,49 @@ th {
                         <div>
                             <label for="expdate" class="formbold-form-label">Expiry Date</label>
                             <input type="date" name="expdate" class="formbold-form-input" onchange="updateAddProductButton()"/>
-                          </div>
                         </div>
-                      </div>
                     </div>
+                    <!-- New fields added for the drug specific attributes -->
+                    <div class="formbold-input-flex">
+                        <div>
+                            <label for="drugbankId" class="formbold-form-label">DrugBank ID</label>
+                            <input type="text" id="drugbankId" placeholder="DrugBank ID" class="formbold-form-input"/>
+                        </div>
+                        <div>
+                            <label for="form" class="formbold-form-label">Form</label>
+                            <select id="form" class="formbold-form-input" onchange="updateAddProductButton()">
+                                <option value="Tablet">Tablet</option>
+                                <option value="Liquid">Liquid</option>
+                                <option value="Capsule">Capsule</option>
+                                <option value="Topical">Topical</option>
+                                <option value="Suppositories">Suppositories</option>
+                                <option value="Drops">Drops</option>
+                                <option value="Inhalers">Inhalers</option>
+                                <option value="Injections">Injections</option>
+                                <option value="Implants">Topical</option>
+                                <option value="Patches">Patches</option>
+                                <!-- Add more options as necessary -->
+                            </select>
+                        </div>
+                        <div>
+                            <label for="strength" class="formbold-form-label">Strength</label>
+                            <input type="text" id="strength" placeholder="Strength (e.g., 300 mg)" class="formbold-form-input"/>
+                        </div>
+                        <div>
+                            <label for="route" class="formbold-form-label">Route</label>
+                            <input type="text" id="route" placeholder="Route of Administration" class="formbold-form-input"/>
+                        </div>
+                        <div>
+                            <label for="images" class="formbold-form-label">Image Link</label>
+                            <input type="url" id="images" placeholder="URL for the image" class="formbold-form-input"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <input type="hidden" id="email" name="email" value="{{ email }}">
-            <!-- Removed the "Add Product" button -->
-            <button type="button" onclick="collectProductData()">Apply Now</button>
+            <div class="button-container">
+                <button type="button" onclick="collectProductData()">Add Drug</button>
+            </div>            
         </form>
     </div>
 </div>
