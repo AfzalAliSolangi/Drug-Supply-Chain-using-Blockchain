@@ -200,14 +200,15 @@ th {
     </div>
 </div>
 
-<!-- Search Input Section adjusted -->
+<!-- Search Input Section with Search Button -->
 <div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
-  <input type="text" id="searchInput" placeholder="Search orders..." onkeyup="filterTable()" style="width: 200px; height: 20px; border: 2px solid #333333;">
+  <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
+  <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
 </div>
 
 
 <div class="table-container">
-    <table>
+    <table id="ordersTable">
         <thead>
           <tr>
             <th scope="col">Select</th>
@@ -254,46 +255,96 @@ th {
 <script>
   var selectedOrders = []; // Array to store selected orders' data
 
-  function updateSelection(checkbox) {
-      var row = checkbox.closest('tr');
-      var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
+    function updateSelection(checkbox) {
+        var row = checkbox.closest('tr');
+        var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
+    
+        if (checkbox.checked) {
+            // If checked, gather data and add to the selectedOrders
+            var orderData = {
+                orderId: orderId,
+                trxId: row.cells[2].textContent.trim(),
+                distributor: row.cells[3].textContent.trim(),
+                date: row.cells[4].textContent.trim(),
+                product: row.cells[5].textContent.trim(),
+                batchId: row.cells[6].textContent.trim(),
+                productCode: row.cells[7].textContent.trim(),
+                quantity: row.cells[8].textContent.trim(),
+                status: row.cells[9].textContent.trim()
+            };
+          
+            // Collect hidden inputs within the row for additional data
+            row.querySelectorAll('td:last-child input[type="hidden"]').forEach(function(input) {
+                orderData[input.name] = input.value;
+            });
+          
+            selectedOrders.push(orderData); // Add the new order data to the array
+        } else {
+            // If unchecked, remove the order from the array
+            selectedOrders = selectedOrders.filter(function(order) {
+                return order.orderId !== orderId; // Correct filtering using orderId
+            });
+        }
+      
+        console.log(selectedOrders); // Logs to console to monitor the selected orders
+    }
+
+    // Attach event listeners to checkboxes on document load
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.table-row input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.onclick = function() { updateSelection(this); };
+        });
+    });
+
+    // Function to filter the table based on search input
+    function filterTable() {
+      var input = document.getElementById('searchInput');
+      var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
+      var table = document.getElementById('ordersTable');
+      var tr = table.getElementsByTagName('tr');
   
-      if (checkbox.checked) {
-          // If checked, gather data and add to the selectedOrders
-          var orderData = {
-              orderId: orderId,
-              trxId: row.cells[2].textContent.trim(),
-              distributor: row.cells[3].textContent.trim(),
-              date: row.cells[4].textContent.trim(),
-              product: row.cells[5].textContent.trim(),
-              batchId: row.cells[6].textContent.trim(),
-              productCode: row.cells[7].textContent.trim(),
-              quantity: row.cells[8].textContent.trim(),
-              status: row.cells[9].textContent.trim()
-          };
-  
-          // Collect hidden inputs within the row for additional data
-          row.querySelectorAll('td:last-child input[type="hidden"]').forEach(function(input) {
-              orderData[input.name] = input.value;
-          });
-  
-          selectedOrders.push(orderData); // Add the new order data to the array
-      } else {
-          // If unchecked, remove the order from the array
-          selectedOrders = selectedOrders.filter(function(order) {
-              return order.orderId !== orderId; // Correct filtering using orderId
-          });
+      if (filter === "") {
+          // If the filter is empty, display all rows
+          for (var i = 1; i < tr.length; i++) { // Skip the header row
+              tr[i].style.display = "";
+          }
+          return; // Exit the function early
       }
   
-      console.log(selectedOrders); // Logs to console to monitor the selected orders
-  }
+      // Continue with filtering only if there is some text in the input
+      for (var i = 1; i < tr.length; i++) {
+          var display = false; // Assume the row does not match
+          // Define which columns to search (OrderID, Trx ID, Distributor, Product)
+          var tds = [tr[i].getElementsByTagName('td')[1], // OrderID (adjust index as necessary)
+                     tr[i].getElementsByTagName('td')[2], // Trx ID
+                     tr[i].getElementsByTagName('td')[3], // Distributor
+                     tr[i].getElementsByTagName('td')[5], // Product
+                     tr[i].getElementsByTagName('td')[6], // Batch ID	
+                     tr[i].getElementsByTagName('td')[7], // Product Code
+                     ]; // Product
   
-  // Attach event listeners to checkboxes on document load
-  document.addEventListener("DOMContentLoaded", function() {
-      document.querySelectorAll('.table-row input[type="checkbox"]').forEach(function(checkbox) {
-          checkbox.onclick = function() { updateSelection(this); };
-      });
-  });
+          for (var j = 0; j < tds.length; j++) {
+              var td = tds[j];
+              if (td) {
+                  var txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().trim() === filter) {
+                      display = true; // Show the row if the cell matches exactly
+                      break; // Stop checking further cells if a match is found
+                  }
+              }
+          }
+          tr[i].style.display = display ? "" : "none"; // Apply the display setting
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('searchInput');
+    input.addEventListener('keyup', function(event) {
+        if (event.key === "Enter") {
+            filterTable();
+        }
+    });
+});
     function distorders(email) {
         console.log("Email Distribution:", email);
         const form = document.createElement('form');
