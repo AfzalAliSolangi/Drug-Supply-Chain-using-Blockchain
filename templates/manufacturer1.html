@@ -215,13 +215,14 @@ th {
           <tr>
             <th scope="col">Select</th>
             <th scope="col">OrderID</th>
-            <th scope="col">Trx ID</th>
+            <th scope="col">Trx</th>
             <th scope="col">Distributor</th>
             <th scope="col">Date</th>
             <th scope="col">Product</th>
-            <th scope="col">Batch ID</th>
+            <th scope="col">Batch</th>
             <th scope="col">Product Code</th>
             <th scope="col">Quantity</th>
+            <th scope="col">Total Price</th>
             <th scope="col">Status</th>
           </tr>
         </thead>
@@ -237,6 +238,7 @@ th {
                 <td>{{ order.batchId }}</td>
                 <td>{{ order.product_code }}</td>
                 <td>{{ order.quantity }}</td>
+                <td>{{ order.tot_price }}</td>
                 <td>
                 <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
                   {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}

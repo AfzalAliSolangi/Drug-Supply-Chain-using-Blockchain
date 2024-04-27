@@ -202,10 +202,11 @@ def login_check_manufacturer(request): #Implement Password authentication
                 keys = item['keys']
                 traxid = item['txid']
                 confirmed_status = item['data']['json']['confirmed']
-                modified_keys = keys[:9] + [traxid] + keys[9:] + [confirmed_status]
+                totalprice = item['data']['json']['totalprice']
+                modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
                 combined_list.append(modified_keys)
 
-            # print("\nCombined list\n")
+            print("\nCombined list\n")
             print(combined_list)
 
             # Sort the list based on the timestamp (second last index)
@@ -252,7 +253,8 @@ def login_check_manufacturer(request): #Implement Password authentication
                     "product_code": item[6],
                     "orderPlaceOn": str(orderPlaceOn),
                     "quantity": item[4],
-                    "confirmed": item[11],
+                    "tot_price": item[10],
+                    "confirmed": item[12],
                 }
                 # Append the dictionary to the orders list
                 orders.append(order)
@@ -818,12 +820,14 @@ def distreqorder(request):
                 productName = cart_item['productName']
                 timestamp = cart_item['timestamp']
                 quantity = cart_item['quantity']
+                totalprice = cart_item['totalprice']
                 print(manu_email)
                 print(batchId)
                 print(productCode)
                 print(productName)
                 print(timestamp)
                 print(quantity)
+                print(totalprice)
 
                 timestamp_utc = datetime.datetime.utcnow().isoformat()
 
@@ -856,6 +860,7 @@ def distreqorder(request):
                 # before publishing have SLA Logic
                 txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [orderid,comp_info,manu_email,email_dist,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
                                                                                                                                                                            'confirmed': '',
+                                                                                                                                                                           'totalprice': str(totalprice)
                                                                                                                                                                       }
                                                                                                                                                                     })
             #render a template or return an appropriate HTTP response, still to be decided
