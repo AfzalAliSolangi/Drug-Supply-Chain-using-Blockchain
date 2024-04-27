@@ -204,6 +204,8 @@ th {
 <div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
   <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
   <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
+
+  <input type="date" id="dateInput" onchange="filterByDate()" style="margin-left: 10px; height: 20px; border: 2px solid #333333;">
 </div>
 
 
@@ -302,7 +304,7 @@ th {
       var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
       var table = document.getElementById('ordersTable');
       var tr = table.getElementsByTagName('tr');
-  
+    
       if (filter === "") {
           // If the filter is empty, display all rows
           for (var i = 1; i < tr.length; i++) { // Skip the header row
@@ -310,7 +312,7 @@ th {
           }
           return; // Exit the function early
       }
-  
+    
       // Continue with filtering only if there is some text in the input
       for (var i = 1; i < tr.length; i++) {
           var display = false; // Assume the row does not match
@@ -322,7 +324,7 @@ th {
                      tr[i].getElementsByTagName('td')[6], // Batch ID	
                      tr[i].getElementsByTagName('td')[7], // Product Code
                      ]; // Product
-  
+      
           for (var j = 0; j < tds.length; j++) {
               var td = tds[j];
               if (td) {
@@ -335,16 +337,40 @@ th {
           }
           tr[i].style.display = display ? "" : "none"; // Apply the display setting
       }
-  }
+    }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('searchInput');
-    input.addEventListener('keyup', function(event) {
-        if (event.key === "Enter") {
-            filterTable();
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+      var input = document.getElementById('searchInput');
+      input.addEventListener('keyup', function(event) {
+          if (event.key === "Enter") {
+              filterTable();
+          }
+      });
     });
-});
+
+    function filterByDate() {
+      var dateInput = document.getElementById('dateInput').value;
+      var table = document.getElementById('ordersTable');
+      var tr = table.getElementsByTagName('tr');
+  
+      if (!dateInput) {
+          // If no date is entered, show all rows
+          for (var i = 1; i < tr.length; i++) {
+              tr[i].style.display = "";
+          }
+          return;
+      }
+  
+      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+  
+      for (var i = 1; i < tr.length; i++) {
+          var td = tr[i].getElementsByTagName('td')[4]; // Assuming Date is the 5th column
+          if (td) {
+              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
+              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+          }
+      }
+  }
     function distorders(email) {
         console.log("Email Distribution:", email);
         const form = document.createElement('form');
