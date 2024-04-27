@@ -266,9 +266,7 @@ th {
                 <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
                 <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
                 <input type="hidden" name="product_name" value="{{ order.product_name }}">
-                <input type="hidden" name="quantity" value="{{ order.product_data.quantity }}">
-                <input type="hidden" name="confirmed" value="{{ order.product_data.confirmed }}">
-                <input type="hidden" name="timestamp" value="{{ order.product_data.timestamp }}">
+                <input type="hidden" name="timestamp" value="{{ order.timestamp }}">
               </td>
             </tr>
             {% endfor %}
@@ -481,12 +479,39 @@ function sortTableByPrice() {
 function handleConfirm() {
   console.log("Confirmed Orders:", selectedOrders);
   // Additional logic for confirming orders can be added here
+  // Add an input field for the selectedOrders data
+  const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+
+  const selectedOrdersInput = document.createElement('input');
+  selectedOrdersInput.type = 'hidden';
+  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
+  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+  form.appendChild(selectedOrdersInput);
+
+  document.body.appendChild(form);
+  form.submit();
 }
 
 function handleCancel() {
   console.log("Cancelled Action");
   console.log("Confirmed Orders:", selectedOrders);
   // Logic to handle a cancellation or clear selections can be added here
+  // Additional logic for confirming orders can be added here
+  // Add an input field for the selectedOrders data
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/manuordercancel';  // Replace with the actual URL of your Django view
+  form.style.display = 'none';
+  const selectedOrdersInput = document.createElement('input');
+  selectedOrdersInput.type = 'hidden';
+  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
+  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+  form.appendChild(selectedOrdersInput);
+  document.body.appendChild(form);
+  form.submit();
 }
     function distorders(email) {
         console.log("Email Distribution:", email);

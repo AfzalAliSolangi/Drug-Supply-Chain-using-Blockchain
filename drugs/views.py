@@ -255,6 +255,7 @@ def login_check_manufacturer(request): #Implement Password authentication
                     "quantity": item[4],
                     "tot_price": item[10],
                     "confirmed": item[12],
+                    "timestamp": item[8],
                 }
                 # Append the dictionary to the orders list
                 orders.append(order)
@@ -265,7 +266,48 @@ def login_check_manufacturer(request): #Implement Password authentication
         else:
             return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
 
-    
+def manuordercancel(request):
+    print('\Cancel Orders From distributors\n')
+    if request.method == 'POST':
+        selectedOrders = request.POST.get('selectedOrders', None)
+        print(selectedOrders)
+        selectedOrders = json.loads(selectedOrders)
+
+        for i in range(len(selectedOrders)):
+            order = selectedOrders[i]
+            print('--------------------------------\n')
+            print(order)
+            print('--------------------------------\n')
+            orderid = order['orderId']
+            traxid = order['trxId']
+            Distributor_name = order['distributor']
+            Manufacturer_email = order['manufacturer_email']
+            distributor_email = order['distributor_email']
+            batchId = order['batchId']
+            product_name = order['product_name']
+            product_code = order['productCode']
+            order_timestamp = order['timestamp']
+            quantity_frm_order = order['quantity'] 
+            totalprice = order['status'] 
+            timestamp_utc = datetime.datetime.utcnow().isoformat()
+
+            #for debugging
+            print('Order_ID :', orderid)
+            print('traxid :', traxid)
+            print('Distributor_name :', Distributor_name)
+            print('Manufacturer_email :',Manufacturer_email)
+            print('distributor_email :',distributor_email)
+            print('batchId :',batchId)
+            print('product_code :', product_code)
+            print('timestamp :',order_timestamp)
+            print('quantity_frm_order :', quantity_frm_order)
+            print('Total Price :', totalprice)
+            timestamp_utc = datetime.datetime.utcnow().isoformat()
+            txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [orderid,Distributor_name,Manufacturer_email,distributor_email,quantity_frm_order, batchId, product_code, product_name,order_timestamp, timestamp_utc],{'json': {
+                                                                                                                                                                               'confirmed': 'Cancelled',
+                                                                                                                                                                               'totalprice' : totalprice
+                                                                                                                                                                           }})
+        return HttpResponse("Order Cancelled!")
 
 def manuorderconfirm(request):
     print('\nConfirm Orders From distributors\n')
@@ -281,24 +323,30 @@ def manuorderconfirm(request):
             print('--------------------------------\n')
             print(order)
             print('--------------------------------\n')
-            Distributor_name = order['Distributor_name']
-            Manufacturer_email = order['Manufacturer_email']
+            orderid = order['orderId']
+            traxid = order['trxId']
+            Distributor_name = order['distributor']
+            Manufacturer_email = order['manufacturer_email']
             distributor_email = order['distributor_email']
             batchId = order['batchId']
             product_name = order['product_name']
-            product_code = order['product_code']
-            timestamp = order['timestamp']
+            product_code = order['productCode']
+            order_timestamp = order['timestamp']
             quantity_frm_order = order['quantity'] 
+            totalprice = order['status'] 
             timestamp_utc = datetime.datetime.utcnow().isoformat()
 
             #for debugging
+            print('Order_ID :', orderid)
+            print('traxid :', traxid)
             print('Distributor_name :', Distributor_name)
             print('Manufacturer_email :',Manufacturer_email)
             print('distributor_email :',distributor_email)
             print('batchId :',batchId)
             print('product_code :', product_code)
-            print('timestamp :',timestamp)
+            print('timestamp :',order_timestamp)
             print('quantity_frm_order :', quantity_frm_order)
+            print('Total Price :', totalprice)
             timestamp_utc = datetime.datetime.utcnow().isoformat()
 
             #gettig data based on keys
@@ -307,8 +355,6 @@ def manuorderconfirm(request):
             response = json.loads(response)
             manufacturer_name = response[0]['data']['json']['manufacturer']
             print(len(response))
-
-
             #for fetching latest timestamp item
             if len(response) > 0:
                 product_map = {}  # Initialize a dictionary to store product data and timestamp for each unique key
@@ -430,7 +476,7 @@ def manuorderconfirm(request):
                                                                                                      })#Add a timestamp for sub logic
                 else:
                     latest_item['quantity_in_stock'] = quantity_frm_order
-                    #publishing into users_distributor_items_stream
+                    # publishing into users_distributor_items_stream
                     txid = rpc_connection.publish('{}'.format(users_distributor_items_stream), [distributor_email,
                                                                                                  Manufacturer_email,
                                                                                                  product_code,
@@ -446,8 +492,9 @@ def manuorderconfirm(request):
                                                                                                      }
                                                                                                      })#Add a timestamp for sub logic
                 #publishing into the manufacturer_orders_stream telling that order is confimed
-                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [Distributor_name,Manufacturer_email,distributor_email,Manufacturer_email, batchId, product_code, product_name, timestamp_utc],{'json': {'quantity': quantity_frm_order,
-                                                                                                                                                                               'confirmed': 'True',
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [orderid,Distributor_name,Manufacturer_email,distributor_email,quantity_frm_order, batchId, product_code, product_name,order_timestamp, timestamp_utc],{'json': {'confirmed': 'Confirmed',
+                                                                                                                                                                               'confirmed': 'Confirmed',
+                                                                                                                                                                               'totalprice' : totalprice
                                                                                                                                                                                }})
 
         return render(request, 'manuproducts.html')

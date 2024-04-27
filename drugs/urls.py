@@ -26,6 +26,7 @@ urlpatterns = [
     path('adddrugmenu', views.adddrugmenu, name='adddrugmenu'),
     # path('manuorders', views.manuorders, name='manuorders'),
     path('manuorderconfirm', views.manuorderconfirm, name='manuorderconfirm'),
+    path('manuordercancel', views.manuordercancel, name='manuordercancel'),
     path('viewmanuinvent', views.viewmanuinvent, name='viewmanuinvent'),
     path('distorderprod', views.distorderprod, name='distorderprod'),
     path('viewdistinvent', views.viewdistinvent, name='viewdistinvent'),
