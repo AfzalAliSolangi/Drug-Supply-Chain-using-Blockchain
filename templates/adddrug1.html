@@ -180,9 +180,9 @@ th {
 <body>
 
 <div class="sidebar">
-    <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); distorders('{{ email }}','{{ company_info }}')">Orders</a>
     <a href="#" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}')">Inventory</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
+    <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
 </div>
 
 <div class="top-bar">
@@ -200,79 +200,7 @@ th {
     </div>
 </div>
 
-<!-- Search Input Section with Search Button -->
-<div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
-  
-  <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
-  <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
 
-  <input type="date" id="dateInput" onchange="filterByDate()" style="margin-left: 10px; height: 20px; border: 2px solid #333333; margin-right: 10px;">
-
-  <!-- Status Filter Dropdown -->
-  <label for="statusFilter" style="margin-right: 5px;">Filter by Status:</label>
-  <select id="statusFilter" onchange="filterByStatus()" style="height: 24px; border: 2px solid #333333;">
-    <option value="">All</option>
-    <option value="Confirmed">Confirmed</option>
-    <option value="Pending">Pending</option>
-    <option value="Cancelled">Cancelled</option>
-  </select>
-  <div>
-    <button id="confirmButton" onclick="handleConfirm()" style="margin-left: 500px; margin-right: 10px;">Confirm</button>
-    <button id="cancelButton" onclick="handleCancel()">Cancel</button>
-  </div>
-</div>
-
-
-<div class="table-container">
-    <table id="ordersTable">
-        <thead>
-          <tr>
-            <th scope="col"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);"></th>
-            <th scope="col">OrderID</th>
-            <th scope="col">Trx</th>
-            <th scope="col">Distributor</th>
-            <th scope="col">Date</th>
-            <th scope="col">Product</th>
-            <th scope="col">Batch</th>
-            <th scope="col">Product Code</th>
-            <th scope="col">Quantity</th>
-            <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
-              Total Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
-          </th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
-            <tr class="table-row">
-              <td>
-                <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
-                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
-            </td>
-                <td>{{ order.orderid }}</td>
-                <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
-                <td>{{ order.Distributor_name }}</td>
-                <td>{{ order.orderPlaceOn }}</td>
-                <td>{{ order.product_name }}</td>
-                <td>{{ order.batchId }}</td>
-                <td>{{ order.product_code }}</td>
-                <td>{{ order.quantity }}</td>
-                <td>{{ order.tot_price }}</td>
-                <td>
-                <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
-                  {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
-                </div>
-                <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
-                <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
-                <input type="hidden" name="product_name" value="{{ order.product_name }}">
-                <input type="hidden" name="timestamp" value="{{ order.timestamp }}">
-              </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   var selectedOrders = []; // Array to store selected orders' data
@@ -513,7 +441,7 @@ function handleCancel() {
   document.body.appendChild(form);
   form.submit();
 }
-    function distorders(email) {
+    function distorders(email,company_info) {
         console.log("Email Distribution:", email);
         const form = document.createElement('form');
         form.method = 'POST';
@@ -531,7 +459,7 @@ function handleCancel() {
         companyinfoInput.name = 'company_info';
         companyinfoInput.value = company_info;
         form.appendChild(companyinfoInput);
-
+        document.body.appendChild(form);
         document.body.appendChild(form);
         form.submit();
     }
