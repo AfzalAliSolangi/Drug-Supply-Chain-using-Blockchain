@@ -54,9 +54,9 @@
   .table-container {
     overflow-y: auto; /* Enables vertical scrolling */
     margin-left: 80px;
-    margin-top: 60px;
+    margin-top: 10px;
     width: calc(100% - 100px); /* Adjust based on your layout */
-    height: 460px; /* Adjust the height to fit your needs */
+    height: 500px; /* Adjust the height to fit your needs */
 }
 
 .table-container table {
@@ -202,6 +202,7 @@ th {
 
 <!-- Search Input Section with Search Button -->
 <div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
+  
   <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
   <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
 
@@ -216,7 +217,7 @@ th {
     <option value="Cancelled">Cancelled</option>
   </select>
   <div>
-    <button id="confirmButton" onclick="handleConfirm()" style="margin-left: 180px; margin-right: 10px;">Confirm</button>
+    <button id="confirmButton" onclick="handleConfirm()" style="margin-left: 500px; margin-right: 10px;">Confirm</button>
     <button id="cancelButton" onclick="handleCancel()">Cancel</button>
   </div>
 </div>
