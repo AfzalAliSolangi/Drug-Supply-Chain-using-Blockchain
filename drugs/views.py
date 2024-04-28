@@ -775,6 +775,7 @@ def login_check_distributor(request): #Implement Password authentication
         json_load = json.loads(data)
         email_frm_chain = json_load[0]['keys'][0]
         passw_frm_chain = json_load[0]['data']['json']['password']
+        manufacturer_name = json_load[0]['data']['json']['company_info']
         comp_info = json_load[0]['data']['json']['company_info']
         print(data)
         print(comp_info)
@@ -783,7 +784,81 @@ def login_check_distributor(request): #Implement Password authentication
         print(password_rcvd)
         print(passw_frm_chain)
         if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            return render(request, "Distributor.html", {'email': email_rcvd, 'comp_info' : comp_info})
+            response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
+            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+            json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+            
+            print(json_string)
+            combined_list = []
+
+            for item in json_string:
+                keys = item['keys']
+                traxid = item['txid']
+                confirmed_status = item['data']['json']['confirmed']
+                totalprice = item['data']['json']['totalprice']
+                modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
+                combined_list.append(modified_keys)
+
+            print("\nCombined list\n")
+            print(combined_list)
+
+            # Sort the list based on the timestamp (second last index)
+            combined_list.sort(key=lambda x: x[-2], reverse=True)
+
+            
+########################################################################################################            
+            #NOTE: This is the logic for finding the latest order based on timestamp
+            # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
+            distinct_orders = {}
+            
+            # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
+            for order in combined_list:
+                key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+                if key not in distinct_orders:
+                    distinct_orders[key] = order
+            
+            # Convert the dictionary to a list of lists
+            distinct_orders_list = list(distinct_orders.values())
+
+########################################################################################################
+            
+            
+            # # Print the distinct orders
+            for order in distinct_orders_list:
+                print(order)
+
+            # Iterate over the combined_list
+            orders = []
+            for index, item in enumerate(distinct_orders_list):
+                # Create a dictionary for each element in the combined_list
+
+                orderPlaceOn = datetime.datetime.fromisoformat(item[8])
+                # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+                orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
+                order = {
+                    "orderid":item[0],
+                    "trxid": item[9],
+                    "Distributor_name": item[1],
+                    "Manufacturer_email": item[2],
+                    "distributor_email": item[3],
+                    "batchId": item[5],
+                    "product_name": item[7],
+                    "product_code": item[6],
+                    "orderPlaceOn": str(orderPlaceOn),
+                    "quantity": item[4],
+                    "tot_price": item[10],
+                    "confirmed": item[12],
+                    "timestamp": item[8],
+                }
+                # Append the dictionary to the orders list
+                orders.append(order)
+
+            # Print the resulting list of dictionaries
+            print(orders)
+
+            # return render(request, "distributor_orders.html",{'orders': orders})
+ 
+            return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders})
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
@@ -1450,8 +1525,10 @@ def pharmreqorder(request):
     if request.method == 'POST':
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
-        email_dist = request.POST.get('email_dist', None)
+        email_pharm = request.POST.get('email_dist', None)
+        email_dist = request.POST.get('manufacturer', None)
         comp_info = request.POST.get('comp_info', None)
+        print(email_pharm)
         print(email_dist)
         print(comp_info)
         #NOTE:
@@ -1459,12 +1536,6 @@ def pharmreqorder(request):
         # it first goes to the order confirmation page of the MANUFACTURER.
         # Once manufacturer confirms the order, the quantity of the medicine is minused from the MANUFACTURER stream
         # and new Item is published in the MANUFACTURER stream.
-
-        # Retrieve the manufacturer name from checkout.html from the POST request
-        manufacturer = request.POST.get('manufacturer', None)
-        print("\n\n----MANUFACTURER NAME----")
-        print(manufacturer)
-        print("--------\n")
 
         #Also getting the manufacturer name becuase it's a key in the MANUFACTURER 
         if cart_items_json:
@@ -1479,19 +1550,28 @@ def pharmreqorder(request):
                 productName = cart_item['productName']
                 timestamp = cart_item['timestamp']
                 quantity = cart_item['quantity']
+                totalprice = cart_item['totalprice']
                 print(manu_email)
                 print(batchId)
                 print(productCode)
                 print(productName)
                 print(timestamp)
                 print(quantity)
+                print(totalprice)
 
                 timestamp_utc = datetime.datetime.utcnow().isoformat()
 
+                time_of_order=timestamp_utc
 
+                # Generate OrderId based on various attributes
+                base_string = f"{email_dist}{email_pharm}{quantity}{batchId}{productCode}{productName}{timestamp_utc}"
+                hashed = hashlib.sha256(base_string.encode()).hexdigest()
+                orderid = ''.join(random.choices(hashed, k=6))
+                
                 # Publishes the ordered products into the distributor_orders_stream stream accessed by Pharmacy
-                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [comp_info,manufacturer,email_dist,manu_email, batchId, productCode, productName, timestamp_utc],{'json': {'quantity': quantity,
-                                                                                                                                                                           'confirmed': 'False',
+                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [orderid,comp_info,email_dist,email_pharm,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
+                                                                                                                                                                           'confirmed': '',
+                                                                                                                                                                           'totalprice': str(totalprice)
                                                                                                                                                                            }})
             #render a template or return an appropriate HTTP response, still to be decided
             return HttpResponse("Purchase completed. Thank you!")
