@@ -181,7 +181,7 @@ th {
 
 <div class="sidebar">
     <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')">Inventory</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); viewdistinvent('{{ email }}', '{{ company_info }}')">Inventory</a>
     <a href="#" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
 </div>
 
@@ -482,7 +482,7 @@ function handleConfirm() {
   // Add an input field for the selectedOrders data
   const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
+            form.action = '/distorderconfirm';  // Replace with the actual URL of your Django view
             form.style.display = 'none';
 
   const selectedOrdersInput = document.createElement('input');

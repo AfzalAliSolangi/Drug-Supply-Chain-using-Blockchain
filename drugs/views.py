@@ -832,7 +832,7 @@ def login_check_distributor(request): #Implement Password authentication
             for index, item in enumerate(distinct_orders_list):
                 # Create a dictionary for each element in the combined_list
 
-                orderPlaceOn = datetime.datetime.fromisoformat(item[8])
+                orderPlaceOn = datetime.datetime.fromisoformat(item[11])
                 # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
                 orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
                 order = {
@@ -841,14 +841,15 @@ def login_check_distributor(request): #Implement Password authentication
                     "Distributor_name": item[1],
                     "Manufacturer_email": item[2],
                     "distributor_email": item[3],
-                    "batchId": item[5],
-                    "product_name": item[7],
-                    "product_code": item[6],
+                    "batchId": item[6],
+                    "product_name": item[8],
+                    "product_code": item[7],
                     "orderPlaceOn": str(orderPlaceOn),
-                    "quantity": item[4],
+                    "quantity": item[5],
                     "tot_price": item[10],
-                    "confirmed": item[12],
-                    "timestamp": item[8],
+                    "confirmed": item[13],
+                    "timestamp": item[12],
+                    "manu_email": item[4],
                 }
                 # Append the dictionary to the orders list
                 orders.append(order)
@@ -1149,7 +1150,7 @@ def pharmorders(request):
         return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_rcvd, 'company_info': comp_info,'orders': orders})
     
 def distorderconfirm(request):
-    print('\nConfirm Orders From distributors\n')
+    print('\nConfirm Orders From Pharmacies\n')
     if request.method == 'POST':
         selectedOrders = request.POST.get('selectedOrders', None)
         print(selectedOrders)
@@ -1162,38 +1163,45 @@ def distorderconfirm(request):
             print('--------------------------------\n')
             print(order)
             print('--------------------------------\n')
-            Pharmacy_name = order['Distributor_name']
-            distributor_email = order['Manufacturer_email']
+            orderid = order['orderId']
+            traxid = order['trxId']
+            Pharmacy_name = order['distributor']
+            distributor_email = order['manufacturer_email']
             pharmacy_email = order['distributor_email']
             batchId = order['batchId']
             product_name = order['product_name']
-            product_code = order['product_code']
-            timestamp = order['timestamp']
+            product_code = order['productCode']
+            order_timestamp = order['timestamp']
             quantity_frm_order = order['quantity'] 
+            totalprice = order['status']  
             timestamp_utc = datetime.datetime.utcnow().isoformat()
 
             #for debugging
+            print('Order_ID :', orderid)
+            print('traxid :', traxid)
             print('Pharmacy_name :', Pharmacy_name)
             print('distributor_email :',distributor_email)
             print('pharmacy_email :',pharmacy_email)
             print('batchId :',batchId)
             print('product_code :', product_code)
-            print('timestamp :',timestamp)
+            print('timestamp :',order_timestamp)
             print('quantity_frm_order :', quantity_frm_order)
+            print('Total Price :', totalprice)
             timestamp_utc = datetime.datetime.utcnow().isoformat()
 
-            Manufacturer_email =  rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [Pharmacy_name, distributor_email, pharmacy_email, batchId, product_code, product_name,timestamp]})        # Have a logic which fetches out items based on latest_timestamp
+            Manufacturer_email =  rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [orderid, Pharmacy_name, distributor_email, pharmacy_email, batchId, product_code, product_name,order_timestamp]})        # Have a logic which fetches out items based on latest_timestamp
             Manufacturer_email = json.dumps(Manufacturer_email)
             Manufacturer_email = json.loads(Manufacturer_email)
-            Manufacturer_email = Manufacturer_email[0]['keys'][3]
+            print(Manufacturer_email)
+            Manufacturer_email = Manufacturer_email[0]['keys'][4]
             print("Manufacturer_email : ",Manufacturer_email)
             #gettig data based on keys
             response =  rpc_connection.liststreamqueryitems('{}'.format(users_distributor_items_stream), {'keys': [distributor_email,Manufacturer_email, batchId, product_code, product_name]})        # Have a logic which fetches out items based on latest_timestamp
             response = json.dumps(response)
             response = json.loads(response)
             manufacturer_name = response[0]['data']['json']['manufacturer']
+            print(manufacturer_name)
             print(len(response))
-
 
             #for fetching latest timestamp item
             if len(response) > 0:
@@ -1239,7 +1247,7 @@ def distorderconfirm(request):
                 latest_item['quantity_in_stock'] = new_quantity
                 print('Item after updating quantity: \n', latest_item)
 
-                #publishing into users_manufacturer_items_stream
+                # #publishing into users_manufacturer_items_stream
                 txid = rpc_connection.publish('{}'.format(users_distributor_items_stream), [distributor_email,
                                                                                             Manufacturer_email,
                                                                                              product_code,
@@ -1254,7 +1262,6 @@ def distorderconfirm(request):
                                                                                                  "products":[latest_item]
                                                                                                  }
                                                                                                  })#Add a timestamp for sub logic
-                
                 #gettig data based on keys
                 response1 =  rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [pharmacy_email,distributor_email,Manufacturer_email, product_code,batchId, product_name]})
                 response1 = json.dumps(response1)
@@ -1334,8 +1341,9 @@ def distorderconfirm(request):
                                                                                                      }
                                                                                                      })#Add a timestamp for sub logic
                 #publishing into the manufacturer_orders_stream telling that order is confimed
-                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [Pharmacy_name,distributor_email,pharmacy_email,Manufacturer_email, batchId, product_code, product_name, timestamp_utc],{'json': {'quantity': quantity_frm_order,
-                                                                                                                                                                               'confirmed': 'True',
+                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [orderid, Pharmacy_name,distributor_email,pharmacy_email,Manufacturer_email,quantity_frm_order, batchId, product_code, product_name, order_timestamp, timestamp_utc],{'json': {
+                                                                                                                                                                               'confirmed': 'Confirmed',
+                                                                                                                                                                               'totalprice' : totalprice
                                                                                                                                                                                }})
 
         return render(request, 'manuproducts.html')
@@ -1590,12 +1598,12 @@ def pharmreqorder(request):
                 time_of_order=timestamp_utc
 
                 # Generate OrderId based on various attributes
-                base_string = f"{email_dist}{email_pharm}{quantity}{batchId}{productCode}{productName}{timestamp_utc}"
+                base_string = f"{email_dist}{email_pharm}{manu_email}{quantity}{batchId}{productCode}{productName}{timestamp_utc}"
                 hashed = hashlib.sha256(base_string.encode()).hexdigest()
                 orderid = ''.join(random.choices(hashed, k=6))
                 
                 # Publishes the ordered products into the distributor_orders_stream stream accessed by Pharmacy
-                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [orderid,comp_info,email_dist,email_pharm,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
+                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [orderid,comp_info,email_dist,email_pharm,manu_email,str(quantity), batchId, productCode, productName, time_of_order, timestamp_utc],{'json': {
                                                                                                                                                                            'confirmed': '',
                                                                                                                                                                            'totalprice': str(totalprice)
                                                                                                                                                                            }})
