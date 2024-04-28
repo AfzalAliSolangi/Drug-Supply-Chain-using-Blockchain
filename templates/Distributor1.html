@@ -532,20 +532,31 @@ function distorderprod(email,company_info) {
     companyinfoInput.name = 'company_info';
     companyinfoInput.value = company_info;
     form.appendChild(companyinfoInput);
+    document.body.appendChild(form);
+
     form.submit();
 }
-function viewdistinvent(email) {
+function viewdistinvent(email,company_info) {
     console.log("Viewing inventory...");
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
     form.style.display = 'none';
+
     const emailInput = document.createElement('input');
     emailInput.type = 'hidden';
     emailInput.name = 'email';
     emailInput.value = email;
     form.appendChild(emailInput);
     document.body.appendChild(form);
+
+    const companyinfoInput = document.createElement('input');
+    companyinfoInput.type = 'hidden';
+    companyinfoInput.name = 'company_info';
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+    document.body.appendChild(form);
+
     form.submit();
 }
 function pharmorders(email) {
