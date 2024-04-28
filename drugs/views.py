@@ -900,9 +900,9 @@ def viewdistinvent(request):
             } for value in product_map.values()]
 
             print(products_with_timestamp)
-            return render(request, 'viewdistinventory.html', {'products': products_with_timestamp})
+            return render(request, 'viewdistinventory1.html', {'products': products_with_timestamp})
         else:
-            return render(request, 'viewdistinventory.html', {'message': 'No products available'})
+            return render(request, 'viewdistinventory1.html', {'message': 'No products available'})
 
 
 
@@ -928,7 +928,7 @@ def distorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "distorderprod.html", {'keys_company_info': keys_company_info,'email_dist': email_dist, 'comp_info' : comp_info})
+        return render(request, "distorderprod1.html", {'keys_company_info': keys_company_info,'email_dist': email_dist, 'comp_info' : comp_info})
 
 def manuproducts(request):
     email_dist = request.GET.get('email_dist', None)

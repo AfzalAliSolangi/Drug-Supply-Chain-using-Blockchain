@@ -1,376 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% csrf_token %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product List</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Font Awesome -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+<title>Orders Dashboard</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .sidebar {
+    background-color: #5D3FD3;
+    width: 80px;
+    height: calc(100vh - 60px); /* Adjusts height to take top bar into account */
+    position: fixed;
+    padding-top: 20px;
+    top: 60px; /* Starts directly below the top bar */
+    left: 0;
+  }
+  .sidebar a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+  }
+  .sidebar a:hover {
+    background-color: #4CAF50;
+  }
+  .top-bar {
+    background: #FFFFFF;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed; /* Makes the top bar fixed at the top */
+    width: 100%; /* Ensures it covers the full width */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensures it stays on top */
+  }
+  .top-bar img {
+    border-radius: 50%; /* Makes the image rounded */
+    margin-right: 10px; /* Adds spacing between the image and the name */
+  }
+  
+  .top-bar span {
+    font-size: 16px; /* Adjust font size as needed */
+    margin-right: 20px; /* Adds spacing between the name and the logout button */
+  }
+  .table-container {
+    overflow-y: auto; /* Enables vertical scrolling */
+    margin-left: 80px;
+    margin-top: 10px;
+    width: calc(100% - 100px); /* Adjust based on your layout */
+    height: 500px; /* Adjust the height to fit your needs */
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+.table-container table {
+    padding: 20px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%; /* Ensures the table fills the container width */
+    background-color: #fff; /* Sets a clean background */
+}
 
-        .product {
-            border: 1px solid #ccc;
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: #fff;
-            border-radius: 0.25rem;
-        }
+th, td {
+    padding: 15px 10px; /* Increased padding for a modern look */
+    text-align: Center; /* Typically modern tables align text to the left */
+    font-size: 14px; /* Adjust font size for readability */
+}
 
-        .product-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.25rem;
-        }
+th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f8f8; /* Light background for the header */
+    color: #333; /* Soft black for text */
+    z-index: 2; /* Ensures the header is above other content */
+}
 
-        .strike-text {
-            text-decoration: line-through;
-        }
 
-        .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+.table-row td {
+    border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
+}
+  .button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  /* Style for the dropdown button */
+  .dropbtn {
+    background-color: #FFFFFF; /* White background */
+    color: black; /* Black text/icon */
+    padding: 8px 12px; /* Adjust padding to balance the button size */
+    font-size: 16px; /* Font size of the text/icon */
+    border: none; /* No border */
+    cursor: pointer; /* Indicates it's clickable */
+    border-radius: 4px; /* Rounded corners */
+    line-height: 1; /* Line height for text alignment */
+    display: flex; /* Use flex to center content */
+    align-items: center; /* Align items vertically */
+    justify-content: center; /* Center content horizontally */
+    height: 40px; /* Match height with other elements like image */
+    overflow: visible; /* Prevents clipping */
+}
 
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
+  
+  
+  /* Container for the dropdown content. Hidden by default. */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0;                  /* Aligns the dropdown to the right of the button */
+}
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #f1f1f1}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {
+      display: block;
+  }
+  
+  /* Change the dropdown button style on hover */
+  .dropdown:hover .dropbtn {
+      background-color: #E8E8E8; /* Light gray to indicate hover */
+  }
+  /* Ensure the dropdown menu is correctly positioned */
+  .dropdown {
+    position: relative; /* Ensures the dropdown content is positioned relative to this container */
+    display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
+    margin-left: 5px; /* Minimal left margin for tight spacing */
+    margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+}
 
-        .btn-outline-primary {
-            border: 1px solid #007bff;
-            color: #007bff;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+#ordersLink {
+  background-color: #4CAF50; /* Green color */
+  color: white; /* Ensures text is visible on the green background */
+}
 
-        .btn-outline-primary:hover {
-            background-color: #007bff;
-            color: #fff;
-        }
+#ordersLink:hover {
+  background-color: #43a047; /* Slightly darker green on hover for feedback */
+}
 
-        .read-more-content {
-            overflow: hidden;
-            height: 1.5em; /* Adjust as needed */
-        }
-
-        .read-more-toggle {
-            cursor: pointer;
-            color: #007bff;
-        }
-
-        /* Cart Icon */
-        .cart-icon {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            color: #007bff;
-            cursor: pointer;
-        }
-
-        /* Cart Counter */
-        .cart-counter {
-            position: fixed;
-            top: 25px;
-            right: 30px;    
-            background-color: #007bff;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 50%;
-        }
-
-        /* Add this to your existing CSS styles */
-        .cart-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .cart-popup {
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
-            max-width: 400px; /* Adjust as needed */
-            margin: 0 auto;
-            border-radius: 0.25rem;
-        }
-
-        /* Close button style */
-        .btn-primary {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        .cart-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-        
-        .cart-buttons button {
-            flex-grow: 1;
-            margin-right: 5px;
-        }
-    </style>
+.oval-box {
+  width: 90px; /* Adjust according to your requirement */
+  height: 30px; /* Adjust according to your requirement */
+  border-radius: 15px; /* Half of the height for smoother corners */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: black; /* Text color */
+  font-weight: bold; /* Make text bold */
+}
+</style>
 </head>
-
 <body>
-    {% if message %}
-    <div class="container">
-        <h2>Distributor: {{ manufacturer }}</h2>
-        <div class="row p-2 bg-white border rounded product">
-            <div class="col-md-12 mt-1">
-                <p>{{ message }}</p>
-            </div>
+
+<div class="sidebar">
+    <a href="#" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
+    <a href="#" id="ordersLink" class="btn" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')">Inventory</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
+</div>
+
+<div class="top-bar">
+    <b>Welcome, {{ company_info }}</b>
+    <div style="display: flex; align-items: center;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" style="height: 40px; border-radius: 50%; margin-right: 5px;">
+      <span>{{ company_info }}</span>
+      <!-- Dropdown Menu -->    
+      <div class="dropdown">
+        <button class="dropbtn">▼</button>
+        <div class="dropdown-content">
+          <a href="#logout">Logout</a>
         </div>
+      </div>
     </div>
-    {% else %}
-    <div class="container">
-        <h2>Distributor: {{ manufacturer }}</h2>
-        </div>
+</div>
 
-        <div class="d-flex justify-content-center row">
-            <div class="col-md-10">
-                {% for product in products %}
-                    <div class="row p-2 bg-white border rounded product">
-                        <div class="col-md-3 mt-1"><img class="img-fluid img-responsive rounded product-image" src="{{ product.image_url }}"></div>
-                        <div class="col-md-9 mt-1">
-                            <h5>{{ product.product_name }}</h5>
-                            <div class="read-more-content">
-                                <p>Descirption    :{{ product.product_data.description | slice:":89" }}</p>
-                            </div>
-                            {% if product.product_data.description.length > 89 %}
-                                <p class="read-more-toggle" onclick="toggleReadMore('{{ product.product_data.product_code }}')">Read more...</p>
-                                <div id="readMoreContent{{ product.product_data.product_code }}" style="display: none;">{{ product.description | slice:"89:" }}</div>
-                            {% endif %}
-                            <p>Quantity    : {{ product.product_data.quantity_in_stock }}</p>
-                            <p>Product Code: {{ product.product_data.product_code }}</p>
-                            <input type="hidden" name="email" value="{{ product.email }}">
-                            <input type="hidden" name="batch_id" value="{{ product.batchId }}">
-                            <input type="hidden" name="timestamp" value="{{ product.timestamp }}">
-                            <div class="d-flex flex-row align-items-center justify-content-between">
-                                <div>
-                                    <h4 class="mr-1">${{ product.product_data.unit_price }}</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<!-- Search Input Section with Search Button -->
+<div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
+  
+  <input type="text" id="searchInput" placeholder="Search Products..." style="width: 200px; height: 20px; border: 2px solid #333333;">
+  <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
 
-    <script>
-        var cartItems = [];
+  <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Mfg Date:</label>  
+  <input type="date" id="dateInput" onchange="filterByDate()" style="height: 20px; border: 2px solid #333333; margin-right: 10px;">
 
-        function toggleReadMore(productId) {
-            var readMoreContent = document.getElementById('readMoreContent' + productId);
-            readMoreContent.style.display = (readMoreContent.style.display === 'none' || readMoreContent.style.display === '') ? 'block' : 'none';
+  <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Exp Date:</label>  
+  <input type="date" id="dateInput" onchange="filterByDate1()" style="height: 20px; border: 2px solid #333333; margin-right: 10px;">
+</div>
+
+
+<div class="table-container">
+    <table id="ordersTable">
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Name</th>
+            <th scope="col">Form</th>
+            <th scope="col">strength</th>
+            <th scope="col">Code</th>
+            <th scope="col">Batch ID</th>
+            <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
+                In-Stock <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+            </th>
+            <th scope="col">Mfg Date</th>
+            <th scope="col">Exp Date</th>
+            <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
+              Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+          </th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr class="table-row">
+                <td><img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;"></td>
+                <td>{{ product.product_name }}</td>
+                <td>{{ product.product_data.form }}</td>
+                <td>{{ product.product_data.strength }}mg</td>
+                <td>{{ product.product_data.product_code }}</td>
+                <td>{{ product.batchId }}</td>
+                <td>{{ product.product_data.quantity_in_stock }}</td>
+                <td>{{ product.product_data.manufacturing_date }}</td>
+                <td>{{ product.product_data.expiry_date }}</td>
+                <td>{{ product.product_data.unit_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var selectedOrders = []; // Array to store selected orders' data
+
+    function updateSelection(checkbox) {
+        var row = checkbox.closest('tr');
+        var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
+    
+        if (checkbox.checked) {
+            // If checked, gather data and add to the selectedOrders
+            var orderData = {
+                orderId: orderId,
+                trxId: row.cells[2].textContent.trim(),
+                distributor: row.cells[3].textContent.trim(),
+                date: row.cells[4].textContent.trim(),
+                product: row.cells[5].textContent.trim(),
+                batchId: row.cells[6].textContent.trim(),
+                productCode: row.cells[7].textContent.trim(),
+                quantity: row.cells[8].textContent.trim(),
+                status: row.cells[9].textContent.trim()
+            };
+          
+            // Collect hidden inputs within the row for additional data
+            row.querySelectorAll('td:last-child input[type="hidden"]').forEach(function(input) {
+                orderData[input.name] = input.value;
+            });
+          
+            selectedOrders.push(orderData); // Add the new order data to the array
+        } else {
+            // If unchecked, remove the order from the array
+            selectedOrders = selectedOrders.filter(function(order) {
+                return order.orderId !== orderId; // Correct filtering using orderId
+            });
         }
-        function addToCart(manu_email,timestamp,manu_name,batchId,productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
-            var quantityInput = document.getElementById('quantity'+batchId);
-            console.log(quantityInput)
-            var quantity = parseInt(quantityInput.value, 10);
-            console.log(quantity)
-            console.log(maxQuantity)
-            console.log(cartItems)
-        
-            if (quantity > 0 && quantity <= maxQuantity) {
-                // Check if the product is already in the cart
-                var existingItem = cartItems.find(item => item.productCode === productCode);
-        
-                if (existingItem) {
-                    // Product already in the cart, update the quantity
-                    existingItem.quantity += quantity;
-                } else {
-                    // Create a new cart item for each product
-                    
-                    var cartItem = {
-                        expiry_date: expiry_date,
-                        manufacturing_date: manufacturing_date,
-                        dosage: dosage,
-                        ingredients: ingredients,
-                        description: description,
-                        batchId: batchId,
-                        manu_name: manu_name,
-                        timestamp: timestamp,
-                        manu_email: manu_email,
-                        productName: productName,
-                        productCode: productCode,
-                        unitPrice: unitPrice,
-                        quantity: quantity,
+      
+        console.log(selectedOrders); // Logs to console to monitor the selected orders
+    }
 
-                        totalprice : quantity*unitPrice
-                        // Add other properties if needed
-                    };
-        
-                    // Add the cart item to the cartItems array
-                    cartItems.push(cartItem);
-        
-                    // Update the cart counter only for new products
-                    var cartCounter = document.getElementById('cartCounter');
-                    var currentCount = parseInt(cartCounter.innerText, 10);
-                    cartCounter.innerText = currentCount + 1;
+    // Attach event listeners to checkboxes on document load
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.table-row input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.onclick = function() { updateSelection(this); };
+        });
+    });
+
+    // Function to filter the table based on search input
+    function filterTable() {
+      var input = document.getElementById('searchInput');
+      var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
+      var table = document.getElementById('ordersTable');
+      var tr = table.getElementsByTagName('tr');
+    
+      if (filter === "") {
+          // If the filter is empty, display all rows
+          for (var i = 1; i < tr.length; i++) { // Skip the header row
+              tr[i].style.display = "";
+          }
+          return; // Exit the function early
+      }
+    
+      // Continue with filtering only if there is some text in the input
+      for (var i = 1; i < tr.length; i++) {
+          var display = false; // Assume the row does not match
+          // Define which columns to search (OrderID, Trx ID, Distributor, Product)
+          var tds = [tr[i].getElementsByTagName('td')[1], // Name
+                     tr[i].getElementsByTagName('td')[2], // Form   
+                     tr[i].getElementsByTagName('td')[3], // strength   
+                     tr[i].getElementsByTagName('td')[5], // Code
+                     tr[i].getElementsByTagName('td')[6], // Batch ID	
+                     tr[i].getElementsByTagName('td')[7], // Product Code
+                     ]; // Product
+      
+          for (var j = 0; j < tds.length; j++) {
+              var td = tds[j];
+              if (td) {
+                  var txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().trim() === filter) {
+                      display = true; // Show the row if the cell matches exactly
+                      break; // Stop checking further cells if a match is found
+                  }
+              }
+          }
+          tr[i].style.display = display ? "" : "none"; // Apply the display setting
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var input = document.getElementById('searchInput');
+      input.addEventListener('keyup', function(event) {
+          if (event.key === "Enter") {
+              filterTable();
+          }
+      });
+    });
+
+    function filterByDate() {
+      var dateInput = document.getElementById('dateInput').value;
+      var table = document.getElementById('ordersTable');
+      var tr = table.getElementsByTagName('tr');
+  
+      if (!dateInput) {
+          // If no date is entered, show all rows
+          for (var i = 1; i < tr.length; i++) {
+              tr[i].style.display = "";
+          }
+          return;
+      }
+  
+      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+  
+      for (var i = 1; i < tr.length; i++) {
+          var td = tr[i].getElementsByTagName('td')[7]; // Assuming Date is the 5th column
+          if (td) {
+              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
+              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+          }
+      }
+  }
+
+    function filterByDate1() {
+      var dateInput = document.getElementById('dateInput').value;
+      var table = document.getElementById('ordersTable');
+      var tr = table.getElementsByTagName('tr');
+  
+      if (!dateInput) {
+          // If no date is entered, show all rows
+          for (var i = 1; i < tr.length; i++) {
+              tr[i].style.display = "";
+          }
+          return;
+      }
+  
+      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+  
+      for (var i = 1; i < tr.length; i++) {
+          var td = tr[i].getElementsByTagName('td')[8]; // Assuming Date is the 5th column
+          if (td) {
+              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
+              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+          }
+      }
+  }
+
+
+
+
+
+let priceSortAsc = true; // Initialize sort direction
+
+function sortTableByPrice() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    var sortIcon = document.getElementById('priceSortIcon');
+    table = document.getElementById("ordersTable");
+    switching = true;
+
+    // Update icon based on current sort direction
+    if (priceSortAsc) {
+        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
+    } else {
+        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+    }
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[9];
+            y = rows[i + 1].getElementsByTagName("TD")[9];
+            if (priceSortAsc) {
+                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
                 }
-        
-                // Reset quantity input
-                quantityInput.value = 0;
-        
-                // Hide the modal
-                $('#addToCartModal' + batchId).modal('hide');
-                
-                // Additional logic here to update the cart or perform other actions
             } else {
-                alert('Invalid quantity. Please enter a valid quantity.');
-            }
-        }
-        
-
-        function viewCart() {
-            // Show the cart overlay
-            document.getElementById('cartOverlay').style.display = 'flex';
-        
-            // Display cart items
-            var cartContent = document.getElementById('cartContent');
-            cartContent.innerHTML = ''; // Clear previous content
-        
-            if (cartItems.length === 0) {
-                cartContent.innerHTML = '<p>Your cart is empty.</p>';
-            } else {
-                // Display each cart item
-                cartItems.forEach(function (item) {
-                    var itemInfo = `
-                        <div>
-                            <p>Product: ${item.productName}</p>
-                            <p>Quantity: ${item.quantity}</p>
-                            <p>Total Price: $${item.unitPrice * item.quantity}</p>
-                        </div>
-                        <hr>
-                    `;
-                    var itemElement = document.createElement('div');
-                    itemElement.innerHTML = itemInfo;
-                    cartContent.appendChild(itemElement);
-                });
-            }
-        }
-        
-        function closeCartPopup() {
-            // Hide the cart overlay
-            document.getElementById('cartOverlay').style.display = 'none';
-        }
-
-        function proceedToCheckout() {
-            // Log the cart items to the console
-            console.log(cartItems);
-        }
-
-        function proceedToCheckout(manufacturer) {
-            // Log the cart items to the console
-            console.log(cartItems);
-            console.log(manufacturer);
-            
-            // Retrieve the value of email_dist from the input field
-            var email_dist = document.querySelector('input[name="email_dist"]').value;
-            console.log(email_dist);
-            // Retrieve the value of email_dist from the input field
-            var comp_info = document.querySelector('input[name="comp_info"]').value;
-            console.log(comp_info);
-        
-            // Create a form dynamically
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/checkout';  // Replace with the actual URL of your Django view
-            form.style.display = 'none';
-        
-            // Add CSRF token
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrfmiddlewaretoken';
-            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
-            form.appendChild(csrfInput);
-        
-            // Create an input field to hold the cartItems data
-            const jsonInput = document.createElement('input');
-            jsonInput.type = 'hidden';
-            jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
-            jsonInput.value = JSON.stringify(cartItems);
-            form.appendChild(jsonInput);
-        
-            // Add an input field for the manufacturer name
-            const manufacturerInput = document.createElement('input');
-            manufacturerInput.type = 'hidden';
-            manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
-            manufacturerInput.value = manufacturer;  // Pass the manufacturer value
-            form.appendChild(manufacturerInput);
-        
-            // Add an input field for the email_dist value
-            const emailInput = document.createElement('input');
-            emailInput.type = 'hidden';
-            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
-            emailInput.value = email_dist;  // Pass the email_dist value
-            form.appendChild(emailInput);
-
-            // Add an input field for the email_dist value
-            const compinfoInput = document.createElement('input');
-            compinfoInput.type = 'hidden';
-            compinfoInput.name = 'comp_info';  // Name to use in Django for the email_dist
-            compinfoInput.value = comp_info;  // Pass the email_dist value
-            form.appendChild(compinfoInput);
-        
-            // Append the form to the document body
-            document.body.appendChild(form);
-        
-            // Submit the form
-            form.submit();
-        }
-        
-        // Function to get CSRF token from cookies
-        function getCSRFToken() {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith('csrftoken=')) {
-                    return cookie.substring('csrftoken='.length, cookie.length);
+                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
                 }
             }
-            return null;
         }
-    </script>
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+}
+
+    function distorders(email,company_info) {
+        console.log("Email Distribution:", email);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/manuorders';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    function viewInventory(email,company_info) {
+        console.log("Viewing inventory...");
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+
+        form.submit();
+    }
+    function addDrug(email, company_info) {
+        console.log("Adding drug...");
+        window.location.href = '/adddrugmenu';  // Replace with the actual URL for adding drug
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/adddrugmenu';  // Replace with the actual URL for adding drug
+        form.style.display = 'none';
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 </body>
 </html>
