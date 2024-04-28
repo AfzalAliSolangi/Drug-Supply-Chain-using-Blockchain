@@ -181,15 +181,15 @@ th {
 
 <div class="sidebar">
     <a href="#" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
-    <a href="#" id="ordersLink" class="btn" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}')">Inventory</a>
+    <a href="#" id="ordersLink" class="btn" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')">Inventory</a>
     <a href="#" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
 </div>
 
 <div class="top-bar">
-    <b>Welcome, {{ manufacturer }}</b>
+    <b>Welcome, {{ company_info }}</b>
     <div style="display: flex; align-items: center;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" style="height: 40px; border-radius: 50%; margin-right: 5px;">
-      <span>{{ manufacturer }}</span>
+      <span>{{ company_info }}</span>
       <!-- Dropdown Menu -->    
       <div class="dropdown">
         <button class="dropbtn">▼</button>
@@ -203,7 +203,7 @@ th {
 <!-- Search Input Section with Search Button -->
 <div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
   
-  <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
+  <input type="text" id="searchInput" placeholder="Search Products..." style="width: 200px; height: 20px; border: 2px solid #333333;">
   <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
 
   <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Mfg Date:</label>  
@@ -237,14 +237,10 @@ th {
         <tbody>
             {% for product in products %}
             <tr class="table-row">
-              <td>
-                <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
-                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
-              </td>
+                <td><img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;"></td>
                 <td>{{ product.product_name }}</td>
                 <td>{{ product.product_data.form }}</td>
-                <td>{{ product.product_data.strength }}</td>
+                <td>{{ product.product_data.strength }}mg</td>
                 <td>{{ product.product_data.product_code }}</td>
                 <td>{{ product.batchId }}</td>
                 <td>{{ product.product_data.quantity_in_stock }}</td>
@@ -445,45 +441,7 @@ function sortTableByPrice() {
     priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
 }
 
-
-function handleConfirm() {
-  console.log("Confirmed Orders:", selectedOrders);
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
-            form.style.display = 'none';
-
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
-function handleCancel() {
-  console.log("Cancelled Action");
-  console.log("Confirmed Orders:", selectedOrders);
-  // Logic to handle a cancellation or clear selections can be added here
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/manuordercancel';  // Replace with the actual URL of your Django view
-  form.style.display = 'none';
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-  document.body.appendChild(form);
-  form.submit();
-}
-    function distorders(email) {
+    function distorders(email,company_info) {
         console.log("Email Distribution:", email);
         const form = document.createElement('form');
         form.method = 'POST';
@@ -505,18 +463,27 @@ function handleCancel() {
         document.body.appendChild(form);
         form.submit();
     }
-    function viewInventory(email) {
+    function viewInventory(email,company_info) {
         console.log("Viewing inventory...");
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
         form.style.display = 'none';
+        
         const emailInput = document.createElement('input');
         emailInput.type = 'hidden';
         emailInput.name = 'email';
         emailInput.value = email;
         form.appendChild(emailInput);
         document.body.appendChild(form);
+
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+
         form.submit();
     }
     function addDrug(email, company_info) {

@@ -343,7 +343,7 @@ th {
 
 <div class="sidebar">
     <a href="#" class="btn" onclick="event.preventDefault(); distorders('{{ email }}','{{ company_info }}')">Orders</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}')">Inventory</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')">Inventory</a>
     <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
 </div>
 
@@ -495,7 +495,7 @@ th {
         document.body.appendChild(form);
         form.submit();
     }
-    function viewInventory(email) {
+    function viewInventory(email, company_info) {
         console.log("Viewing inventory...");
         const form = document.createElement('form');
         form.method = 'POST';
@@ -506,6 +506,12 @@ th {
         emailInput.name = 'email';
         emailInput.value = email;
         form.appendChild(emailInput);
+        document.body.appendChild(form);
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
         document.body.appendChild(form);
         form.submit();
     }

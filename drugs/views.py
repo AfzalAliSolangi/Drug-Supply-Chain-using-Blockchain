@@ -586,7 +586,9 @@ def viewmanuinvent(request):
     print('Viewing Manufacturer Inventory')
     if request.method == 'POST':
         manu_key = request.POST.get('email')
+        company_info = request.POST.get('company_info')
         print(manu_key)
+        print(company_info)
         response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(manu_key)) # Based on the manufacturer KEY the data is being fetched
         print(len(response))
         if len(response) > 0:
@@ -617,7 +619,7 @@ def viewmanuinvent(request):
             } for value in product_map.values()]
 
             print(products_with_timestamp)
-            return render(request, 'viewmanuinventory1.html', {'products': products_with_timestamp})
+            return render(request, 'viewmanuinventory1.html', {'products': products_with_timestamp, 'company_info':company_info, 'email':manu_key})
         else:
             return render(request, 'viewmanuinventory.html', {'message': 'No products available'})
 
@@ -626,7 +628,9 @@ def adddrugmenu(request):
     print('\nAdd Drug Manufacturer\n')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
+        print('email',email_rcvd)
         Company_name = request.POST.get('company_info')
+        print('Company_name',Company_name)
         print("Email of the Manufacturer",email_rcvd)
         print("Name of the Manufacturer",Company_name)
     return render(request, "adddrug1.html",{'company_info': Company_name,'email':email_rcvd})
