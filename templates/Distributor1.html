@@ -513,74 +513,48 @@ function handleCancel() {
   document.body.appendChild(form);
   form.submit();
 }
-    function distorders(email) {
-        console.log("Email Distribution:", email);
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/manuorders';  // Replace with the actual URL for completing purchase
-        form.style.display = 'none';
-
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
-        emailInput.value = email;
-        form.appendChild(emailInput);
-
-        const companyinfoInput = document.createElement('input');
-        companyinfoInput.type = 'hidden';
-        companyinfoInput.name = 'company_info';
-        companyinfoInput.value = company_info;
-        form.appendChild(companyinfoInput);
-
-        document.body.appendChild(form);
-        form.submit();
-    }
-
-
-    function viewInventory(email,company_info) {
-        console.log("Viewing inventory...");
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
-        form.style.display = 'none';
-        
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
-        emailInput.value = email;
-        form.appendChild(emailInput);
-        document.body.appendChild(form);
-
-        const companyinfoInput = document.createElement('input');
-        companyinfoInput.type = 'hidden';
-        companyinfoInput.name = 'company_info';
-        companyinfoInput.value = company_info;
-        form.appendChild(companyinfoInput);
-
-        document.body.appendChild(form);
-        form.submit();
-    }
-    
-    function addDrug(email, company_info) {
-        console.log("Adding drug...");
-        window.location.href = '/adddrugmenu';  // Replace with the actual URL for adding drug
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/adddrugmenu';  // Replace with the actual URL for adding drug
-        form.style.display = 'none';
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
-        emailInput.value = email;
-        form.appendChild(emailInput);
-        const companyinfoInput = document.createElement('input');
-        companyinfoInput.type = 'hidden';
-        companyinfoInput.name = 'company_info';
-        companyinfoInput.value = company_info;
-        form.appendChild(companyinfoInput);
-        document.body.appendChild(form);
-        form.submit();
-    }
+function distorderprod(email) {
+    console.log("Email Distribution:", email);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/distorderprod';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+function viewdistinvent(email) {
+    console.log("Viewing inventory...");
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+function pharmorders(email) {
+    console.log("Email Distribution:", email);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+    form.submit();
+}
 </script>
 </body>
 </html>
