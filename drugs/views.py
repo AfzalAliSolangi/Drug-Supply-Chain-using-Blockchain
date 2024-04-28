@@ -969,9 +969,9 @@ def manuproducts(request):
         } for value in product_map.values()]
         
         print(products_with_timestamp)
-        return render(request, 'manuproducts.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist, 'comp_info': comp_info})
+        return render(request, 'manuproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist, 'company_info': comp_info})
     else:
-        return render(request, 'manuproducts.html', {'message': 'No products available'})
+        return render(request, 'manuproducts1.html', {'message': 'No products available'})
 
 @csrf_protect
 def distcheckout(request):
