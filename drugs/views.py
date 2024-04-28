@@ -699,7 +699,7 @@ def adddrug(request): # Manufacturer Input
             if set(key_list) == input_key_set:
                 print("Match found:", key_list)
                 # return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})
-                return HttpResponse("This item Already exists!")
+                return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'This Item already exists!'})
                 #Output a pop up on the screen saying the item exists
                 #also return a page show the exact details of the existing item
         else:
@@ -713,7 +713,7 @@ def adddrug(request): # Manufacturer Input
                                                                                          timestamp_utc
                                                                                          ],
                                                                                          {'json': data})#Add a timestamp for sub logic
-            return render(request, "adddrug.html", {"txid": txid})
+            return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
 
 
 ####Distributor#####
