@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.153/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
 <title>Orders Dashboard</title>
 <style>
   body {
@@ -12,7 +15,7 @@
     padding: 0;
   }
   .sidebar {
-    background-color: #5D3FD3;
+    background-color: #5D3FD3!important;
     width: 80px;
     height: calc(100vh - 60px); /* Adjusts height to take top bar into account */
     position: fixed;
@@ -24,7 +27,7 @@
     display: block;
     color: white;
     padding: 10px;
-    text-decoration: none;
+    text-decoration: none!important;
     text-align: center;
   }
   .sidebar a:hover {
@@ -251,7 +254,7 @@ th {
 <div class="sidebar">
     <a href="#" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
     <a href="#"  class="btn" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')">Inventory</a>
-    <a href="#"  id="ordersLink" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Order Drugs</a>
+    <a href="#"  id="ordersLink" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Order<br>Drugs</a>
 </div>
 
 <div class="top-bar">
@@ -331,10 +334,37 @@ th {
                 <input type="hidden" name="batch_id" value="{{ product.batchId }}">
                 <input type="hidden" name="timestamp" value="{{ product.timestamp }}">
             </tr>
+            
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% for product in products %}
+<!-- Add to Cart Modal -->
+<div class="modal fade" id="addToCartModal{{ product.batchId }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="quantity{{ product.batchId }}">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity{{ product.batchId }}" name="quantity" value="1" min="1" max="{{ product.product_data.quantity_in_stock }}">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.email }}', '{{ product.timestamp }}', '{{ manufacturer }}', '{{ product.batchId }}', '{{ product.product_code }}', '{{ product.product_data.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_data.unit_price }}', '{{ product.product_data.description }}', {{ product.product_data.ingredients | safe }}, '{{ product.product_data.dosage }}', '{{ product.product_data.manufacturing_date }}', '{{ product.product_data.expiry_date }}')">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 
 <div id="cartOverlay" class="cart-overlay" onclick="closeCartPopup()">
     <div class="cart-popup" id="cartPopup">
@@ -347,12 +377,71 @@ th {
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   var selectedOrders = []; // Array to store selected orders' data
+  
+  var cartItems = [];
 
+  function addToCart(manu_email,timestamp,manu_name,batchId,productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
+    var quantityInput = document.getElementById('quantity'+batchId);
+    var quantity = parseInt(quantityInput.value, 10);
+    console.log(quantity)
+    console.log(maxQuantity)
+    console.log(cartItems)
+
+    if (quantity > 0 && quantity <= maxQuantity) {
+        // Check if the product is already in the cart
+        var existingItem = cartItems.find(item => item.productCode === productCode);
+
+        if (existingItem) {
+            // Product already in the cart, update the quantity
+            existingItem.quantity += quantity;
+        } else {
+            // Create a new cart item for each product
+            
+            var cartItem = {
+                expiry_date: expiry_date,
+                manufacturing_date: manufacturing_date,
+                dosage: dosage,
+                ingredients: ingredients,
+                description: description,
+                batchId: batchId,
+                manu_name: manu_name,
+                timestamp: timestamp,
+                manu_email: manu_email,
+                productName: productName,
+                productCode: productCode,
+                unitPrice: unitPrice,
+                quantity: quantity,
+
+                totalprice : quantity*unitPrice
+                // Add other properties if needed
+            };
+
+            // Add the cart item to the cartItems array
+            cartItems.push(cartItem);
+
+            // Update the cart counter only for new products
+            var cartCounter = document.getElementById('cartCounter');
+            var currentCount = parseInt(cartCounter.innerText, 10);
+            cartCounter.innerText = currentCount + 1;
+        }
+
+        // Reset quantity input
+        quantityInput.value = 0;
+
+        // Hide the modal
+        $('#addToCartModal' + batchId).modal('hide');
+        
+        // Additional logic here to update the cart or perform other actions
+    } else {
+        alert('Invalid quantity. Please enter a valid quantity.');
+    }
+}
     function updateSelection(checkbox) {
         var row = checkbox.closest('tr');
         var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
@@ -636,6 +725,83 @@ function sortTableByPrice() {
         // Hide the cart overlay
         document.getElementById('cartOverlay').style.display = 'none';
     }
+
+    function proceedToCheckout() {
+        // Log the cart items to the console
+        console.log(cartItems);
+    }
+
+    function proceedToCheckout(manufacturer) {
+        // Log the cart items to the console
+        console.log(cartItems);
+        console.log(manufacturer);
+        
+        // Retrieve the value of email_dist from the input field
+        var email_dist = document.querySelector('input[name="email_dist"]').value;
+        console.log(email_dist);
+        // Retrieve the value of email_dist from the input field
+        var comp_info = document.querySelector('input[name="comp_info"]').value;
+        console.log(comp_info);
+    
+        // Create a form dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/distcheckout';  // Replace with the actual URL of your Django view
+        form.style.display = 'none';
+    
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+        form.appendChild(csrfInput);
+    
+        // Create an input field to hold the cartItems data
+        const jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
+        jsonInput.value = JSON.stringify(cartItems);
+        form.appendChild(jsonInput);
+    
+        // Add an input field for the manufacturer name
+        const manufacturerInput = document.createElement('input');
+        manufacturerInput.type = 'hidden';
+        manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+        manufacturerInput.value = manufacturer;  // Pass the manufacturer value
+        form.appendChild(manufacturerInput);
+    
+        // Add an input field for the email_dist value
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+        emailInput.value = email_dist;  // Pass the email_dist value
+        form.appendChild(emailInput);
+
+        // Add an input field for the email_dist value
+        const compinfoInput = document.createElement('input');
+        compinfoInput.type = 'hidden';
+        compinfoInput.name = 'comp_info';  // Name to use in Django for the email_dist
+        compinfoInput.value = comp_info;  // Pass the email_dist value
+        form.appendChild(compinfoInput);
+    
+        // Append the form to the document body
+        document.body.appendChild(form);
+    
+        // Submit the form
+        form.submit();
+    }
+
+    // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
 </script>
 </body>
 </html>
