@@ -6,20 +6,25 @@
     <title>User Registration</title>
     <style>
         body {
+            background-image: linear-gradient(to bottom, #0077be, #00a0e9);
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 10px;
+            min-height: 100vh;
         }
 
         form {
             background-color: #ffffff;
             padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
         h3 {
@@ -69,7 +74,7 @@
         }
 
         input[type="submit"] {
-            background-color: #5c67f2;
+            background-color: #0079BF;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -82,7 +87,7 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #4a54e1;
+            background-color: #005c99;
         }
 
         .required::after {
@@ -92,15 +97,17 @@
 
         #password-strength-meter-container {
             width: 100%;
-            height: 20px;
+            height: 10px;
             background-color: #f0f0f0;
             margin-bottom: 10px;
+            border-radius: 5px;
         }
 
         #password-strength-meter {
             height: 100%;
             width: 0;
             background-color: #ff0000;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -163,7 +170,7 @@
         </fieldset>
 
         <fieldset>
-            <legend>License and Certification:</legend>
+            <legend></legend>
             <div class="input-group">
                 <label for="license_certification">PDF or Word document:</label>
                 <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required>
