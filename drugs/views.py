@@ -935,7 +935,7 @@ def distorderprod(request):
         return render(request, "distorderprod1.html", {'keys_company_info': keys_company_info,'email': email_dist, 'company_info' : company_info})
 
 def manuproducts(request):
-    email_dist = request.GET.get('email_dist', None)
+    email_dist = request.GET.get('email', None)
     selected_manufacturer = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
     comp_info = request.GET.get('comp_info', None) # Manufacturer name being passed from Distributor.html
     print(selected_manufacturer)

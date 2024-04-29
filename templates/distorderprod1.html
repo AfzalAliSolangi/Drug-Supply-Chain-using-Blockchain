@@ -276,7 +276,7 @@
 
   <form action="manuproducts" method="get" id="manufacturerForm">
       {% csrf_token %}
-      <input type="hidden" name="email_dist" value="{{ email_dist }}">
+      <input type="hidden" name="email" value="{{ email }}">
       <input type="hidden" name="comp_info" value="{{ company_info }}">
       <label for="manufacturer">Choose a Manufacturer:</label>
       <select id="manufacturer" name="manufacturer" onchange="enableSubmit()">
