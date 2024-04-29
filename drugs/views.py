@@ -980,7 +980,7 @@ def distcheckout(request):
         # Retrieve the cartItems data from the POST request
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
-        email_dist = request.POST.get('email_dist', None)
+        email_dist = request.POST.get('email', None)
         comp_info = request.POST.get('comp_info', None)
         print(email_dist)
         print(comp_info)
