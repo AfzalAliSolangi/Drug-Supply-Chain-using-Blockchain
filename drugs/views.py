@@ -973,7 +973,7 @@ def manuproducts(request):
         } for value in product_map.values()]
         
         print(products_with_timestamp)
-        return render(request, 'manuproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email_dist': email_dist, 'company_info': comp_info})
+        return render(request, 'manuproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email': email_dist, 'company_info': comp_info})
     else:
         return render(request, 'manuproducts1.html', {'message': 'No products available'})
 
@@ -1085,7 +1085,9 @@ def pharmorders(request):
     print('\nOrders From Pharmacies\n')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
+        print("Email :",email_rcvd)
         comp_info = request.POST.get('company_info') #Name of the Distributor
+        print("comany_info:",comp_info)
         response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
