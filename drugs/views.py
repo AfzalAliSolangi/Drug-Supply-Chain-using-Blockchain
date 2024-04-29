@@ -213,7 +213,6 @@ def login_check_manufacturer(request): #Implement Password authentication
             combined_list.sort(key=lambda x: x[-2], reverse=True)
 
             
-########################################################################################################            
             #NOTE: This is the logic for finding the latest order based on timestamp
             # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
             distinct_orders = {}
@@ -227,7 +226,6 @@ def login_check_manufacturer(request): #Implement Password authentication
             # Convert the dictionary to a list of lists
             distinct_orders_list = list(distinct_orders.values())
 
-########################################################################################################
             
             
             # # Print the distinct orders
