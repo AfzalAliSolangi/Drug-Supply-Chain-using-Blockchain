@@ -82,7 +82,7 @@ def email_check_master(request):
             if each_email==email:
                 print("present")
                 return render(request, "login_master.html") #if the email is present prompt to login master page
-        return render(request, "signup-master.html",{'email': email}) #if the email is not present then render this page
+        return render(request, "signup-master1.html",{'email': email}) #if the email is not present then render this page
 
 def process_registration_master(request):
     print("process_registration_manufacturer")
@@ -736,7 +736,7 @@ def email_check_distributor(request):
             if each_email==email:
                 print("present")
                 return render(request, "login_distributor.html") #if the email is present prompt to login master page
-        return render(request, "signup-distributor.html",{'email': email}) #if the email is not present then render this page
+        return render(request, "signup-distributor1.html",{'email': email}) #if the email is not present then render this page
 
 def process_registration_distributor(request):
     print("process_registration_distributor")
@@ -1424,7 +1424,7 @@ def email_check_pharmacy(request):
             if each_email==email:
                 print("present")
                 return render(request, "login_pharmacy.html") #if the email is present prompt to login master page
-        return render(request, "Signup-pharmacy.html",{'email': email}) #if the email is not present then render this page
+        return render(request, "Signup-pharmacy1.html",{'email': email}) #if the email is not present then render this page
 
 def process_registration_pharmacy(request):
     print("process_registration_pharmacy")
