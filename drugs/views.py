@@ -912,7 +912,9 @@ def distorderprod(request):
     print("\nOrdering Products from Manufacturer")
     if request.method == 'POST':
         email_dist = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
         print('\nDistributor Email: ',email_dist)
+        print('\nCompany Info: ',company_info)
         
         #for fetching out the name of the Distributor name
         result = rpc_connection.liststreamkeyitems(users_distributor_stream, email_dist)
@@ -930,7 +932,7 @@ def distorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "distorderprod1.html", {'keys_company_info': keys_company_info,'email_dist': email_dist, 'company_info' : comp_info})
+        return render(request, "distorderprod1.html", {'keys_company_info': keys_company_info,'email': email_dist, 'company_info' : company_info})
 
 def manuproducts(request):
     email_dist = request.GET.get('email_dist', None)

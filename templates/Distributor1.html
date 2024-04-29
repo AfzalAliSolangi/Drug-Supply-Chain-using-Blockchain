@@ -6,181 +6,181 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 <title>Orders Dashboard</title>
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  .sidebar {
-    background-color: #5D3FD3;
-    width: 80px;
-    height: calc(100vh - 60px); /* Adjusts height to take top bar into account */
-    position: fixed;
-    padding-top: 20px;
-    top: 60px; /* Starts directly below the top bar */
-    left: 0;
-  }
-  .sidebar a {
-    display: block;
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    text-align: center;
-  }
-  .sidebar a:hover {
-    background-color: #4CAF50;
-  }
-  .top-bar {
-    background: #FFFFFF;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed; /* Makes the top bar fixed at the top */
-    width: 100%; /* Ensures it covers the full width */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensures it stays on top */
-  }
-  .top-bar img {
-    border-radius: 50%; /* Makes the image rounded */
-    margin-right: 10px; /* Adds spacing between the image and the name */
-  }
-  
-  .top-bar span {
-    font-size: 16px; /* Adjust font size as needed */
-    margin-right: 20px; /* Adds spacing between the name and the logout button */
-  }
-  .table-container {
-    overflow-y: auto; /* Enables vertical scrolling */
-    margin-left: 80px;
-    margin-top: 10px;
-    width: calc(100% - 100px); /* Adjust based on your layout */
-    height: 500px; /* Adjust the height to fit your needs */
-}
-
-.table-container table {
-    padding: 20px;
-    border-spacing: 0;
-    border-collapse: collapse;
-    width: 100%; /* Ensures the table fills the container width */
-    background-color: #fff; /* Sets a clean background */
-}
-
-th, td {
-    padding: 15px 10px; /* Increased padding for a modern look */
-    text-align: Center; /* Typically modern tables align text to the left */
-    font-size: 14px; /* Adjust font size for readability */
-}
-
-th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f8f8; /* Light background for the header */
-    color: #333; /* Soft black for text */
-    z-index: 2; /* Ensures the header is above other content */
-}
-
-
-.table-row td {
-    border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
-}
-  .button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  /* Style for the dropdown button */
-  .dropbtn {
-    background-color: #FFFFFF; /* White background */
-    color: black; /* Black text/icon */
-    padding: 8px 12px; /* Adjust padding to balance the button size */
-    font-size: 16px; /* Font size of the text/icon */
-    border: none; /* No border */
-    cursor: pointer; /* Indicates it's clickable */
-    border-radius: 4px; /* Rounded corners */
-    line-height: 1; /* Line height for text alignment */
-    display: flex; /* Use flex to center content */
-    align-items: center; /* Align items vertically */
-    justify-content: center; /* Center content horizontally */
-    height: 40px; /* Match height with other elements like image */
-    overflow: visible; /* Prevents clipping */
-}
-
-  
-  
-  /* Container for the dropdown content. Hidden by default. */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 150px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    right: 0;                  /* Aligns the dropdown to the right of the button */
-}
-  
-  /* Links inside the dropdown */
-  .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .sidebar {
+      background-color: #5D3FD3;
+      width: 80px;
+      height: calc(100vh - 60px); /* Adjusts height to take top bar into account */
+      position: fixed;
+      padding-top: 20px;
+      top: 60px; /* Starts directly below the top bar */
+      left: 0;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px;
       text-decoration: none;
-      display: block;
-  }
-  
-  /* Change color of dropdown links on hover */
-  .dropdown-content a:hover {background-color: #f1f1f1}
-  
-  /* Show the dropdown menu on hover */
-  .dropdown:hover .dropdown-content {
-      display: block;
-  }
-  
-  /* Change the dropdown button style on hover */
-  .dropdown:hover .dropbtn {
-      background-color: #E8E8E8; /* Light gray to indicate hover */
-  }
-  /* Ensure the dropdown menu is correctly positioned */
-  .dropdown {
-    position: relative; /* Ensures the dropdown content is positioned relative to this container */
-    display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
-    margin-left: 5px; /* Minimal left margin for tight spacing */
-    margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
-}
+      text-align: center;
+    }
+    .sidebar a:hover {
+      background-color: #4CAF50;
+    }
+    .top-bar {
+      background: #FFFFFF;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed; /* Makes the top bar fixed at the top */
+      width: 100%; /* Ensures it covers the full width */
+      top: 0;
+      left: 0;
+      z-index: 1000; /* Ensures it stays on top */
+    }
+    .top-bar img {
+      border-radius: 50%; /* Makes the image rounded */
+      margin-right: 10px; /* Adds spacing between the image and the name */
+    }
 
-#ordersLink {
-  background-color: #4CAF50; /* Green color */
-  color: white; /* Ensures text is visible on the green background */
-}
+    .top-bar span {
+      font-size: 16px; /* Adjust font size as needed */
+      margin-right: 20px; /* Adds spacing between the name and the logout button */
+    }
+    .table-container {
+      overflow-y: auto; /* Enables vertical scrolling */
+      margin-left: 80px;
+      margin-top: 10px;
+      width: calc(100% - 100px); /* Adjust based on your layout */
+      height: 500px; /* Adjust the height to fit your needs */
+  }
 
-#ordersLink:hover {
-  background-color: #43a047; /* Slightly darker green on hover for feedback */
-}
+  .table-container table {
+      padding: 20px;
+      border-spacing: 0;
+      border-collapse: collapse;
+      width: 100%; /* Ensures the table fills the container width */
+      background-color: #fff; /* Sets a clean background */
+  }
 
-.oval-box {
-  width: 90px; /* Adjust according to your requirement */
-  height: 30px; /* Adjust according to your requirement */
-  border-radius: 15px; /* Half of the height for smoother corners */
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  color: black; /* Text color */
-  font-weight: bold; /* Make text bold */
-}
+  th, td {
+      padding: 15px 10px; /* Increased padding for a modern look */
+      text-align: Center; /* Typically modern tables align text to the left */
+      font-size: 14px; /* Adjust font size for readability */
+  }
+
+  th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8; /* Light background for the header */
+      color: #333; /* Soft black for text */
+      z-index: 2; /* Ensures the header is above other content */
+  }
+
+
+  .table-row td {
+      border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
+  }
+    .button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    /* Style for the dropdown button */
+    .dropbtn {
+      background-color: #FFFFFF; /* White background */
+      color: black; /* Black text/icon */
+      padding: 8px 12px; /* Adjust padding to balance the button size */
+      font-size: 16px; /* Font size of the text/icon */
+      border: none; /* No border */
+      cursor: pointer; /* Indicates it's clickable */
+      border-radius: 4px; /* Rounded corners */
+      line-height: 1; /* Line height for text alignment */
+      display: flex; /* Use flex to center content */
+      align-items: center; /* Align items vertically */
+      justify-content: center; /* Center content horizontally */
+      height: 40px; /* Match height with other elements like image */
+      overflow: visible; /* Prevents clipping */
+  }
+
+
+
+    /* Container for the dropdown content. Hidden by default. */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 150px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      right: 0;                  /* Aligns the dropdown to the right of the button */
+  }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {background-color: #f1f1f1}
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Change the dropdown button style on hover */
+    .dropdown:hover .dropbtn {
+        background-color: #E8E8E8; /* Light gray to indicate hover */
+    }
+    /* Ensure the dropdown menu is correctly positioned */
+    .dropdown {
+      position: relative; /* Ensures the dropdown content is positioned relative to this container */
+      display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
+      margin-left: 5px; /* Minimal left margin for tight spacing */
+      margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+  }
+
+  #ordersLink {
+    background-color: #4CAF50; /* Green color */
+    color: white; /* Ensures text is visible on the green background */
+  }
+
+  #ordersLink:hover {
+    background-color: #43a047; /* Slightly darker green on hover for feedback */
+  }
+
+  .oval-box {
+    width: 90px; /* Adjust according to your requirement */
+    height: 30px; /* Adjust according to your requirement */
+    border-radius: 15px; /* Half of the height for smoother corners */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: black; /* Text color */
+    font-weight: bold; /* Make text bold */
+  }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
+    <a href="#" id="ordersLink">Orders</a>
     <a href="#" class="btn" onclick="event.preventDefault(); viewdistinvent('{{ email }}', '{{ company_info }}')">Inventory</a>
     <a href="#" class="btn" onclick="event.preventDefault(); distorderprod('{{ email }}', '{{ company_info }}')">Order Drugs</a>
 </div>
@@ -422,157 +422,157 @@ th {
             }
         }
     }
-}
-
-function toggleSelectAll(source) {
-  // Select all checkboxes within table rows that are not disabled and are visible
-  var checkboxes = document.querySelectorAll('#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)');
-  for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = source.checked;
-      updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
   }
-}
 
-let priceSortAsc = true; // Initialize sort direction
-
-function sortTableByPrice() {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    var sortIcon = document.getElementById('priceSortIcon');
-    table = document.getElementById("ordersTable");
-    switching = true;
-
-    // Update icon based on current sort direction
-    if (priceSortAsc) {
-        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
-    } else {
-        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+  function toggleSelectAll(source) {
+    // Select all checkboxes within table rows that are not disabled and are visible
+    var checkboxes = document.querySelectorAll('#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)');
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+        updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
     }
+  }
 
-    while (switching) {
-        switching = false;
-        rows = table.getElementsByTagName("TR");
-        for (i = 1; i < (rows.length - 1); i++) {
-            shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[9];
-            y = rows[i + 1].getElementsByTagName("TD")[9];
-            if (priceSortAsc) {
-                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
-                    shouldSwitch = true;
-                    break;
-                }
-            } else {
-                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-        }
-    }
-    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
-}
+  let priceSortAsc = true; // Initialize sort direction
+
+  function sortTableByPrice() {
+      var table, rows, switching, i, x, y, shouldSwitch;
+      var sortIcon = document.getElementById('priceSortIcon');
+      table = document.getElementById("ordersTable");
+      switching = true;
+
+      // Update icon based on current sort direction
+      if (priceSortAsc) {
+          sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
+      } else {
+          sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+      }
+
+      while (switching) {
+          switching = false;
+          rows = table.getElementsByTagName("TR");
+          for (i = 1; i < (rows.length - 1); i++) {
+              shouldSwitch = false;
+              x = rows[i].getElementsByTagName("TD")[9];
+              y = rows[i + 1].getElementsByTagName("TD")[9];
+              if (priceSortAsc) {
+                  if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                      shouldSwitch = true;
+                      break;
+                  }
+              } else {
+                  if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                      shouldSwitch = true;
+                      break;
+                  }
+              }
+          }
+          if (shouldSwitch) {
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+          }
+      }
+      priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+  }
 
 
-function handleConfirm() {
-  console.log("Confirmed Orders:", selectedOrders);
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/distorderconfirm';  // Replace with the actual URL of your Django view
-            form.style.display = 'none';
-
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
-function handleCancel() {
-  console.log("Cancelled Action");
-  console.log("Confirmed Orders:", selectedOrders);
-  // Logic to handle a cancellation or clear selections can be added here
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/distordercancel';  // Replace with the actual URL of your Django view
-  form.style.display = 'none';
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-  document.body.appendChild(form);
-  form.submit();
-}
-function distorderprod(email,company_info) {
-    console.log("Email Distribution:", email);
+  function handleConfirm() {
+    console.log("Confirmed Orders:", selectedOrders);
+    // Additional logic for confirming orders can be added here
+    // Add an input field for the selectedOrders data
     const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/distorderprod';  // Replace with the actual URL for completing purchase
-    form.style.display = 'none';
+              form.method = 'POST';
+              form.action = '/distorderconfirm';  // Replace with the actual URL of your Django view
+              form.style.display = 'none';
 
-    const emailInput = document.createElement('input');
-    emailInput.type = 'hidden';
-    emailInput.name = 'email';
-    emailInput.value = email;
-    form.appendChild(emailInput);
-    document.body.appendChild(form);
+    const selectedOrdersInput = document.createElement('input');
+    selectedOrdersInput.type = 'hidden';
+    selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
+    selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+    form.appendChild(selectedOrdersInput);
 
-    const companyinfoInput = document.createElement('input');
-    companyinfoInput.type = 'hidden';
-    companyinfoInput.name = 'company_info';
-    companyinfoInput.value = company_info;
-    form.appendChild(companyinfoInput);
-    document.body.appendChild(form);
-
-    form.submit();
-}
-function viewdistinvent(email,company_info) {
-    console.log("Viewing inventory...");
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
-    form.style.display = 'none';
-
-    const emailInput = document.createElement('input');
-    emailInput.type = 'hidden';
-    emailInput.name = 'email';
-    emailInput.value = email;
-    form.appendChild(emailInput);
-    document.body.appendChild(form);
-
-    const companyinfoInput = document.createElement('input');
-    companyinfoInput.type = 'hidden';
-    companyinfoInput.name = 'company_info';
-    companyinfoInput.value = company_info;
-    form.appendChild(companyinfoInput);
-    document.body.appendChild(form);
-
-    form.submit();
-}
-function pharmorders(email) {
-    console.log("Email Distribution:", email);
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
-    form.style.display = 'none';
-    const emailInput = document.createElement('input');
-    emailInput.type = 'hidden';
-    emailInput.name = 'email';
-    emailInput.value = email;
-    form.appendChild(emailInput);
     document.body.appendChild(form);
     form.submit();
-}
+  }
+
+  function handleCancel() {
+    console.log("Cancelled Action");
+    console.log("Confirmed Orders:", selectedOrders);
+    // Logic to handle a cancellation or clear selections can be added here
+    // Additional logic for confirming orders can be added here
+    // Add an input field for the selectedOrders data
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/distordercancel';  // Replace with the actual URL of your Django view
+    form.style.display = 'none';
+    const selectedOrdersInput = document.createElement('input');
+    selectedOrdersInput.type = 'hidden';
+    selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
+    selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+    form.appendChild(selectedOrdersInput);
+    document.body.appendChild(form);
+    form.submit();
+  }
+  function distorderprod(email,company_info) {
+      console.log("Email Distribution:", email);
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/distorderprod';  // Replace with the actual URL for completing purchase
+      form.style.display = 'none';
+
+      const emailInput = document.createElement('input');
+      emailInput.type = 'hidden';
+      emailInput.name = 'email';
+      emailInput.value = email;
+      form.appendChild(emailInput);
+      document.body.appendChild(form);
+
+      const companyinfoInput = document.createElement('input');
+      companyinfoInput.type = 'hidden';
+      companyinfoInput.name = 'company_info';
+      companyinfoInput.value = company_info;
+      form.appendChild(companyinfoInput);
+      document.body.appendChild(form);
+
+      form.submit();
+  }
+  function viewdistinvent(email,company_info) {
+      console.log("Viewing inventory...");
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
+      form.style.display = 'none';
+
+      const emailInput = document.createElement('input');
+      emailInput.type = 'hidden';
+      emailInput.name = 'email';
+      emailInput.value = email;
+      form.appendChild(emailInput);
+      document.body.appendChild(form);
+
+      const companyinfoInput = document.createElement('input');
+      companyinfoInput.type = 'hidden';
+      companyinfoInput.name = 'company_info';
+      companyinfoInput.value = company_info;
+      form.appendChild(companyinfoInput);
+      document.body.appendChild(form);
+
+      form.submit();
+  }
+  function pharmorders(email) {
+      console.log("Email Distribution:", email);
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
+      form.style.display = 'none';
+      const emailInput = document.createElement('input');
+      emailInput.type = 'hidden';
+      emailInput.name = 'email';
+      emailInput.value = email;
+      form.appendChild(emailInput);
+      document.body.appendChild(form);
+      form.submit();
+  }
 </script>
 </body>
 </html>
