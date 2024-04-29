@@ -868,9 +868,11 @@ def login_check_distributor(request): #Implement Password authentication
 def viewdistinvent(request):
     print('\nViewing Distributor Inventory')
     if request.method == 'POST':
-        dist_key = request.POST.get('email')
-        print(dist_key)
-        response = rpc_connection.liststreamkeyitems('{}'.format(users_distributor_items_stream), '{}'.format(dist_key)) # Based on the manufacturer KEY the data is being fetched
+        email_rcvd = request.POST.get('email')
+        company_info = request.POST.get('company_info')
+        print('Distributor Email: ',email_rcvd)
+        print('company_info: ',company_info)
+        response = rpc_connection.liststreamkeyitems('{}'.format(users_distributor_items_stream), '{}'.format(email_rcvd)) # Based on the manufacturer KEY the data is being fetched
         print(len(response))
         if len(response) > 0:
             product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
@@ -900,7 +902,7 @@ def viewdistinvent(request):
             } for value in product_map.values()]
 
             print(products_with_timestamp)
-            return render(request, 'viewdistinventory1.html', {'products': products_with_timestamp})
+            return render(request, 'viewdistinventory1.html', {'products': products_with_timestamp , 'email': email_rcvd, 'company_info': company_info})
         else:
             return render(request, 'viewdistinventory1.html', {'message': 'No products available'})
 
@@ -1123,7 +1125,7 @@ def pharmorders(request):
         orders = []
         for index, item in enumerate(distinct_orders_list):
             # Create a dictionary for each element in the combined_list
-            orderPlaceOn = datetime.datetime.fromisoformat(item[8])
+            orderPlaceOn = datetime.datetime.fromisoformat(item[11])
             # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
             orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
             order = {
@@ -1132,14 +1134,15 @@ def pharmorders(request):
                 "Distributor_name": item[1],
                 "Manufacturer_email": item[2],
                 "distributor_email": item[3],
-                "batchId": item[5],
-                "product_name": item[7],
-                "product_code": item[6],
+                "batchId": item[6],
+                "product_name": item[8],
+                "product_code": item[7],
                 "orderPlaceOn": str(orderPlaceOn),
-                "quantity": item[4],
+                "quantity": item[5],
                 "tot_price": item[10],
-                "confirmed": item[12],
-                "timestamp": item[8],
+                "confirmed": item[13],
+                "timestamp": item[12],
+                "manu_email": item[4],
             }
             # Append the dictionary to the orders list
             orders.append(order)
