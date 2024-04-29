@@ -179,90 +179,93 @@ def login_check_manufacturer(request): #Implement Password authentication
         data = json.dumps(result)
         json_load = json.loads(data)
         #apply length check for json_load
-        email_frm_chain = json_load[0]['keys'][0]
-        passw_frm_chain = json_load[0]['data']['json']['password']
-        manufacturer_name = json_load[0]['data']['json']['company_info']
-        comp_info = json_load[0]['data']['json']['company_info']
-        print(data)
-        print(comp_info)
-        print("Email from front end: ",email_rcvd)
-        print("Email from stream: ",email_frm_chain)
-        print(password_rcvd)
-        print(passw_frm_chain)
-        if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
-            print(email_rcvd)
-            response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
-            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-            json_string = json.loads(json_string) #Converts OrderedDict to JSON String
-            
-            print(json_string)
-            combined_list = []
+        if(len(json_load)>0):
+            email_frm_chain = json_load[0]['keys'][0]
+            passw_frm_chain = json_load[0]['data']['json']['password']
+            manufacturer_name = json_load[0]['data']['json']['company_info']
+            comp_info = json_load[0]['data']['json']['company_info']
+            print(data)
+            print(comp_info)
+            print("Email from front end: ",email_rcvd)
+            print("Email from stream: ",email_frm_chain)
+            print(password_rcvd)
+            print(passw_frm_chain)
+            if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+                print(email_rcvd)
+                response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
+                json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+                json_string = json.loads(json_string) #Converts OrderedDict to JSON String
 
-            for item in json_string:
-                keys = item['keys']
-                traxid = item['txid']
-                confirmed_status = item['data']['json']['confirmed']
-                totalprice = item['data']['json']['totalprice']
-                modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
-                combined_list.append(modified_keys)
+                print(json_string)
+                combined_list = []
 
-            print("\nCombined list\n")
-            print(combined_list)
+                for item in json_string:
+                    keys = item['keys']
+                    traxid = item['txid']
+                    confirmed_status = item['data']['json']['confirmed']
+                    totalprice = item['data']['json']['totalprice']
+                    modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
+                    combined_list.append(modified_keys)
 
-            # Sort the list based on the timestamp (second last index)
-            combined_list.sort(key=lambda x: x[-2], reverse=True)
+                print("\nCombined list\n")
+                print(combined_list)
 
-            
-            #NOTE: This is the logic for finding the latest order based on timestamp
-            # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
-            distinct_orders = {}
-            
-            # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
-            for order in combined_list:
-                key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
-                if key not in distinct_orders:
-                    distinct_orders[key] = order
-            
-            # Convert the dictionary to a list of lists
-            distinct_orders_list = list(distinct_orders.values())
+                # Sort the list based on the timestamp (second last index)
+                combined_list.sort(key=lambda x: x[-2], reverse=True)
 
-            
-            
-            # # Print the distinct orders
-            for order in distinct_orders_list:
-                print(order)
 
-            # Iterate over the combined_list
-            orders = []
-            for index, item in enumerate(distinct_orders_list):
-                # Create a dictionary for each element in the combined_list
+                #NOTE: This is the logic for finding the latest order based on timestamp
+                # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
+                distinct_orders = {}
 
-                orderPlaceOn = datetime.datetime.fromisoformat(item[8])
-                # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
-                orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
-                order = {
-                    "orderid":item[0],
-                    "trxid": item[9],
-                    "Distributor_name": item[1],
-                    "Manufacturer_email": item[2],
-                    "distributor_email": item[3],
-                    "batchId": item[5],
-                    "product_name": item[7],
-                    "product_code": item[6],
-                    "orderPlaceOn": str(orderPlaceOn),
-                    "quantity": item[4],
-                    "tot_price": item[10],
-                    "confirmed": item[12],
-                    "timestamp": item[8],
-                }
-                # Append the dictionary to the orders list
-                orders.append(order)
+                # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
+                for order in combined_list:
+                    key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+                    if key not in distinct_orders:
+                        distinct_orders[key] = order
 
-            # Print the resulting list of dictionaries
-            print(orders)
-            return render(request, "manufacturer1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders})
+                # Convert the dictionary to a list of lists
+                distinct_orders_list = list(distinct_orders.values())
+
+
+
+                # # Print the distinct orders
+                for order in distinct_orders_list:
+                    print(order)
+
+                # Iterate over the combined_list
+                orders = []
+                for index, item in enumerate(distinct_orders_list):
+                    # Create a dictionary for each element in the combined_list
+
+                    orderPlaceOn = datetime.datetime.fromisoformat(item[8])
+                    # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+                    orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
+                    order = {
+                        "orderid":item[0],
+                        "trxid": item[9],
+                        "Distributor_name": item[1],
+                        "Manufacturer_email": item[2],
+                        "distributor_email": item[3],
+                        "batchId": item[5],
+                        "product_name": item[7],
+                        "product_code": item[6],
+                        "orderPlaceOn": str(orderPlaceOn),
+                        "quantity": item[4],
+                        "tot_price": item[10],
+                        "confirmed": item[12],
+                        "timestamp": item[8],
+                    }
+                    # Append the dictionary to the orders list
+                    orders.append(order)
+
+                # Print the resulting list of dictionaries
+                print(orders)
+                return render(request, "manufacturer1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders})
+            else:
+                return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
         else:
-            return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
+                return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
 
 def manuorders(request): #If manufacturer is already logged in and move to other tab and back to orders it is for that
     print('manufacturer orders')
