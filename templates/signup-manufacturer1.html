@@ -9,17 +9,12 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
-        }
-        .input-group {
-            border: 2px solid #ccc;
             padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
         }
+
         form {
             background-color: #ffffff;
-            padding: 20px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             display: grid;
@@ -27,40 +22,50 @@
             gap: 20px;
         }
 
-        h1 {
+        h3 {
             color: #333;
-            font-size: 1.5em; /* Slightly larger */
+            font-size: 1.3em;
             text-align: left;
-            margin: 0 0 20px; /* Add bottom margin */
+            margin: 0 0 0px;
             grid-column: 1 / -1; /* Ensures it spans across all columns */
         }
 
         fieldset {
             border: none;
-            padding: 5px;
+            padding: 2px;
             grid-column: span 2; /* Make fieldsets span both columns */
+            margin-bottom: 2px; /* Reduced space between fieldsets */
         }
 
         legend {
             font-size: 1.2em;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
+        }
+
+        .input-group {
+            border: 2px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px; /* Reduced space between input groups */
         }
 
         label {
             font-weight: bold;
             display: block;
-            margin: 10px 0 5px;
+            margin-bottom: 5px;
         }
 
         input[type="text"],
         input[type="password"],
+        input[type="file"],
         textarea,
-        select {
+        select,
+        input[type="checkbox"] {
             width: 100%;
             padding: 8px;
             border-radius: 4px;
             border: 1px solid #ccc;
-            box-sizing: border-box; /* Makes sure padding doesn't affect width */
+            box-sizing: border-box;
         }
 
         input[type="submit"] {
@@ -73,7 +78,7 @@
             cursor: pointer;
             display: block;
             margin: 20px auto;
-            grid-column: span 2; /* Center the button spanning across both columns */
+            grid-column: span 2;
         }
 
         input[type="submit"]:hover {
@@ -87,7 +92,7 @@
 
         #password-strength-meter-container {
             width: 100%;
-            height: 10px;
+            height: 20px;
             background-color: #f0f0f0;
             margin-bottom: 10px;
         }
@@ -95,64 +100,79 @@
         #password-strength-meter {
             height: 100%;
             width: 0;
-            background-color: #ff0000; /* Default color: Red */
+            background-color: #ff0000;
         }
     </style>
 </head>
 <body>
     <form action="process_registration_manufacturer" method="post" onsubmit="return validateForm()">
-        <h1>User Manufacturer Registration Form</h1>
+        <h3>User Manufacturer Registration Form</h3>
         <fieldset>
-            <label for="company_info">Company Name<span class="required">*</span>:</label>
-            <input type="text" id="company_info" name="company_info" required autocomplete="off" maxlength="70">
-            
-            <label for="street_address">Street Address:</label>
-            <input type="text" id="street_address" name="street_address" required autocomplete="off" maxlength="100">
-
-            <label for="business_details">Business Details:</label>
-            <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off" maxlength="500"></textarea>
-            <small>Maximum 500 characters.</small>
-        </fieldset>
-        
-        <fieldset>
-            <label for="state">State:</label>
-            <select id="state" name="state" onchange="populateCities()" required>
-                <option value="">Select State</option>
-                <option value="Sindh">Sindh</option>
-                <option value="Punjab">Punjab</option>
-                <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
-                <option value="Balochistan">Balochistan</option>
-            </select>
-            
-            <label for="city">City:</label>
-            <select id="city" name="city" required>
-                <option value="">Select City</option>
-            </select>
-            
-            <label for="zip_code">Zip code<span class="required">*</span>:</label>
-            <input type="text" id="zip_code" name="zip_code" required autocomplete="off" pattern="[0-9]{5}">
-            <small>Zip code must contain exactly 5 numeric characters.</small>
-        </fieldset>
-        
-        <fieldset>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required autocomplete="off" onkeyup="checkPasswordStrength(this.value)">
-            <div id="password-strength-meter-container">
-                <div id="password-strength-meter"></div>
+            <div class="input-group">
+                <label for="company_info">Company Name<span class="required">*</span>:</label>
+                <input type="text" id="company_info" name="company_info" required autocomplete="off" maxlength="70">
             </div>
-            <small>Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 6 characters long.</small>
-        </fieldset>
-        
-        <fieldset>
-            <label for="license_certification">License and Certification (PDF or Word document)<span class="required"></span>:</label><br>
-            <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required><br><br>
 
-            <label for="agree_terms">I agree to the Terms and Conditions<span class="required"></span>:</label>
-            <input type="checkbox" id="agree_terms" name="agree_terms" required><br><br>
+            <div class="input-group">
+                <label for="street_address">Street Address:</label>
+                <input type="text" id="street_address" name="street_address" required autocomplete="off" maxlength="100">
+            </div>
+
+            <div class="input-group">
+                <label for="business_details">Business Details:</label>
+                <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off" maxlength="500"></textarea>
+                <small>Maximum 500 characters.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <div class="input-group">
+                <label for="state">State:</label>
+                <select id="state" name="state" onchange="populateCities()" required>
+                    <option value="">Select State</option>
+                    <option value="Sindh">Sindh</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
+                    <option value="Balochistan">Balochistan</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="city">City:</label>
+                <select id="city" name="city" required>
+                    <option value="">Select City</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="zip_code">Zip code<span class="required">*</span>:</label>
+                <input type="text" id="zip_code" name="zip_code" required autocomplete="off" pattern="[0-9]{5}">
+                <small>Zip code must contain exactly 5 numeric characters.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required autocomplete="off" onkeyup="checkPasswordStrength(this.value)">
+                <div id="password-strength-meter-container">
+                    <div id="password-strength-meter"></div>
+                </div>
+                <small>Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 6 characters long.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>License and Certification:</legend>
+            <div class="input-group">
+                <label for="license_certification">PDF or Word document:</label>
+                <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required>
+            </div>
+            <input type="submit" value="Sign Up">
         </fieldset>
         
         <input type="hidden" name="email" value="{{ email }}">
-        <input type="submit" value="Submit">
+       
     </form>
 
     <script>
