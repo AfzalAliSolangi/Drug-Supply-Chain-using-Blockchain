@@ -41,28 +41,27 @@ rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassw
 def index(request):
     return render(request, "index.html")
 
-
 def blog(request):
     return render(request, "blog.html")
-
 
 def blogsingle(request):
     return render(request, "blog-single.html")
 
-
 def features(request):
     return render(request, "features.html")
 
-
 def pricing(request):
     return render(request, "pricing.html")
-
 
 def contact(request):
     return render(request, "contact.html")
 
 
-### MASTER ###
+
+
+
+
+#### MASTER ####
 def signup_master(request):
     print("signup-master check")
     return render(request, "email_check_master.html")
@@ -119,12 +118,14 @@ def login_check_master(request): #Implement Password authentication
         print(password)
         return render(request, "master.html")
 
-## MANUFACTURER ##
 
+
+
+
+#### MANUFACTURER ####
 def signup_manufacturer(request):
     print("signup-manufacturer check")
     return render(request, "email_check_manufacturer.html")
-
 
 def email_check_manufacturer(request):
     print("email_check_manufacturer")
@@ -144,7 +145,6 @@ def email_check_manufacturer(request):
                 return render(request, "login_manufacturer.html") #if the email is present prompt to login master page
         return render(request, "signup-manufacturer.html",{'email': email}) #if the email is not present then render this page
     
-
 def process_registration_manufacturer(request):
     print("process_registration_manufacturer")
     if request.method == 'POST':
@@ -266,8 +266,7 @@ def login_check_manufacturer(request): #Implement Password authentication
         else:
             return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
 
-#If manufacturer is already logged in and move to other tab and back to orders it is for that
-def manuorders(request):
+def manuorders(request): #If manufacturer is already logged in and move to other tab and back to orders it is for that
     print('manufacturer orders')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
@@ -346,8 +345,6 @@ def manuorders(request):
         print(orders)
         return render(request, "manufacturer1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': comp_info,'orders': orders})
     return HttpResponse("Working!")
-
-
 
 def manuordercancel(request):
     print('\Cancel Orders From distributors\n')
@@ -623,8 +620,7 @@ def viewmanuinvent(request):
         else:
             return render(request, 'viewmanuinventory.html', {'message': 'No products available'})
 
-########################## Adding Drugs In Manufacturer Item Stream ################################################
-def adddrugmenu(request):
+def adddrugmenu(request):# Adding Drugs In Manufacturer Item Stream
     print('\nAdd Drug Manufacturer\n')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
@@ -716,11 +712,13 @@ def adddrug(request): # Manufacturer Input
             return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
 
 
-####Distributor#####
+
+
+
+#### DISTRIBUTOR #####
 def signup_distributor(request):
     print("signup-distributor check")
     return render(request, "email_check_distributor.html")
-
 
 def email_check_distributor(request):
     print("email_check_distributor")
@@ -765,7 +763,7 @@ def process_registration_distributor(request):
 def login_distributor(request):
         return render(request, "login_distributor.html")
 
-def login_check_distributor(request): #Implement Password authentication
+def login_check_distributor(request):
     print('login_check_distributor')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
@@ -863,8 +861,6 @@ def login_check_distributor(request): #Implement Password authentication
         else:
             return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
 
-
-##Started working from here on 2024/04/22##
 def viewdistinvent(request):
     print('\nViewing Distributor Inventory')
     if request.method == 'POST':
@@ -905,8 +901,6 @@ def viewdistinvent(request):
             return render(request, 'viewdistinventory1.html', {'products': products_with_timestamp , 'email': email_rcvd, 'company_info': company_info})
         else:
             return render(request, 'viewdistinventory1.html', {'message': 'No products available'})
-
-
 
 def distorderprod(request):
     print("\nOrdering Products from Manufacturer")
@@ -1106,7 +1100,7 @@ def pharmorders(request):
         # Sort the list based on the timestamp (second last index)
         combined_list.sort(key=lambda x: x[-2], reverse=True)
         
-#######################################################################################################            
+        #######################################################################################################            
         #NOTE: This is the logic for finding the latest order based on timestamp
         # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
         distinct_orders = {}
@@ -1119,7 +1113,7 @@ def pharmorders(request):
         
         # Convert the dictionary to a list of lists
         distinct_orders_list = list(distinct_orders.values())
-#######################################################################################################
+        #######################################################################################################
         
         
         # # Print the distinct orders
@@ -1205,7 +1199,6 @@ def distordercancel(request):
                                                                                                                                                                                }})
 
         return HttpResponse("Order Cancelled!")
-
 
 def distorderconfirm(request):
     print('\nConfirm Orders From Pharmacies\n')
@@ -1406,7 +1399,11 @@ def distorderconfirm(request):
 
         return render(request, 'manuproducts.html')
 
-####Pharmacy#####
+
+
+
+
+#### PHARMACY #####
 def signup_pharmacy(request):
     print("Signup-pharmacy check")
     return render(request, "email_check_pharmacy.html")
@@ -1454,7 +1451,6 @@ def process_registration_pharmacy(request):
 def login_pharmacy(request):
         return render(request, "login_pharmacy.html")
 
-#####Started working from here on 2024/04/23##
 def login_check_pharmacy(request): #Implement Password authentication
     print('login_check_pharmacy')
     if request.method == 'POST':
@@ -1571,7 +1567,6 @@ def pharmcheckout(request):
             # You can also render a template or return an appropriate HTTP response
             return render(request, 'pharmcheckout.html', {'cart_items': cart_items, 'manufacturer' : manufacturer, 'email_dist': email_dist, 'comp_info':comp_info})
 
-
 def viewpharminvent(request):
     print('\nViewing Pharmacy Inventory')
     if request.method == 'POST':
@@ -1610,7 +1605,6 @@ def viewpharminvent(request):
             return render(request, 'viewdistinventory.html', {'products': products_with_timestamp})
         else:
             return render(request, 'viewdistinventory.html', {'message': 'No products available'})
-
 
 def pharmreqorder(request):
     print('\nPharmacy publish order request to Distributor')
@@ -1680,10 +1674,8 @@ def getdetails(request):
 
     # return render(request,"seedetails.html")
 
-
 def base(request):
     return render(request, "base.html")
-
 
 def prddata(request):
     if request.method == 'POST':
@@ -1700,10 +1692,6 @@ def prddata(request):
     else:
         return render(request, "dealerinput.html")
 
-
-           
-        
-
 def hostpitalinput(request):
     if request.method == 'POST':
         hospid = int(request.POST['hospid'])
@@ -1719,6 +1707,4 @@ def hostpitalinput(request):
     else:
         return render(request, "hospitalinput.html", {"error": "Failed to publish data to MultiChain"})
 
-#Code developed need to replace it. After replacing pass the keys from distributor.html to this func
-#Use user_manufacturer_item_stream2(with timestamp included)
 
