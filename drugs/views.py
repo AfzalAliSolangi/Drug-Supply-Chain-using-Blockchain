@@ -618,7 +618,7 @@ def viewmanuinvent(request):
             print(products_with_timestamp)
             return render(request, 'viewmanuinventory1.html', {'products': products_with_timestamp, 'company_info':company_info, 'email':manu_key})
         else:
-            return render(request, 'viewmanuinventory.html', {'message': 'No products available'})
+            return render(request, 'viewmanuinventory1.html', {'message': 'No products available' , 'company_info':company_info, 'email':manu_key})
 
 def adddrugmenu(request):# Adding Drugs In Manufacturer Item Stream
     print('\nAdd Drug Manufacturer\n')
@@ -900,7 +900,7 @@ def viewdistinvent(request):
             print(products_with_timestamp)
             return render(request, 'viewdistinventory1.html', {'products': products_with_timestamp , 'email': email_rcvd, 'company_info': company_info})
         else:
-            return render(request, 'viewdistinventory1.html', {'message': 'No products available'})
+            return render(request, 'viewdistinventory1.html', {'message': 'No products available', 'email': email_rcvd, 'company_info': company_info})
 
 def distorderprod(request):
     print("\nOrdering Products from Manufacturer")
@@ -969,7 +969,7 @@ def manuproducts(request):
         print(products_with_timestamp)
         return render(request, 'manuproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email': email_dist, 'company_info': comp_info})
     else:
-        return render(request, 'manuproducts1.html', {'message': 'No products available'})
+        return render(request, 'manuproducts1.html', {'message': 'No products available', 'manufacturer': selected_manufacturer, 'email': email_dist, 'company_info': comp_info})
 
 @csrf_protect
 def distcheckout(request):
