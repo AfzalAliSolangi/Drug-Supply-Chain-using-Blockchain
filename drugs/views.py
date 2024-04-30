@@ -10,6 +10,8 @@ from collections import defaultdict
 import random
 import string
 import hashlib
+from cryptography.fernet import Fernet
+from django.contrib.auth.hashers import make_password,check_password
 
 config = configparser.ConfigParser()
 
@@ -150,6 +152,11 @@ def process_registration_manufacturer(request):
     if request.method == 'POST':
         # print("method check")
         email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Hash the password
+        hashed_password = make_password(password)
+
         request_data = {
             "email": request.POST.get('email'),
             "company_info": request.POST.get('company_info'),
@@ -158,7 +165,7 @@ def process_registration_manufacturer(request):
             "state": request.POST.get('state'),
             "city": request.POST.get('city'),
             "zip_code": request.POST.get('zip_code'),
-            "password": request.POST.get('password'),
+            "password": hashed_password,
             "license_certification": request.POST.get('license_certification')
         }
         data = json.dumps(request_data)
@@ -190,7 +197,7 @@ def login_check_manufacturer(request): #Implement Password authentication
             print("Email from stream: ",email_frm_chain)
             print(password_rcvd)
             print(passw_frm_chain)
-            if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+            if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
                 print(email_rcvd)
                 response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
                 json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
