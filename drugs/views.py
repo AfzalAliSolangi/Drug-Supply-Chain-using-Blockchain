@@ -1445,6 +1445,11 @@ def process_registration_pharmacy(request):
     if request.method == 'POST':
         # print("method check")
         email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Hash the password
+        hashed_password = make_password(password)
+
         request_data = {
             "email": request.POST.get('email'),
             "company_info": request.POST.get('company_info'),
@@ -1453,14 +1458,14 @@ def process_registration_pharmacy(request):
             "state": request.POST.get('state'),
             "city": request.POST.get('city'),
             "zip_code": request.POST.get('zip_code'),
-            "password": request.POST.get('password'),
+            "password": hashed_password,
             "license_certification": request.POST.get('license_certification')
         }
         data = json.dumps(request_data)
         data = json.loads(data)
         txid = rpc_connection.publish('users_pharmacy_stream', '{}'.format(email), {'json' : data})
         if txid:
-            return HttpResponse("process_registration_pharmacy")
+            return render(request, "login_pharmacy.html")
 
 def login_pharmacy(request):
         return render(request, "login_pharmacy.html")
@@ -1485,7 +1490,7 @@ def login_check_pharmacy(request): #Implement Password authentication
         print("Email from stream: ",email_frm_chain)
         print(password_rcvd)
         print(passw_frm_chain)
-        if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+        if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
             return render(request, "pharmacy.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': pharmacy_name})
         else:
             return render(request, "login_pharmacy.html", {'error_message': "Incorrect email or password."})
