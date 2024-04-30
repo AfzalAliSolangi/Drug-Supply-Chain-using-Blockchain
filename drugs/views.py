@@ -104,7 +104,7 @@ def process_registration_master(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish('users_master_stream', '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish(users_master_stream, '{}'.format(email), {'json' : data})
         if txid:
             return HttpResponse("process_registration_master")
         
@@ -170,7 +170,7 @@ def process_registration_manufacturer(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish('users_manufacturer_stream', '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish(users_manufacturer_stream, '{}'.format(email), {'json' : data})
         if txid:
             return render(request, "login_manufacturer.html")
         
@@ -769,7 +769,7 @@ def process_registration_distributor(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish('users_distributor_stream', '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish(users_distributor_stream, '{}'.format(email), {'json' : data})
         if txid:
             return render(request, "login_distributor.html")
 
@@ -1463,7 +1463,7 @@ def process_registration_pharmacy(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish('users_pharmacy_stream', '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish(users_pharmacy_stream, '{}'.format(email), {'json' : data})
         if txid:
             return render(request, "login_pharmacy.html")
 
