@@ -807,7 +807,7 @@ def login_check_distributor(request):
             print("Email from stream: ",email_frm_chain)
             print(password_rcvd)
             print(passw_frm_chain)
-            if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
+            if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
                 response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
                 json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
                 json_string = json.loads(json_string) #Converts OrderedDict to JSON String
@@ -1569,8 +1569,10 @@ def pharmorderprod(request):
     print("\nOrdering Products from Distributor")
     if request.method == 'POST':
         email_pharm = request.POST.get('email',None)
-        print('\Pharmacy Email: ',email_pharm)
-        
+        company_info = request.POST.get('company_info',None)
+        print('\nDistributor Email: ',email_pharm)
+        print('\nCompany Info: ',company_info)
+
         #for fetching out the name of the Distributor name
         result = rpc_connection.liststreamkeyitems(users_pharmacy_stream, email_pharm)
         data = json.dumps(result)
@@ -1587,7 +1589,7 @@ def pharmorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "pharmorderprod.html", {'keys_company_info': keys_company_info,'email_dist': email_pharm, 'comp_info' : comp_info})
+        return render(request, "pharmorderprod1.html", {'keys_company_info': keys_company_info,'email_dist': email_pharm, 'company_info' : comp_info})
 
 def distproducts(request):
     email_pharm = request.GET.get('email_pharm', None)
