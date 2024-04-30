@@ -172,7 +172,7 @@ def process_registration_manufacturer(request):
         data = json.loads(data)
         txid = rpc_connection.publish('users_manufacturer_stream', '{}'.format(email), {'json' : data})
         if txid:
-            return HttpResponse("process_registration_manufacturer")
+            return render(request, "login_manufacturer.html")
         
 def login_manufacturer(request):
         return render(request, "login_manufacturer.html")
