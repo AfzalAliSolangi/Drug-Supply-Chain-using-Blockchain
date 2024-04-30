@@ -751,6 +751,11 @@ def process_registration_distributor(request):
     if request.method == 'POST':
         # print("method check")
         email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Hash the password
+        hashed_password = make_password(password)
+
         request_data = {
             "email": request.POST.get('email'),
             "company_info": request.POST.get('company_info'),
@@ -759,7 +764,7 @@ def process_registration_distributor(request):
             "state": request.POST.get('state'),
             "city": request.POST.get('city'),
             "zip_code": request.POST.get('zip_code'),
-            "password": request.POST.get('password'),
+            "password": hashed_password,
             "license_certification": request.POST.get('license_certification')
         }
         data = json.dumps(request_data)
@@ -790,7 +795,7 @@ def login_check_distributor(request):
             print("Email from stream: ",email_frm_chain)
             print(password_rcvd)
             print(passw_frm_chain)
-            if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+            if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
                 response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
                 json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
                 json_string = json.loads(json_string) #Converts OrderedDict to JSON String
