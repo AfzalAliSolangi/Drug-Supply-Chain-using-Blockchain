@@ -1589,14 +1589,15 @@ def pharmorderprod(request):
             for key in item['keys']:
                 keys_company_info[key] = item['data']['json']['company_info']
         print("\nkeys_company_info:\n",keys_company_info)
-        return render(request, "pharmorderprod1.html", {'keys_company_info': keys_company_info,'email_dist': email_pharm, 'company_info' : comp_info})
+        return render(request, "pharmorderprod1.html", {'keys_company_info': keys_company_info,'email': email_pharm, 'company_info' : company_info})
 
 def distproducts(request):
-    email_pharm = request.GET.get('email_pharm', None)
-    selected_distributor = request.GET.get('distributor', None) # Manufacturer name being passed from Distributor.html
+    email_pharm = request.GET.get('email', None)
+    selected_distributor = request.GET.get('manufacturer', None) # Manufacturer name being passed from Distributor.html
     comp_info = request.GET.get('comp_info', None) # Manufacturer name being passed from Distributor.html
     print(selected_distributor)
     print("Distributor emails: ",email_pharm)
+    print("selected_distributor:",selected_distributor)
     print("comp_info :" ,comp_info) 
     x = rpc_connection.subscribe('{}'.format(users_distributor_items_stream)) # Subscribing
     response = rpc_connection.liststreamkeyitems('{}'.format(users_distributor_items_stream), '{}'.format(selected_distributor)) # Based on the manufacturer KEY the data is being fetched
@@ -1630,9 +1631,9 @@ def distproducts(request):
         } for value in product_map.values()]
         
         print(products_with_timestamp)
-        return render(request, 'distproducts.html', {'products': products_with_timestamp, 'manufacturer': selected_distributor, 'email_dist': email_pharm, 'comp_info': comp_info})
+        return render(request, 'distproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_distributor, 'email': email_pharm, 'company_info': comp_info})
     else:
-        return render(request, 'distproducts.html', {'message': 'No products available'})
+        return render(request, 'distproducts1.html', {'message': 'No products available'})
 
 @csrf_protect
 def pharmcheckout(request):
