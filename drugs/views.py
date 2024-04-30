@@ -807,7 +807,7 @@ def login_check_distributor(request):
             print("Email from stream: ",email_frm_chain)
             print(password_rcvd)
             print(passw_frm_chain)
-            if email_rcvd==email_frm_chain and password_rcvd==passw_frm_chain:
+            if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
                 response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
                 json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
                 json_string = json.loads(json_string) #Converts OrderedDict to JSON String
@@ -1491,79 +1491,82 @@ def login_check_pharmacy(request): #Implement Password authentication
         data = json.dumps(result)
         json_load = json.loads(data)
         #apply length check for json_load
-        email_frm_chain = json_load[0]['keys'][0]
-        passw_frm_chain = json_load[0]['data']['json']['password']
-        pharmacy_name = json_load[0]['data']['json']['company_info']
-        comp_info = json_load[0]['data']['json']['company_info']
-        print(data)
-        print(comp_info)
-        print(pharmacy_name)
-        print("Email from front end: ",email_rcvd)
-        print("Email from stream: ",email_frm_chain)
-        print(password_rcvd)
-        print(passw_frm_chain)
-        if email_rcvd==email_frm_chain and password_rcvd== passw_frm_chain:
+        if(len(json_load)>0):
+            email_frm_chain = json_load[0]['keys'][0]
+            passw_frm_chain = json_load[0]['data']['json']['password']
+            pharmacy_name = json_load[0]['data']['json']['company_info']
+            comp_info = json_load[0]['data']['json']['company_info']
+            print(data)
+            print(comp_info)
+            print(pharmacy_name)
+            print("Email from front end: ",email_rcvd)
+            print("Email from stream: ",email_frm_chain)
+            print(password_rcvd)
+            print(passw_frm_chain)
+            if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
+                #####
+                response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
+                json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+                json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+                print(json_string)
+                combined_list = []
+                for item in json_string:
+                    keys = item['keys']
+                    traxid = item['txid']
+                    confirmed_status = item['data']['json']['confirmed']
+                    totalprice = item['data']['json']['totalprice']
+                    modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
+                    combined_list.append(modified_keys)
+                print("\nCombined list\n")
+                print(combined_list)
+                # Sort the list based on the timestamp (second last index)
+                combined_list.sort(key=lambda x: x[-2], reverse=True)
+                #NOTE: This is the logic for finding the latest order based on timestamp
+                # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
+                distinct_orders = {}
+                # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
+                for order in combined_list:
+                    key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+                    if key not in distinct_orders:
+                        distinct_orders[key] = order
+                # Convert the dictionary to a list of lists
+                distinct_orders_list = list(distinct_orders.values())
+                # # Print the distinct orders
+                for order in distinct_orders_list:
+                    print(order)
+                # Iterate over the combined_list
+                orders = []
+                for index, item in enumerate(distinct_orders_list):
+                    # Create a dictionary for each element in the combined_list
+                    orderPlaceOn = datetime.datetime.fromisoformat(item[11])
+                    # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+                    orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
+                    order = {
+                        "orderid":item[0],
+                        "trxid": item[9],
+                        "Distributor_name": item[1],
+                        "Manufacturer_email": item[2],
+                        "distributor_email": item[3],
+                        "batchId": item[6],
+                        "product_name": item[8],
+                        "product_code": item[7],
+                        "orderPlaceOn": str(orderPlaceOn),
+                        "quantity": item[5],
+                        "tot_price": item[10],
+                        "confirmed": item[13],
+                        "timestamp": item[12],
+                        "manu_email": item[4],
+                    }
+                    # Append the dictionary to the orders list
+                    orders.append(order)
+                # Print the resulting list of dictionaries
+                print(orders)
             #####
-            response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_rcvd]})
-            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-            json_string = json.loads(json_string) #Converts OrderedDict to JSON String
-            print(json_string)
-            combined_list = []
-            for item in json_string:
-                keys = item['keys']
-                traxid = item['txid']
-                confirmed_status = item['data']['json']['confirmed']
-                totalprice = item['data']['json']['totalprice']
-                modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
-                combined_list.append(modified_keys)
-            print("\nCombined list\n")
-            print(combined_list)
-            # Sort the list based on the timestamp (second last index)
-            combined_list.sort(key=lambda x: x[-2], reverse=True)
-            #NOTE: This is the logic for finding the latest order based on timestamp
-            # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
-            distinct_orders = {}
-            # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
-            for order in combined_list:
-                key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
-                if key not in distinct_orders:
-                    distinct_orders[key] = order
-            # Convert the dictionary to a list of lists
-            distinct_orders_list = list(distinct_orders.values())
-            # # Print the distinct orders
-            for order in distinct_orders_list:
-                print(order)
-            # Iterate over the combined_list
-            orders = []
-            for index, item in enumerate(distinct_orders_list):
-                # Create a dictionary for each element in the combined_list
-                orderPlaceOn = datetime.datetime.fromisoformat(item[11])
-                # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
-                orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
-                order = {
-                    "orderid":item[0],
-                    "trxid": item[9],
-                    "Distributor_name": item[1],
-                    "Manufacturer_email": item[2],
-                    "distributor_email": item[3],
-                    "batchId": item[6],
-                    "product_name": item[8],
-                    "product_code": item[7],
-                    "orderPlaceOn": str(orderPlaceOn),
-                    "quantity": item[5],
-                    "tot_price": item[10],
-                    "confirmed": item[13],
-                    "timestamp": item[12],
-                    "manu_email": item[4],
-                }
-                # Append the dictionary to the orders list
-                orders.append(order)
-            # Print the resulting list of dictionaries
-            print(orders)
-        #####
-            return render(request, "pharmacy1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': pharmacy_name, 'orders':orders })
+                return render(request, "pharmacy1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': pharmacy_name, 'orders':orders })
+            else:
+                return render(request, "login_pharmacy.html", {'error_message': "Incorrect email or password."})
         else:
-            return render(request, "login_pharmacy.html", {'error_message': "Incorrect email or password."})
+                return render(request, "login_pharmacy.html", {'error_message': "Incorrect email or password."})
 
 def pharmorderprod(request):
     print("\nOrdering Products from Distributor")
@@ -1664,7 +1667,8 @@ def viewpharminvent(request):
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
         company_info = request.POST.get('company_info')
-        print(email_rcvd)
+        print("email_rcvd: ",email_rcvd)
+        print("company_info :",company_info)
         response = rpc_connection.liststreamkeyitems('{}'.format(users_pharmacy_items_stream), '{}'.format(email_rcvd)) # Based on the manufacturer KEY the data is being fetched
         print(len(response))
         if len(response) > 0:
@@ -1697,7 +1701,8 @@ def viewpharminvent(request):
             print(products_with_timestamp)
             return render(request, 'viewpharminventory1.html', {'products': products_with_timestamp, 'email': email_rcvd, 'company_info': company_info})
         else:
-            return render(request, 'viewpharminventory1.html', {'message': 'No products available'})
+            print('oh yes')
+            return render(request, 'viewpharminventory1.html', {'message': 'No products available', 'email': email_rcvd, 'company_info': company_info})
 
 def pharmreqorder(request):
     print('\nPharmacy publish order request to Distributor')
