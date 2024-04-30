@@ -39,6 +39,18 @@ rpcport = config.get('Section1','rpcport')
 chainname = config.get('Section1','chainname')
 rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassword)
 
+# Generate a secret key for encryption (Keep it secure, preferably store it in a secure location)
+SECRET_KEY = b'your_secret_key_here'  # Replace with your secret key
+cipher_suite = Fernet(SECRET_KEY)
+
+def encrypt_data(data):
+    encrypted_data = cipher_suite.encrypt(data.encode())
+    return encrypted_data
+
+def decrypt_data(encrypted_data):
+    decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
+    return decrypted_data
+
 
 def index(request):
     return render(request, "index.html")
