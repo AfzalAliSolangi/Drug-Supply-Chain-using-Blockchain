@@ -31,6 +31,7 @@ urlpatterns = [
     path('distorderprod', views.distorderprod, name='distorderprod'),
     path('viewdistinvent', views.viewdistinvent, name='viewdistinvent'),
     path('pharmorderprod', views.pharmorderprod, name='pharmorderprod'),
+    path('pharmorderstatus', views.pharmorderstatus, name='pharmorderstatus'),
     path('distproducts', views.distproducts, name='distproducts'),
     path('pharmcheckout', views.pharmcheckout, name='pharmcheckout'),
     path('pharmreqorder', views.pharmreqorder, name='pharmreqorder'),

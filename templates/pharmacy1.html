@@ -181,7 +181,7 @@
 
 <div class="sidebar">
     <a href="#" id="ordersLink">Orders</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); viewdistinvent('{{ email }}', '{{ company_info }}')">Inventory</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); viewpharminvent('{{ email }}', '{{ company_info }}')">Inventory</a>
     <a href="#" class="btn" onclick="event.preventDefault(); pharmorderprod('{{ email }}', '{{ company_info }}')">Order Drugs</a>
 </div>
 
@@ -216,10 +216,6 @@
     <option value="Pending">Pending</option>
     <option value="Cancelled">Cancelled</option>
   </select>
-  <div>
-    <button id="confirmButton" onclick="handleConfirm()" style="margin-left: 500px; margin-right: 10px;">Confirm</button>
-    <button id="cancelButton" onclick="handleCancel()">Cancel</button>
-  </div>
 </div>
 
 
@@ -227,7 +223,6 @@
     <table id="ordersTable">
         <thead>
           <tr>
-            <th scope="col"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);"></th>
             <th scope="col">OrderID</th>
             <th scope="col">Trx</th>
             <th scope="col">Pharmacy</th>
@@ -245,11 +240,6 @@
         <tbody>
             {% for order in orders %}
             <tr class="table-row">
-              <td>
-                <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
-                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
-            </td>
                 <td>{{ order.orderid }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
                 <td>{{ order.Distributor_name }}</td>
@@ -475,44 +465,6 @@
       priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
   }
 
-
-  function handleConfirm() {
-    console.log("Confirmed Orders:", selectedOrders);
-    // Additional logic for confirming orders can be added here
-    // Add an input field for the selectedOrders data
-    const form = document.createElement('form');
-              form.method = 'POST';
-              form.action = '/distorderconfirm';  // Replace with the actual URL of your Django view
-              form.style.display = 'none';
-
-    const selectedOrdersInput = document.createElement('input');
-    selectedOrdersInput.type = 'hidden';
-    selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-    selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-    form.appendChild(selectedOrdersInput);
-
-    document.body.appendChild(form);
-    form.submit();
-  }
-
-  function handleCancel() {
-    console.log("Cancelled Action");
-    console.log("Confirmed Orders:", selectedOrders);
-    // Logic to handle a cancellation or clear selections can be added here
-    // Additional logic for confirming orders can be added here
-    // Add an input field for the selectedOrders data
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/distordercancel';  // Replace with the actual URL of your Django view
-    form.style.display = 'none';
-    const selectedOrdersInput = document.createElement('input');
-    selectedOrdersInput.type = 'hidden';
-    selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-    selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-    form.appendChild(selectedOrdersInput);
-    document.body.appendChild(form);
-    form.submit();
-  }
   function pharmorderprod(email,company_info) {
       console.log("Email Distribution:", email);
       const form = document.createElement('form');
@@ -536,11 +488,11 @@
 
       form.submit();
   }
-  function viewdistinvent(email,company_info) {
+  function viewpharminvent(email,company_info) {
       console.log("Viewing inventory...");
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
+      form.action = '/viewpharminvent';  // Replace with the actual URL for completing purchase
       form.style.display = 'none';
 
       const emailInput = document.createElement('input');

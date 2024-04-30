@@ -249,8 +249,8 @@
 <body>
 
 <div class="sidebar">
-    <a href="#" class="btn" onclick="event.preventDefault(); pharmorders('{{ email }}','{{ company_info }}')">Orders</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); viewdistinvent('{{ email }}', '{{ company_info }}')">Inventory</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); pharmorderstatus('{{ email }}','{{ company_info }}')">Orders</a>
+    <a href="#" class="btn" onclick="event.preventDefault(); viewpharminvent('{{ email }}', '{{ company_info }}')">Inventory</a>
     <a href="#" id="ordersLink" >Order Drugs</a>
 </div>
 
@@ -335,11 +335,11 @@
  
    form.submit();
  }
- function viewdistinvent(email,company_info) {
+ function viewpharminvent(email,company_info) {
    console.log("Viewing inventory...");
    const form = document.createElement('form');
    form.method = 'POST';
-   form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
+   form.action = '/viewpharminvent';  // Replace with the actual URL for completing purchase
    form.style.display = 'none';
 
    const emailInput = document.createElement('input');
@@ -358,11 +358,11 @@
     
    form.submit();
  }
- function pharmorders(email,company_info) {
+ function pharmorderstatus(email,company_info) {
    console.log("Email Distribution:", email);
    const form = document.createElement('form');
    form.method = 'POST';
-   form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
+   form.action = '/pharmorderstatus';  // Replace with the actual URL for completing purchase
    form.style.display = 'none';
  
    const emailInput = document.createElement('input');
