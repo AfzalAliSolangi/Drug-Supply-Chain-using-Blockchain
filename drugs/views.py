@@ -566,11 +566,11 @@ def manuorderconfirm(request):
                     print(products_with_timestamp)
                     latest_item = products_with_timestamp[0]['product_data']
                     prev_quantity = products_with_timestamp[0]['product_data']['quantity_in_stock'] #From the user_manufacturer_items_stream
-                    new_quantity = int(prev_quantity)+int(quantity_frm_order)
+                    new_quantity = int(decrypt_data(base64_to_bytes(prev_quantity)))+int(quantity_frm_order)
                     total_amout = int(quantity_frm_order) * int(decrypt_data(base64_to_bytes(products_with_timestamp[0]['product_data']['unit_price'])))
                     print('new quantity :',new_quantity)
                     print('tot_amount :', total_amout)
-                    latest_item['quantity_in_stock'] = new_quantity
+                    latest_item['quantity_in_stock'] = bytes_to_base64(encrypt_data(str(new_quantity)))
                     print('Item after updating quantity: \n', latest_item)
                     
                     #publishing into users_distributor_items_stream
@@ -589,7 +589,7 @@ def manuorderconfirm(request):
                                                                                                      }
                                                                                                      })#Add a timestamp for sub logic
                 else:
-                    latest_item['quantity_in_stock'] = quantity_frm_order
+                    latest_item['quantity_in_stock'] = bytes_to_base64(encrypt_data(str(quantity_frm_order)))
                     # publishing into users_distributor_items_stream
                     txid = rpc_connection.publish('{}'.format(users_distributor_items_stream), [distributor_email,
                                                                                                  Manufacturer_email,
@@ -956,12 +956,29 @@ def viewdistinvent(request):
 
             for item in response:
                 data = item['data']['json']
-                key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+                key = (decrypt_data(base64_to_bytes(data['email'])),
+                       decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                       decrypt_data(base64_to_bytes(data['batchId'])),
+                       decrypt_data(base64_to_bytes(data['products'][0]['product_name'])))
                 timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
 
                 if key not in product_map or timestamp > product_map[key]['timestamp']:
                     product_map[key] = {
-                        'product_data': data['products'][0],
+                            'product_data': {
+                                        'product_name': decrypt_data(base64_to_bytes(data['products'][0]['product_name'])),
+                                        'product_code': decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                                        'description': decrypt_data(base64_to_bytes(data['products'][0]['description'])),
+                                        'ingredients': decrypt_data(base64_to_bytes(data['products'][0]['ingredients'])),
+                                        'dosage': decrypt_data(base64_to_bytes(data['products'][0]['dosage'])),
+                                        'quantity_in_stock': decrypt_data(base64_to_bytes(data['products'][0]['quantity_in_stock'])),
+                                        'unit_price': decrypt_data(base64_to_bytes(data['products'][0]['unit_price'])),
+                                        'manufacturing_date': decrypt_data(base64_to_bytes(data['products'][0]['manufacturing_date'])),
+                                        'expiry_date': decrypt_data(base64_to_bytes(data['products'][0]['expiry_date'])),
+                                        'drugbank_id': decrypt_data(base64_to_bytes(data['products'][0]['drugbank_id'])),
+                                        'form': decrypt_data(base64_to_bytes(data['products'][0]['form'])),
+                                        'strength': decrypt_data(base64_to_bytes(data['products'][0]['strength'])),
+                                        'route': decrypt_data(base64_to_bytes(data['products'][0]['route'])),
+                                        'published_on': decrypt_data(base64_to_bytes(data['products'][0]['published_on']))},
                         'timestamp': timestamp,
                         'email': key[0],
                         'product_code': key[1],
