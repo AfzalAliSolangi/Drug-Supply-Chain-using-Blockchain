@@ -56,6 +56,10 @@ def decrypt_data(encrypted_data):
 def bytes_to_base64(data):
     return base64.b64encode(data).decode()
 
+# Function to decode base64 encoded string to bytes
+def base64_to_bytes(encoded_data):
+    return base64.b64decode(encoded_data)
+
 def index(request):
     return render(request, "index.html")
 
@@ -211,7 +215,7 @@ def login_check_manufacturer(request): #Implement Password authentication
         if(len(json_load)>0):
             email_frm_chain = json_load[0]['keys'][0]
             passw_frm_chain = json_load[0]['data']['json']['password']
-            manufacturer_name = json_load[0]['data']['json']['company_info']
+            manufacturer_name = decrypt_data(base64_to_bytes(json_load[0]['data']['json']['company_info']))
             comp_info = json_load[0]['data']['json']['company_info']
             print(data)
             print(comp_info)
