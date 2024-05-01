@@ -621,18 +621,36 @@ def viewmanuinvent(request):
         print(manu_key)
         print(company_info)
         response = rpc_connection.liststreamkeyitems('{}'.format(users_manufacturer_items_stream), '{}'.format(manu_key)) # Based on the manufacturer KEY the data is being fetched
+        print(response)
         print(len(response))
         if len(response) > 0:
             product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
 
             for item in response:
                 data = item['data']['json']
-                key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+                key = (decrypt_data(base64_to_bytes(data['email'])),
+                       decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                       decrypt_data(base64_to_bytes(data['batchId'])),
+                       decrypt_data(base64_to_bytes(data['products'][0]['product_name'])))
                 timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
 
                 if key not in product_map or timestamp > product_map[key]['timestamp']:
                     product_map[key] = {
-                        'product_data': data['products'][0],
+                        'product_data': {
+                                        'product_name': decrypt_data(base64_to_bytes(data['products'][0]['product_name'])),
+                                        'product_code': decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                                        'description': decrypt_data(base64_to_bytes(data['products'][0]['description'])),
+                                        'ingredients': decrypt_data(base64_to_bytes(data['products'][0]['ingredients'])),
+                                        'dosage': decrypt_data(base64_to_bytes(data['products'][0]['dosage'])),
+                                        'quantity_in_stock': decrypt_data(base64_to_bytes(data['products'][0]['quantity_in_stock'])),
+                                        'unit_price': decrypt_data(base64_to_bytes(data['products'][0]['unit_price'])),
+                                        'manufacturing_date': decrypt_data(base64_to_bytes(data['products'][0]['manufacturing_date'])),
+                                        'expiry_date': decrypt_data(base64_to_bytes(data['products'][0]['expiry_date'])),
+                                        'drugbank_id': decrypt_data(base64_to_bytes(data['products'][0]['drugbank_id'])),
+                                        'form': decrypt_data(base64_to_bytes(data['products'][0]['form'])),
+                                        'strength': decrypt_data(base64_to_bytes(data['products'][0]['strength'])),
+                                        'route': decrypt_data(base64_to_bytes(data['products'][0]['route'])),
+                                        'published_on': decrypt_data(base64_to_bytes(data['products'][0]['published_on']))},
                         'timestamp': timestamp,
                         'email': key[0],
                         'product_code': key[1],
@@ -754,9 +772,9 @@ def adddrug(request): # Manufacturer Input
                                                                                          timestamp_utc
                                                                                          ],
                                                                                          {   'json': {
-                                                                                             'manufacturer': manufacturer,
-                                                                                             'batchId': batchid,
-                                                                                             'email': email,
+                                                                                             'manufacturer': bytes_to_base64(encrypt_data(manufacturer)),
+                                                                                             'batchId': bytes_to_base64(encrypt_data(batchid)),
+                                                                                             'email': bytes_to_base64(encrypt_data(email)),
                                                                                              'products': list(structured_json['products'])}})#Add a timestamp for sub logic
             
             return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
