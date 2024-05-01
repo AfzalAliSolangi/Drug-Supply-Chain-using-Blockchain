@@ -686,21 +686,28 @@ def adddrug(request): # Manufacturer Input
         }
 
         for product in data["products"]:
+
+            ingredients_str = ", ".join(product["ingredients"])
+
             structured_product = {
-                "product_name": product["product_name"],
-                "product_code": product["product_code"],
-                "description": product["description"],
-                "ingredients": product["ingredients"],
-                "dosage": product["dosage"],
-                "quantity_in_stock": product["quantity_in_stock"],
-                "unit_price": product["unit_price"],
-                "manufacturing_date": product["manufacturing_date"],
-                "expiry_date": product["expiry_date"],
-                "published_on": timestamp_utc
+                "product_name": bytes_to_base64(encrypt_data(product["product_name"])),
+                "product_code": bytes_to_base64(encrypt_data(product["product_code"])),
+                "description": bytes_to_base64(encrypt_data(product["description"])),
+                "ingredients": bytes_to_base64(encrypt_data(ingredients_str)),
+                "dosage": bytes_to_base64(encrypt_data(product["dosage"])),
+                "quantity_in_stock": bytes_to_base64(encrypt_data(str(product["quantity_in_stock"]))),
+                "unit_price": bytes_to_base64(encrypt_data(str(product["unit_price"]))),
+                "manufacturing_date": bytes_to_base64(encrypt_data(product["manufacturing_date"])),
+                "expiry_date": bytes_to_base64(encrypt_data(product["expiry_date"])),
+                "published_on": bytes_to_base64(encrypt_data(timestamp_utc))
             }
             structured_json["products"].append(structured_product)
         
         print(structured_json)
+        structured_json = json.dumps(structured_json, indent=4) #Converts OrderedDict to JSON String
+        structured_json = json.loads(structured_json) #Converts OrderedDict to JSON String
+
+
         response = rpc_connection.liststreamitems(users_manufacturer_items_stream)
         json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
         json_string = json.loads(json_string) #Converts OrderedDict to JSON String
@@ -742,7 +749,7 @@ def adddrug(request): # Manufacturer Input
                                                                                          product["product_name"],
                                                                                          timestamp_utc
                                                                                          ],
-                                                                                         {'json': data})#Add a timestamp for sub logic
+                                                                                         {'json': structured_json})#Add a timestamp for sub logic
             return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
 
 
