@@ -1005,7 +1005,7 @@ def distorderprod(request):
         keys_company_info = {}
         for item in json_load:
             for key in item['keys']:
-                keys_company_info[key] = item['data']['json']['company_info']
+                keys_company_info[key] = decrypt_data(base64_to_bytes(item['data']['json']['company_info']))
         print("\nkeys_company_info:\n",keys_company_info)
         return render(request, "distorderprod1.html", {'keys_company_info': keys_company_info,'email': email_dist, 'company_info' : company_info})
 
@@ -1030,7 +1030,21 @@ def manuproducts(request):
             
             if key not in product_map or timestamp > product_map[key]['timestamp']:
                 product_map[key] = {
-                    'product_data': data['products'][0],
+                    'product_data': {
+                                        'product_name': decrypt_data(base64_to_bytes(data['products'][0]['product_name'])),
+                                        'product_code': decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                                        'description': decrypt_data(base64_to_bytes(data['products'][0]['description'])),
+                                        'ingredients': list(decrypt_data(base64_to_bytes(data['products'][0]['ingredients']))),
+                                        'dosage': decrypt_data(base64_to_bytes(data['products'][0]['dosage'])),
+                                        'quantity_in_stock': decrypt_data(base64_to_bytes(data['products'][0]['quantity_in_stock'])),
+                                        'unit_price': decrypt_data(base64_to_bytes(data['products'][0]['unit_price'])),
+                                        'manufacturing_date': decrypt_data(base64_to_bytes(data['products'][0]['manufacturing_date'])),
+                                        'expiry_date': decrypt_data(base64_to_bytes(data['products'][0]['expiry_date'])),
+                                        'drugbank_id': decrypt_data(base64_to_bytes(data['products'][0]['drugbank_id'])),
+                                        'form': decrypt_data(base64_to_bytes(data['products'][0]['form'])),
+                                        'strength': decrypt_data(base64_to_bytes(data['products'][0]['strength'])),
+                                        'route': decrypt_data(base64_to_bytes(data['products'][0]['route'])),
+                                        'published_on': decrypt_data(base64_to_bytes(data['products'][0]['published_on']))},
                     'timestamp': timestamp,
                     'email': key[0],
                     'product_code': key[1],
@@ -1040,10 +1054,10 @@ def manuproducts(request):
         
         products_with_timestamp = [{
             'timestamp': value['timestamp'],
-            'email': value['email'],
-            'product_code': value['product_code'],
-            'batchId': value['batchId'],
-            'product_name': value['product_name'],
+            'email': decrypt_data(base64_to_bytes(value['email'])),
+            'product_code': decrypt_data(base64_to_bytes(value['product_code'])),
+            'batchId': decrypt_data(base64_to_bytes(value['batchId'])),
+            'product_name': decrypt_data(base64_to_bytes(value['product_name'])),
             'product_data': value['product_data']
         } for value in product_map.values()]
         
@@ -1060,7 +1074,7 @@ def distcheckout(request):
         cart_items_json = request.POST.get('cartItems', None)
         manufacturer = request.POST.get('manufacturer', None)
         email_dist = request.POST.get('email', None)
-        comp_info = request.POST.get('comp_info', None)
+        comp_info = request.POST.get('company_info', None)
         print(email_dist)
         print(comp_info)
         if cart_items_json and manufacturer:
