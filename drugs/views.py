@@ -699,6 +699,10 @@ def adddrug(request): # Manufacturer Input
                 "unit_price": bytes_to_base64(encrypt_data(str(product["unit_price"]))),
                 "manufacturing_date": bytes_to_base64(encrypt_data(product["manufacturing_date"])),
                 "expiry_date": bytes_to_base64(encrypt_data(product["expiry_date"])),
+                "drugbank_id": bytes_to_base64(encrypt_data(product["drugbank_id"])),
+                "form": bytes_to_base64(encrypt_data(product["form"])),
+                "strength": bytes_to_base64(encrypt_data(product["strength"])),
+                "route": bytes_to_base64(encrypt_data(product["route"])),
                 "published_on": bytes_to_base64(encrypt_data(timestamp_utc))
             }
             structured_json["products"].append(structured_product)
@@ -749,7 +753,12 @@ def adddrug(request): # Manufacturer Input
                                                                                          product["product_name"],
                                                                                          timestamp_utc
                                                                                          ],
-                                                                                         {'json': structured_json})#Add a timestamp for sub logic
+                                                                                         {   'json': {
+                                                                                             'manufacturer': manufacturer,
+                                                                                             'batchId': batchid,
+                                                                                             'email': email,
+                                                                                             'products': list(structured_json['products'])}})#Add a timestamp for sub logic
+            
             return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
 
 
