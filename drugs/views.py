@@ -583,8 +583,8 @@ def manuorderconfirm(request):
                                                                                                  ],
                                                                                                  {'json': {
                                                                                                      "manufacturer":manufacturer_name,
-                                                                                                     "email":Manufacturer_email,
-                                                                                                     "batchId":batchId,
+                                                                                                     "email": bytes_to_base64(encrypt_data(Manufacturer_email)),
+                                                                                                     "batchId": bytes_to_base64(encrypt_data(batchId)),
                                                                                                      "products":[latest_item]
                                                                                                      }
                                                                                                      })#Add a timestamp for sub logic
@@ -600,8 +600,8 @@ def manuorderconfirm(request):
                                                                                                  ],
                                                                                                  {'json': {
                                                                                                      "manufacturer":manufacturer_name,
-                                                                                                     "email":Manufacturer_email,
-                                                                                                     "batchId":batchId,
+                                                                                                     "email":bytes_to_base64(encrypt_data(Manufacturer_email)),
+                                                                                                     "batchId":bytes_to_base64(encrypt_data(batchId)),
                                                                                                      "products":[latest_item]
                                                                                                      }
                                                                                                      })#Add a timestamp for sub logic
