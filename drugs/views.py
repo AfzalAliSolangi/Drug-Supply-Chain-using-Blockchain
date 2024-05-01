@@ -820,7 +820,7 @@ def login_check_distributor(request):
         if(len(json_load)>0):
             email_frm_chain = json_load[0]['keys'][0]
             passw_frm_chain = json_load[0]['data']['json']['password']
-            manufacturer_name = json_load[0]['data']['json']['company_info']
+            manufacturer_name = decrypt_data(base64_to_bytes(json_load[0]['data']['json']['company_info']))
             comp_info = json_load[0]['data']['json']['company_info']
             print(data)
             print(comp_info)
@@ -1521,7 +1521,7 @@ def login_check_pharmacy(request): #Implement Password authentication
         if(len(json_load)>0):
             email_frm_chain = json_load[0]['keys'][0]
             passw_frm_chain = json_load[0]['data']['json']['password']
-            pharmacy_name = json_load[0]['data']['json']['company_info']
+            pharmacy_name = decrypt_data(base64_to_bytes(json_load[0]['data']['json']['company_info']))
             comp_info = json_load[0]['data']['json']['company_info']
             print(data)
             print(comp_info)
