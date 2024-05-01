@@ -503,14 +503,14 @@ def manuorderconfirm(request):
                 print(products_with_timestamp)
 
                 latest_item = products_with_timestamp[0]['product_data']
-                prev_quantity = products_with_timestamp[0]['product_data']['quantity_in_stock'] #From the user_manufacturer_items_stream
+                prev_quantity = decrypt_data(base64_to_bytes(products_with_timestamp[0]['product_data']['quantity_in_stock'])) #From the user_manufacturer_items_stream
                 new_quantity = int(prev_quantity)-int(quantity_frm_order)
-                total_amout = int(quantity_frm_order) * int(products_with_timestamp[0]['product_data']['unit_price'])
+                total_amout = int(quantity_frm_order) * int(decrypt_data(base64_to_bytes(products_with_timestamp[0]['product_data']['unit_price'])))
 
                 print('new quantity :',new_quantity)
                 print('tot_amount :', total_amout)
 
-                latest_item['quantity_in_stock'] = new_quantity
+                latest_item['quantity_in_stock'] = bytes_to_base64(encrypt_data(str(new_quantity)))
                 print('Item after updating quantity: \n', latest_item)
 
                 #publishing into users_manufacturer_items_stream
@@ -522,9 +522,9 @@ def manuorderconfirm(request):
                                                                                              timestamp_utc
                                                                                              ],
                                                                                              {'json': {
-                                                                                                 "manufacturer":manufacturer_name,
-                                                                                                 "email":Manufacturer_email,
-                                                                                                 "batchId":batchId,
+                                                                                                 "manufacturer": manufacturer_name,
+                                                                                                 "batchId": bytes_to_base64(encrypt_data(batchId)),
+                                                                                                 "email": bytes_to_base64(encrypt_data(Manufacturer_email)),
                                                                                                  "products":[latest_item]
                                                                                                  }
                                                                                                  })#Add a timestamp for sub logic
@@ -567,7 +567,7 @@ def manuorderconfirm(request):
                     latest_item = products_with_timestamp[0]['product_data']
                     prev_quantity = products_with_timestamp[0]['product_data']['quantity_in_stock'] #From the user_manufacturer_items_stream
                     new_quantity = int(prev_quantity)+int(quantity_frm_order)
-                    total_amout = int(quantity_frm_order) * int(products_with_timestamp[0]['product_data']['unit_price'])
+                    total_amout = int(quantity_frm_order) * int(decrypt_data(base64_to_bytes(products_with_timestamp[0]['product_data']['unit_price'])))
                     print('new quantity :',new_quantity)
                     print('tot_amount :', total_amout)
                     latest_item['quantity_in_stock'] = new_quantity
