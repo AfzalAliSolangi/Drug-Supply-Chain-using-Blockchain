@@ -12,6 +12,7 @@ import string
 import hashlib
 from cryptography.fernet import Fernet
 from django.contrib.auth.hashers import make_password,check_password
+import base64
 
 config = configparser.ConfigParser()
 
@@ -51,6 +52,9 @@ def decrypt_data(encrypted_data):
     decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
     return decrypted_data
 
+# Function to convert bytes data to base64 encoded string
+def bytes_to_base64(data):
+    return base64.b64encode(data).decode()
 
 def index(request):
     return render(request, "index.html")
@@ -168,17 +172,24 @@ def process_registration_manufacturer(request):
 
         # Hash the password
         hashed_password = make_password(password)
-
+        # Encrypt other user details
+        encrypted_company_info = encrypt_data(request.POST.get('company_info'))
+        encrypted_street_address = encrypt_data(request.POST.get('street_address'))
+        encrypted_business_details = encrypt_data(request.POST.get('business_details'))
+        encrypted_state = encrypt_data(request.POST.get('state'))
+        encrypted_city = encrypt_data(request.POST.get('city'))
+        encrypted_zip_code = encrypt_data(request.POST.get('zip_code'))
+        print(encrypted_company_info)
         request_data = {
             "email": request.POST.get('email'),
-            "company_info": request.POST.get('company_info'),
-            "street_address": request.POST.get('street_address'),
-            "business_details": request.POST.get('business_details'),
-            "state": request.POST.get('state'),
-            "city": request.POST.get('city'),
-            "zip_code": request.POST.get('zip_code'),
+            "company_info": bytes_to_base64(encrypted_company_info),
+            "street_address": bytes_to_base64(encrypted_street_address),
+            "business_details": bytes_to_base64(encrypted_business_details),
+            "state": bytes_to_base64(encrypted_state),
+            "city": bytes_to_base64(encrypted_city),
+            "zip_code": bytes_to_base64(encrypted_zip_code),
             "password": hashed_password,
-            "license_certification": request.POST.get('license_certification')
+            "license_certification": request.POST.get('license_certification') #Hash calculated from the front end don't need to encrypt it
         }
         data = json.dumps(request_data)
         data = json.loads(data)
