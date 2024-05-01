@@ -1025,7 +1025,10 @@ def manuproducts(request):
         
         for item in response:
             data = item['data']['json']
-            key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+            key = (decrypt_data(base64_to_bytes(data['email'])),
+                   decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                   decrypt_data(base64_to_bytes(data['batchId'])),
+                   decrypt_data(base64_to_bytes(data['products'][0]['product_name'])))
             timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
             
             if key not in product_map or timestamp > product_map[key]['timestamp']:
@@ -1054,10 +1057,10 @@ def manuproducts(request):
         
         products_with_timestamp = [{
             'timestamp': value['timestamp'],
-            'email': decrypt_data(base64_to_bytes(value['email'])),
-            'product_code': decrypt_data(base64_to_bytes(value['product_code'])),
-            'batchId': decrypt_data(base64_to_bytes(value['batchId'])),
-            'product_name': decrypt_data(base64_to_bytes(value['product_name'])),
+            'email': value['email'],
+            'product_code': value['product_code'],
+            'batchId': value['batchId'],
+            'product_name': value['product_name'],
             'product_data': value['product_data']
         } for value in product_map.values()]
         
