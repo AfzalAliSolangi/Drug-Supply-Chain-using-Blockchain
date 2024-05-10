@@ -1,257 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-<title>Orders Dashboard</title>
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  .sidebar {
-    background-color: #5D3FD3;
-    width: 80px;
-    height: calc(100vh - 60px); /* Adjusts height to take top bar into account */
-    position: fixed;
-    padding-top: 20px;
-    top: 60px; /* Starts directly below the top bar */
-    left: 0;
-  }
-  .sidebar a {
-    display: block;
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    text-align: center;
-  }
-  .sidebar a:hover {
-    background-color: #4CAF50;
-  }
-  .top-bar {
-    background: #FFFFFF;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed; /* Makes the top bar fixed at the top */
-    width: 100%; /* Ensures it covers the full width */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensures it stays on top */
-  }
-  .top-bar img {
-    border-radius: 50%; /* Makes the image rounded */
-    margin-right: 10px; /* Adds spacing between the image and the name */
-  }
-  
-  .top-bar span {
-    font-size: 16px; /* Adjust font size as needed */
-    margin-right: 20px; /* Adds spacing between the name and the logout button */
-  }
-  .table-container {
-    overflow-y: auto; /* Enables vertical scrolling */
-    margin-left: 80px;
-    margin-top: 10px;
-    width: calc(100% - 100px); /* Adjust based on your layout */
-    height: 500px; /* Adjust the height to fit your needs */
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles.css" />
 
-.table-container table {
-    padding: 20px;
-    border-spacing: 0;
-    border-collapse: collapse;
-    width: 100%; /* Ensures the table fills the container width */
-    background-color: #fff; /* Sets a clean background */
-}
+    <title>Orders Dashboard</title>
+  </head>
+  <style>
+    body {
+      font-family: "Montserrat" !important;
+      margin: 0;
+      padding: 0;
+    }
 
-th, td {
-    padding: 15px 10px; /* Increased padding for a modern look */
-    text-align: Center; /* Typically modern tables align text to the left */
-    font-size: 14px; /* Adjust font size for readability */
-}
+    .sidebar {
+      background-color: #ededed !important;
+      width: 180px;
+      height: calc(100vh - 60px);
+      position: fixed;
+      top: 55px;
+      left: 0;
+    }
 
-th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f8f8; /* Light background for the header */
-    color: #333; /* Soft black for text */
-    z-index: 2; /* Ensures the header is above other content */
-}
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      text-align: center;
+    }
 
+    .sidebar a:hover {
+      background-color: #4caf50;
+    }
 
-.table-row td {
-    border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
-}
-  .button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  /* Style for the dropdown button */
-  .dropbtn {
-    background-color: #FFFFFF; /* White background */
-    color: black; /* Black text/icon */
-    padding: 8px 12px; /* Adjust padding to balance the button size */
-    font-size: 16px; /* Font size of the text/icon */
-    border: none; /* No border */
-    cursor: pointer; /* Indicates it's clickable */
-    border-radius: 4px; /* Rounded corners */
-    line-height: 1; /* Line height for text alignment */
-    display: flex; /* Use flex to center content */
-    align-items: center; /* Align items vertically */
-    justify-content: center; /* Center content horizontally */
-    height: 40px; /* Match height with other elements like image */
-    overflow: visible; /* Prevents clipping */
-}
+    .top-bar {
+      background: linear-gradient(270deg, #fff 0, #00158f) !important;
+      padding: 10px 20px;
+      position: fixed; /* Makes the top bar fixed at the top */
+      width: 100%; /* Ensures it covers the full width */
+      top: 0;
+      left: 0;
+      z-index: 1000; /* Ensures it stays on top */
+    }
 
-  
-  
-  /* Container for the dropdown content. Hidden by default. */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 150px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    right: 0;                  /* Aligns the dropdown to the right of the button */
-}
-  
-  /* Links inside the dropdown */
-  .dropdown-content a {
+    .top-bar img {
+      border-radius: 50%; /* Makes the image rounded */
+      margin-right: 10px; /* Adds spacing between the image and the name */
+    }
+
+    .top-bar span {
+      font-size: 16px; /* Adjust font size as needed */
+      margin-right: 20px; /* Adds spacing between the name and the logout button */
+    }
+
+    .table-container {
+      overflow-y: auto; /* Enables vertical scrolling */
+      margin-left: 180px;
+      margin-top: 10px;
+      height: 500px; /* Adjust the height to fit your needs */
+    }
+
+    .table-container table {
+      padding: 20px;
+      border-spacing: 0;
+      border-collapse: collapse;
+      width: 100%; /* Ensures the table fills the container width */
+      background-color: #fff; /* Sets a clean background */
+    }
+
+    th,
+    td {
+      padding: 15px 10px; /* Increased padding for a modern look */
+      text-align: Center; /* Typically modern tables align text to the left */
+      font-size: 14px; /* Adjust font size for readability */
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8; /* Light background for the header */
+      color: #333; /* Soft black for text */
+      z-index: 2; /* Ensures the header is above other content */
+    }
+
+    .table-row td {
+      border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
+    }
+    .button {
+      background-color: #4caf50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    /* Style for the dropdown button */
+    .dropbtn {
+      background-color: #ffffff; /* White background */
+      color: black; /* Black text/icon */
+      padding: 8px 12px; /* Adjust padding to balance the button size */
+      font-size: 16px; /* Font size of the text/icon */
+      border: none; /* No border */
+      cursor: pointer; /* Indicates it's clickable */
+      border-radius: 4px; /* Rounded corners */
+      line-height: 1; /* Line height for text alignment */
+      display: flex; /* Use flex to center content */
+      align-items: center; /* Align items vertically */
+      justify-content: center; /* Center content horizontally */
+      height: 40px; /* Match height with other elements like image */
+      overflow: visible; /* Prevents clipping */
+    }
+
+    /* Container for the dropdown content. Hidden by default. */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 150px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      right: 0; /* Aligns the dropdown to the right of the button */
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
       color: black;
       padding: 12px 16px;
       text-decoration: none;
       display: block;
-  }
-  
-  /* Change color of dropdown links on hover */
-  .dropdown-content a:hover {background-color: #f1f1f1}
-  
-  /* Show the dropdown menu on hover */
-  .dropdown:hover .dropdown-content {
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {
       display: block;
+    }
+
+    /* Change the dropdown button style on hover */
+    .dropdown:hover .dropbtn {
+      background-color: #e8e8e8; /* Light gray to indicate hover */
+    }
+    /* Ensure the dropdown menu is correctly positioned */
+    .dropdown {
+      position: relative; /* Ensures the dropdown content is positioned relative to this container */
+      display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
+      margin-left: 5px; /* Minimal left margin for tight spacing */
+      margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+    }
+
+    #ordersLink {
+      background-color: #4caf50; /* Green color */
+      color: white; /* Ensures text is visible on the green background */
+    }
+
+    #ordersLink:hover {
+      background-color: #43a047; /* Slightly darker green on hover for feedback */
+    }
+
+    .oval-box {
+      width: 90px; /* Adjust according to your requirement */
+      height: 30px; /* Adjust according to your requirement */
+      border-radius: 15px; /* Half of the height for smoother corners */
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      color: black; /* Text color */
+      font-weight: bold; /* Make text bold */
+    }
+
+    a.btn.btn-sidebar.w-100.mb-2 {
+      background: #00158f;
+      border: none !important;
   }
-  
-  /* Change the dropdown button style on hover */
-  .dropdown:hover .dropbtn {
-      background-color: #E8E8E8; /* Light gray to indicate hover */
-  }
-  /* Ensure the dropdown menu is correctly positioned */
-  .dropdown {
-    position: relative; /* Ensures the dropdown content is positioned relative to this container */
-    display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
-    margin-left: 5px; /* Minimal left margin for tight spacing */
-    margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+
+  a.btn.btn-sidebar.w-100.mb-2:hover {
+    background: #fff;
+    border: 1px solid #00158f !important;
+    color: #00158f;
 }
-
-#ordersLink {
-  background-color: #4CAF50; /* Green color */
-  color: white; /* Ensures text is visible on the green background */
-}
-
-#ordersLink:hover {
-  background-color: #43a047; /* Slightly darker green on hover for feedback */
-}
-
-.oval-box {
-  width: 90px; /* Adjust according to your requirement */
-  height: 30px; /* Adjust according to your requirement */
-  border-radius: 15px; /* Half of the height for smoother corners */
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  color: black; /* Text color */
-  font-weight: bold; /* Make text bold */
-}
-</style>
-</head>
-<body>
-
-<div class="sidebar">
-    <a href="#" id="ordersLink" class="btn" onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')">Orders</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')">Inventory</a>
-    <a href="#" class="btn" onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')">Add Drug</a>
-</div>
-
-<div class="top-bar">
-    <b>Welcome, {{ company_info }}</b>
-    <div style="display: flex; align-items: center;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" style="height: 40px; border-radius: 50%; margin-right: 5px;">
-      <span>{{ company_info }}</span>
-      <!-- Dropdown Menu -->
-      <div class="dropdown">
-        <button class="dropbtn">▼</button>
-        <div class="dropdown-content">
-          <a href="{% url 'index' %}">logout</a>  <!-- Link to the home page -->
-        </div>
-      </div>
+  </style>
+  <body>
+    <div class="sidebar d-flex flex-column align-items-start p-3 bg-light">
+      <a
+        href="#"
+        class="btn btn-sidebar w-100 mb-2"
+        onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')"
+        >Orders</a
+      >
+      <a
+        href="#"
+        class="btn btn-sidebar w-100 mb-2"
+        onclick="event.preventDefault(); viewInventory('{{ email }}', '{{ company_info }}')"
+        >Inventory</a
+      >
+      <a
+        href="#"
+        class="btn btn-sidebar w-100 mb-2"
+        onclick="event.preventDefault(); addDrug('{{ email }}', '{{ company_info }}')"
+        >Add Drug</a
+      >
     </div>
-</div>
 
-<!-- Search Input Section with Search Button -->
-<div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
-  
-  <input type="text" id="searchInput" placeholder="Search orders..." style="width: 200px; height: 20px; border: 2px solid #333333;">
-  <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
-
-  <input type="date" id="dateInput" onchange="filterByDate()" style="margin-left: 10px; height: 20px; border: 2px solid #333333; margin-right: 10px;">
-
-  <!-- Status Filter Dropdown -->
-  <label for="statusFilter" style="margin-right: 5px;">Filter by Status:</label>
-  <select id="statusFilter" onchange="filterByStatus()" style="height: 24px; border: 2px solid #333333;">
-    <option value="">All</option>
-    <option value="Confirmed">Confirmed</option>
-    <option value="Pending">Pending</option>
-    <option value="Cancelled">Cancelled</option>
-  </select>
-  <div>
-    <button id="confirmButton" onclick="handleConfirm()" style="margin-left: 500px; margin-right: 10px;">Confirm</button>
-    <button id="cancelButton" onclick="handleCancel()">Cancel</button>
+    <div class="top-bar py-2 px-3 bg-light shadow-sm">
+      <div class="d-flex justify-content-between align-items-center">
+          <b style="color: #fff">Welcome, {{ company_info }}</b>
+          <div class="d-flex align-items-center">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" class="rounded-circle" style="height: 40px; width: 40px; margin-right: 10px;">
+              <span style="color: #000" class="me-3">{{ company_info }}</span>
+              <!-- Bootstrap Dropdown Menu -->
+              <div class="dropdown">
+                  <button style="    background: #fff;
+                  border: 1px solid #e1e1e1;
+                  color: #000;" class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Options
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="{% url 'index' %}">Logout</a></li>
+                      <!-- Add more links here as needed -->
+                  </ul>
+              </div>
+          </div>
+      </div>
   </div>
-</div>
+  
 
+    <!-- Search Input Section with Search Button -->
+    <div class="d-flex align-items-center ps-4 pt-3" style="margin-left: 180px; margin-top: 60px;">
+      <input type="text" id="searchInput" class="form-control me-2" placeholder="Search orders..." style="width: 200px;">
+      <button id="searchButton" class="btn btn-outline-secondary" onclick="filterTable()">Search</button>
+  
+      <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
+  
+      <!-- Status Filter Dropdown -->
+      <div class="d-flex align-items-center">
+          <label for="statusFilter" class="me-2">Filter by Status:</label>
+          <select id="statusFilter" class="form-select" onchange="filterByStatus()" style="width: auto;">
+              <option value="">All</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Pending">Pending</option>
+              <option value="Cancelled">Cancelled</option>
+          </select>
+      </div>
+  
+      <div class="ms-auto">
+          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm()">Confirm</button>
+          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Cancel</button>
+      </div>
+  </div>
+  
 
-<div class="table-container">
-    <table id="ordersTable">
+  <div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
+    <table id="ordersTable" class="table table-striped table-hover">
         <thead>
-          <tr>
-            <th scope="col"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);"></th>
-            <th scope="col">OrderID</th>
-            <th scope="col">Trx</th>
-            <th scope="col">Distributor</th>
-            <th scope="col">Date</th>
-            <th scope="col">Product</th>
-            <th scope="col">Batch</th>
-            <th scope="col">Product Code</th>
-            <th scope="col">Quantity</th>
-            <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
-              Total Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
-          </th>
-            <th scope="col">Status</th>
-          </tr>
+            <tr>
+                <th width="100" scope="col">
+                    <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);">
+                </th>
+                <th width="100" scope="col">OrderID</th>
+                <th width="100" scope="col">Trx</th>
+                <th width="100" scope="col">Distributor</th>
+                <th width="100" scope="col">Date</th>
+                <th width="100" scope="col">Product</th>
+                <th width="100" scope="col">Batch</th>
+                <th width="100" scope="col">Product Code</th>
+                <th width="100" scope="col">Quantity</th>
+                <th width="100" scope="col" style="cursor: pointer;" onclick="sortTableByPrice()">
+                    Total Price <span id="priceSortIcon">&#8645;</span>
+                </th>
+                <th width="100" scope="col">Status</th>
+            </tr>
         </thead>
         <tbody>
             {% for order in orders %}
-            <tr class="table-row">
+            <tr>
               <td>
                 <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
-                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
-            </td>
+                <input type="checkbox" name="selected" value="{{ order.id }}"
+                onclick="updateSelection(this);" {% if order.confirmed ==
+                'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif
+                %}>
+              </td>
                 <td>{{ order.orderid }}</td>
-                <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
+                <td style="word-wrap: break-word; max-width: 150px">{{ order.trxid }}</td>
                 <td>{{ order.Distributor_name }}</td>
                 <td>{{ order.orderPlaceOn }}</td>
                 <td>{{ order.product_name }}</td>
@@ -260,327 +317,350 @@ th {
                 <td>{{ order.quantity }}</td>
                 <td>{{ order.tot_price }}</td>
                 <td>
-                <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
-                  {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
+                  <div
+                  class="oval-box"
+                  style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;"
+                >
+                  {% if order.confirmed == '' %}Pending{% else %}{{
+                  order.confirmed }}{% endif %}
                 </div>
-                <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
-                <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
-                <input type="hidden" name="product_name" value="{{ order.product_name }}">
-                <input type="hidden" name="timestamp" value="{{ order.timestamp }}">
-              </td>
+                    <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
+                    <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
+                    <input type="hidden" name="product_name" value="{{ order.product_name }}">
+                    <input type="hidden" name="timestamp" value="{{ order.timestamp }}">
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  var selectedOrders = []; // Array to store selected orders' data
 
-    function updateSelection(checkbox) {
-        var row = checkbox.closest('tr');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% comment %} <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script> {% endcomment %}
+    <script>
+      var selectedOrders = []; // Array to store selected orders' data
+
+      function updateSelection(checkbox) {
+        var row = checkbox.closest("tr");
         var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
-    
+
         if (checkbox.checked) {
-            // If checked, gather data and add to the selectedOrders
-            var orderData = {
-                orderId: orderId,
-                trxId: row.cells[2].textContent.trim(),
-                distributor: row.cells[3].textContent.trim(),
-                date: row.cells[4].textContent.trim(),
-                product: row.cells[5].textContent.trim(),
-                batchId: row.cells[6].textContent.trim(),
-                productCode: row.cells[7].textContent.trim(),
-                quantity: row.cells[8].textContent.trim(),
-                status: row.cells[9].textContent.trim()
-            };
-          
-            // Collect hidden inputs within the row for additional data
-            row.querySelectorAll('td:last-child input[type="hidden"]').forEach(function(input) {
-                orderData[input.name] = input.value;
+          // If checked, gather data and add to the selectedOrders
+          var orderData = {
+            orderId: orderId,
+            trxId: row.cells[2].textContent.trim(),
+            distributor: row.cells[3].textContent.trim(),
+            date: row.cells[4].textContent.trim(),
+            product: row.cells[5].textContent.trim(),
+            batchId: row.cells[6].textContent.trim(),
+            productCode: row.cells[7].textContent.trim(),
+            quantity: row.cells[8].textContent.trim(),
+            status: row.cells[9].textContent.trim(),
+          };
+
+          // Collect hidden inputs within the row for additional data
+          row
+            .querySelectorAll('td:last-child input[type="hidden"]')
+            .forEach(function (input) {
+              orderData[input.name] = input.value;
             });
-          
-            selectedOrders.push(orderData); // Add the new order data to the array
+
+          selectedOrders.push(orderData); // Add the new order data to the array
         } else {
-            // If unchecked, remove the order from the array
-            selectedOrders = selectedOrders.filter(function(order) {
-                return order.orderId !== orderId; // Correct filtering using orderId
-            });
+          // If unchecked, remove the order from the array
+          selectedOrders = selectedOrders.filter(function (order) {
+            return order.orderId !== orderId; // Correct filtering using orderId
+          });
         }
-      
+
         console.log(selectedOrders); // Logs to console to monitor the selected orders
-    }
+      }
 
-    // Attach event listeners to checkboxes on document load
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.table-row input[type="checkbox"]').forEach(function(checkbox) {
-            checkbox.onclick = function() { updateSelection(this); };
-        });
-    });
+      // Attach event listeners to checkboxes on document load
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .querySelectorAll('.table-row input[type="checkbox"]')
+          .forEach(function (checkbox) {
+            checkbox.onclick = function () {
+              updateSelection(this);
+            };
+          });
+      });
 
-    // Function to filter the table based on search input
-    function filterTable() {
-      var input = document.getElementById('searchInput');
-      var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
-      var table = document.getElementById('ordersTable');
-      var tr = table.getElementsByTagName('tr');
-    
-      if (filter === "") {
+      // Function to filter the table based on search input
+      function filterTable() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase().trim(); // Get the input text and trim whitespace
+        var table = document.getElementById("ordersTable");
+        var tr = table.getElementsByTagName("tr");
+
+        if (filter === "") {
           // If the filter is empty, display all rows
-          for (var i = 1; i < tr.length; i++) { // Skip the header row
-              tr[i].style.display = "";
+          for (var i = 1; i < tr.length; i++) {
+            // Skip the header row
+            tr[i].style.display = "";
           }
           return; // Exit the function early
-      }
-    
-      // Continue with filtering only if there is some text in the input
-      for (var i = 1; i < tr.length; i++) {
+        }
+
+        // Continue with filtering only if there is some text in the input
+        for (var i = 1; i < tr.length; i++) {
           var display = false; // Assume the row does not match
           // Define which columns to search (OrderID, Trx ID, Distributor, Product)
-          var tds = [tr[i].getElementsByTagName('td')[1], // OrderID (adjust index as necessary)
-                     tr[i].getElementsByTagName('td')[2], // Trx ID
-                     tr[i].getElementsByTagName('td')[3], // Distributor
-                     tr[i].getElementsByTagName('td')[5], // Product
-                     tr[i].getElementsByTagName('td')[6], // Batch ID	
-                     tr[i].getElementsByTagName('td')[7], // Product Code
-                     ]; // Product
-      
+          var tds = [
+            tr[i].getElementsByTagName("td")[1], // OrderID (adjust index as necessary)
+            tr[i].getElementsByTagName("td")[2], // Trx ID
+            tr[i].getElementsByTagName("td")[3], // Distributor
+            tr[i].getElementsByTagName("td")[5], // Product
+            tr[i].getElementsByTagName("td")[6], // Batch ID
+            tr[i].getElementsByTagName("td")[7], // Product Code
+          ]; // Product
+
           for (var j = 0; j < tds.length; j++) {
-              var td = tds[j];
-              if (td) {
-                  var txtValue = td.textContent || td.innerText;
-                  if (txtValue.toUpperCase().trim() === filter) {
-                      display = true; // Show the row if the cell matches exactly
-                      break; // Stop checking further cells if a match is found
-                  }
+            var td = tds[j];
+            if (td) {
+              var txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().trim() === filter) {
+                display = true; // Show the row if the cell matches exactly
+                break; // Stop checking further cells if a match is found
               }
+            }
           }
           tr[i].style.display = display ? "" : "none"; // Apply the display setting
+        }
       }
-    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      var input = document.getElementById('searchInput');
-      input.addEventListener('keyup', function(event) {
+      document.addEventListener("DOMContentLoaded", function () {
+        var input = document.getElementById("searchInput");
+        input.addEventListener("keyup", function (event) {
           if (event.key === "Enter") {
-              filterTable();
+            filterTable();
           }
+        });
       });
-    });
 
-    function filterByDate() {
-      var dateInput = document.getElementById('dateInput').value;
-      var table = document.getElementById('ordersTable');
-      var tr = table.getElementsByTagName('tr');
-  
-      if (!dateInput) {
+      function filterByDate() {
+        var dateInput = document.getElementById("dateInput").value;
+        var table = document.getElementById("ordersTable");
+        var tr = table.getElementsByTagName("tr");
+
+        if (!dateInput) {
           // If no date is entered, show all rows
           for (var i = 1; i < tr.length; i++) {
-              tr[i].style.display = "";
+            tr[i].style.display = "";
           }
           return;
-      }
-  
-      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
-  
-      for (var i = 1; i < tr.length; i++) {
-          var td = tr[i].getElementsByTagName('td')[4]; // Assuming Date is the 5th column
+        }
+
+        var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+
+        for (var i = 1; i < tr.length; i++) {
+          var td = tr[i].getElementsByTagName("td")[4]; // Assuming Date is the 5th column
           if (td) {
-              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
-              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+            var rowDate = new Date(td.textContent || td.innerText)
+              .toISOString()
+              .slice(0, 10);
+            tr[i].style.display = rowDate === filterDate ? "" : "none";
           }
+        }
       }
-  }
 
-  function filterByStatus() {
-    var statusInput = document.getElementById('statusFilter').value;
-    var table = document.getElementById('ordersTable');
-    var tr = table.getElementsByTagName('tr');
+      function filterByStatus() {
+        var statusInput = document.getElementById("statusFilter").value;
+        var table = document.getElementById("ordersTable");
+        var tr = table.getElementsByTagName("tr");
 
-    for (var i = 1; i < tr.length; i++) {
-        var td = tr[i].getElementsByTagName('td')[10]; // Adjust if the index changes
-        var div = td.querySelector('.oval-box'); // Assuming this is the div with the color
-        if (div) {
+        for (var i = 1; i < tr.length; i++) {
+          var td = tr[i].getElementsByTagName("td")[10]; // Adjust if the index changes
+          var div = td.querySelector(".oval-box"); // Assuming this is the div with the color
+          if (div) {
             // Determine the status based on background color
             var style = window.getComputedStyle(div);
             var backgroundColor = style.backgroundColor;
 
             // Map background colors to statuses
-            var status = '';
-            if (backgroundColor === 'rgb(255, 0, 0)') { // Example RGB for red
-                status = 'Cancelled';
-            } else if (backgroundColor === 'rgb(0, 128, 0)') { // Example RGB for green
-                status = 'Confirmed';
-            } else if (backgroundColor === 'rgb(255, 255, 0)') { // Example RGB for yellow
-                status = 'Pending';
+            var status = "";
+            if (backgroundColor === "rgb(255, 0, 0)") {
+              // Example RGB for red
+              status = "Cancelled";
+            } else if (backgroundColor === "rgb(0, 128, 0)") {
+              // Example RGB for green
+              status = "Confirmed";
+            } else if (backgroundColor === "rgb(255, 255, 0)") {
+              // Example RGB for yellow
+              status = "Pending";
             }
 
             if (statusInput === "" || status === statusInput) {
-                tr[i].style.display = "";
+              tr[i].style.display = "";
             } else {
-                tr[i].style.display = "none";
+              tr[i].style.display = "none";
             }
+          }
         }
-    }
-}
+      }
 
-function toggleSelectAll(source) {
-  // Select all checkboxes within table rows that are not disabled and are visible
-  var checkboxes = document.querySelectorAll('#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)');
-  for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = source.checked;
-      updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
-  }
-}
+      function toggleSelectAll(source) {
+        // Select all checkboxes within table rows that are not disabled and are visible
+        var checkboxes = document.querySelectorAll(
+          '#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)'
+        );
+        for (var i = 0; i < checkboxes.length; i++) {
+          checkboxes[i].checked = source.checked;
+          updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
+        }
+      }
 
-let priceSortAsc = true; // Initialize sort direction
+      let priceSortAsc = true; // Initialize sort direction
 
-function sortTableByPrice() {
-    var table, rows, switching, i, x, y, shouldSwitch;
-    var sortIcon = document.getElementById('priceSortIcon');
-    table = document.getElementById("ordersTable");
-    switching = true;
+      function sortTableByPrice() {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        var sortIcon = document.getElementById("priceSortIcon");
+        table = document.getElementById("ordersTable");
+        switching = true;
 
-    // Update icon based on current sort direction
-    if (priceSortAsc) {
-        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
-    } else {
-        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
-    }
+        // Update icon based on current sort direction
+        if (priceSortAsc) {
+          sortIcon.innerHTML = "&#8659;"; // Unicode for down arrow
+        } else {
+          sortIcon.innerHTML = "&#8657;"; // Unicode for up arrow
+        }
 
-    while (switching) {
-        switching = false;
-        rows = table.getElementsByTagName("TR");
-        for (i = 1; i < (rows.length - 1); i++) {
+        while (switching) {
+          switching = false;
+          rows = table.getElementsByTagName("TR");
+          for (i = 1; i < rows.length - 1; i++) {
             shouldSwitch = false;
             x = rows[i].getElementsByTagName("TD")[9];
             y = rows[i + 1].getElementsByTagName("TD")[9];
             if (priceSortAsc) {
-                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
-                    shouldSwitch = true;
-                    break;
-                }
+              if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                shouldSwitch = true;
+                break;
+              }
             } else {
-                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
-                    shouldSwitch = true;
-                    break;
-                }
+              if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                shouldSwitch = true;
+                break;
+              }
             }
-        }
-        if (shouldSwitch) {
+          }
+          if (shouldSwitch) {
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
+          }
         }
-    }
-    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
-}
+        priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+      }
 
+      function handleConfirm() {
+        console.log("Confirmed Orders:", selectedOrders);
+        // Additional logic for confirming orders can be added here
+        // Add an input field for the selectedOrders data
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/manuorderconfirm"; // Replace with the actual URL of your Django view
+        form.style.display = "none";
 
-function handleConfirm() {
-  console.log("Confirmed Orders:", selectedOrders);
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/manuorderconfirm';  // Replace with the actual URL of your Django view
-            form.style.display = 'none';
+        const selectedOrdersInput = document.createElement("input");
+        selectedOrdersInput.type = "hidden";
+        selectedOrdersInput.name = "selectedOrders"; // Name to use in Django for the selectedOrders data
+        selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+        form.appendChild(selectedOrdersInput);
 
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
+        document.body.appendChild(form);
+        form.submit();
+      }
 
-  document.body.appendChild(form);
-  form.submit();
-}
-
-function handleCancel() {
-  console.log("Cancelled Action");
-  console.log("Confirmed Orders:", selectedOrders);
-  // Logic to handle a cancellation or clear selections can be added here
-  // Additional logic for confirming orders can be added here
-  // Add an input field for the selectedOrders data
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/manuordercancel';  // Replace with the actual URL of your Django view
-  form.style.display = 'none';
-  const selectedOrdersInput = document.createElement('input');
-  selectedOrdersInput.type = 'hidden';
-  selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-  selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-  form.appendChild(selectedOrdersInput);
-  document.body.appendChild(form);
-  form.submit();
-}
-    function distorders(email) {
+      function handleCancel() {
+        console.log("Cancelled Action");
+        console.log("Confirmed Orders:", selectedOrders);
+        // Logic to handle a cancellation or clear selections can be added here
+        // Additional logic for confirming orders can be added here
+        // Add an input field for the selectedOrders data
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/manuordercancel"; // Replace with the actual URL of your Django view
+        form.style.display = "none";
+        const selectedOrdersInput = document.createElement("input");
+        selectedOrdersInput.type = "hidden";
+        selectedOrdersInput.name = "selectedOrders"; // Name to use in Django for the selectedOrders data
+        selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
+        form.appendChild(selectedOrdersInput);
+        document.body.appendChild(form);
+        form.submit();
+      }
+      function distorders(email) {
         console.log("Email Distribution:", email);
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/manuorders';  // Replace with the actual URL for completing purchase
-        form.style.display = 'none';
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/manuorders"; // Replace with the actual URL for completing purchase
+        form.style.display = "none";
 
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
+        const emailInput = document.createElement("input");
+        emailInput.type = "hidden";
+        emailInput.name = "email";
         emailInput.value = email;
         form.appendChild(emailInput);
 
-        const companyinfoInput = document.createElement('input');
-        companyinfoInput.type = 'hidden';
-        companyinfoInput.name = 'company_info';
+        const companyinfoInput = document.createElement("input");
+        companyinfoInput.type = "hidden";
+        companyinfoInput.name = "company_info";
         companyinfoInput.value = company_info;
         form.appendChild(companyinfoInput);
 
         document.body.appendChild(form);
         form.submit();
-    }
+      }
 
-
-    function viewInventory(email,company_info) {
+      function viewInventory(email, company_info) {
         console.log("Viewing inventory...");
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
-        form.style.display = 'none';
-        
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/viewmanuinvent"; // Replace with the actual URL for completing purchase
+        form.style.display = "none";
+
+        const emailInput = document.createElement("input");
+        emailInput.type = "hidden";
+        emailInput.name = "email";
         emailInput.value = email;
         form.appendChild(emailInput);
         document.body.appendChild(form);
 
-        const companyinfoInput = document.createElement('input');
-        companyinfoInput.type = 'hidden';
-        companyinfoInput.name = 'company_info';
+        const companyinfoInput = document.createElement("input");
+        companyinfoInput.type = "hidden";
+        companyinfoInput.name = "company_info";
         companyinfoInput.value = company_info;
         form.appendChild(companyinfoInput);
 
         document.body.appendChild(form);
         form.submit();
-    }
-    
-    function addDrug(email, company_info) {
+      }
+
+      function addDrug(email, company_info) {
         console.log("Adding drug...");
-        window.location.href = '/adddrugmenu';  // Replace with the actual URL for adding drug
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/adddrugmenu';  // Replace with the actual URL for adding drug
-        form.style.display = 'none';
-        const emailInput = document.createElement('input');
-        emailInput.type = 'hidden';
-        emailInput.name = 'email';
+        window.location.href = "/adddrugmenu"; // Replace with the actual URL for adding drug
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/adddrugmenu"; // Replace with the actual URL for adding drug
+        form.style.display = "none";
+        const emailInput = document.createElement("input");
+        emailInput.type = "hidden";
+        emailInput.name = "email";
         emailInput.value = email;
         form.appendChild(emailInput);
-        const companyinfoInput = document.createElement('input');
-        companyinfoInput.type = 'hidden';
-        companyinfoInput.name = 'company_info';
+        const companyinfoInput = document.createElement("input");
+        companyinfoInput.type = "hidden";
+        companyinfoInput.name = "company_info";
         companyinfoInput.value = company_info;
         form.appendChild(companyinfoInput);
         document.body.appendChild(form);
         form.submit();
-    }
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>
