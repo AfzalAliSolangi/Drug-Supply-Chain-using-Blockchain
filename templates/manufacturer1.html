@@ -337,11 +337,9 @@ button#searchButton:hover {
             <tr>
               <td>
                 <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}"
-                onclick="updateSelection(this);" {% if order.confirmed ==
-                'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif
-                %}>
-              </td>
+                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
+                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
+            </td>
                 <td>{{ order.orderid }}</td>
                 <td style="word-wrap: break-word; max-width: 150px">{{ order.trxid }}</td>
                 <td>{{ order.Distributor_name }}</td>
@@ -356,8 +354,7 @@ button#searchButton:hover {
                   class="oval-box"
                   style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;"
                 >
-                  {% if order.confirmed == '' %}Pending{% else %}{{
-                  order.confirmed }}{% endif %}
+                {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
                 </div>
                     <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
                     <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
