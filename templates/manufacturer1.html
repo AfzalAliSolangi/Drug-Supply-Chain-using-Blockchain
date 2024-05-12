@@ -19,7 +19,6 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="styles.css" />
 
     <title>Orders Dashboard</title>
   </head>
@@ -198,7 +197,8 @@
 
     a.btn.btn-sidebar.w-100.mb-2 {
       background: #00158f;
-  }
+  
+    }
 
   a.btn.btn-sidebar.w-100.mb-2:hover {
     background: #fff;
@@ -240,6 +240,7 @@ button#searchButton:hover {
       <a
         href="#"
         class="btn btn-sidebar w-100 mb-2"
+        style="background:#fff !important; border-color:#00158f !important; color:#00158f !important"
         onclick="event.preventDefault(); distorders('{{ email }}', '{{ company_info }}')"
         >Orders</a
       >
