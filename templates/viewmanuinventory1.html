@@ -298,8 +298,8 @@ button#searchButton:hover {
       <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
     </div>
 
-    <div class="table-container" >
-      <table id="ordersTable">
+    <div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
+        <table id="ordersTable" class="table table-striped table-hover" style="margin-top: 20px;">
         <thead>
           <tr>
             <th scope="col">Product</th>
