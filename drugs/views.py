@@ -179,6 +179,7 @@ def user_type(request):
         userType = request.GET.get('userType', None)
         print('\nDistributor Email: ',email_rcvd)
         print('Company Info: ',company_info)
+        
         if userType=='Manufacturer':
             print('1')
             response = rpc_connection.liststreamitems(users_manufacturer_stream)

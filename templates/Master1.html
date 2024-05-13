@@ -304,10 +304,7 @@ button#searchButton:hover {
           </select>
       </div>
   
-      <div class="ms-auto">
-          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm()">Activate</button>
-          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Deactive</button>
-      </div>
+      
   </div>
 
 
@@ -316,7 +313,7 @@ button#searchButton:hover {
         <thead>
           <tr>
             <th width="100" scope="col">
-              <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);">
+              Select
           </th>
             <th width="100" scope="col">Name</th>
             <th width="100" scope="col">Email</th>
@@ -331,8 +328,11 @@ button#searchButton:hover {
             {% for order in orders %}
             <tr class="table-row">
               <td>
-                <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.email }}" onclick="updateSelection(this);">
+                
+                <div>
+                    <button style="width: 100px;" id="confirmButton" class="btn btn-success" onclick="handleConfirm()">Activate</button>
+                    <button style="width: 100px; margin-top: 5px;" id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Deactive</button>
+                </div>
                        {% comment %} {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}> {% endcomment %}
             </td>
                 <td>{{ order.company_info }}</td>
