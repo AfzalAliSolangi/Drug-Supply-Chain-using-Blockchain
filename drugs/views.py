@@ -889,10 +889,10 @@ def manage_sla(request):
         json_string_manufacturer = json.loads(json_string_manufacturer)
         if len(json_string_manufacturer)>0:
             Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']
-            print(data)
+            print(Manufacturer_hash_sla)
         else:
             Manufacturer_hash_sla = 'None'
-            print(data)
+            print(Manufacturer_hash_sla)
 
         #Distributor SLA
         response = rpc_connection.liststreamitems(distributor_SLA_stream)
@@ -900,10 +900,10 @@ def manage_sla(request):
         json_string_distributor = json.loads(json_string_distributor)
         if len(json_string_distributor)>0:
             distributor_hash_sla = json_string_distributor[-1]['data']['json']
-            print(data)
+            print(distributor_hash_sla)
         else:
-            data = 'None'
-            print(data)
+            distributor_hash_sla = 'None'
+            print(distributor_hash_sla)
 
         #Pharmacy SLA
         response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
@@ -911,14 +911,22 @@ def manage_sla(request):
         json_string_pharmacy = json.loads(json_string_pharmacy)
         if len(json_string_pharmacy)>0:
             pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']
-            print(data)
+            print(pharmacy_hash_sla)
         else:
-            data = 'None'
-            pharmacy_hash_sla(data)
+            pharmacy_hash_sla = 'None'
+            print(pharmacy_hash_sla)
+    return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla,'distributor_hash_sla':distributor_hash_sla,'pharmacy_hash_sla':pharmacy_hash_sla})
 
-
-
-    return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd})
+def manu_sla_submit(request):
+    print('submiting Manufacturer user SLA')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        hash_sla = request.POST.get('hash_sla',None)
+        print(email_rcvd)
+        print(company_info)
+        print(hash_sla)
+    return HttpResponse("Working!")
 
 #### MANUFACTURER ####
 def signup_manufacturer(request):
