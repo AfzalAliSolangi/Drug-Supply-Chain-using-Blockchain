@@ -332,12 +332,12 @@ button#searchButton:hover {
                 <div>
                     <button style="width: 100px;" id="confirmButton" class="btn btn-success"
             {% if order.status == 'True' %}disabled{% endif %}
-            onclick="handleConfirm()">Acitve</button>
+            onclick="handleConfirm('{{ order.email }}', '{{ userType }}')">Acitve</button>
 
         <!-- Example for a cancel button -->
         <button style="width: 100px; margin-top: 5px;" id="cancelButton" class="btn btn-danger"
             {% if order.status == 'False' %}disabled{% endif %}
-            onclick="handleCancel()">Deactive</button>
+            onclick="handleCancel('{{ email }}', '{{ company_info }}','{{ order.email }}', '{{ user_type }}')">Deactive</button>
                 </div>
                        {% comment %} {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}> {% endcomment %}
             </td>
@@ -548,23 +548,42 @@ button#searchButton:hover {
     form.submit();
   }
 
-  function handleCancel() {
-    console.log("Cancelled Action");
-    console.log("Confirmed Orders:", selectedOrders);
-    // Logic to handle a cancellation or clear selections can be added here
-    // Additional logic for confirming orders can be added here
-    // Add an input field for the selectedOrders data
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/distordercancel';  // Replace with the actual URL of your Django view
-    form.style.display = 'none';
-    const selectedOrdersInput = document.createElement('input');
-    selectedOrdersInput.type = 'hidden';
-    selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
-    selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
-    form.appendChild(selectedOrdersInput);
-    document.body.appendChild(form);
-    form.submit();
+  function handleCancel(email,company_info,useremail,user_type) {
+    console.log("Email Distribution:", email);
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/deactive_user';  // Replace with the actual URL for completing purchase
+      form.style.display = 'none';
+
+      const emailInput = document.createElement('input');
+      emailInput.type = 'hidden';
+      emailInput.name = 'email';
+      emailInput.value = email;
+      form.appendChild(emailInput);
+      document.body.appendChild(form);
+
+      const companyinfoInput = document.createElement('input');
+      companyinfoInput.type = 'hidden';
+      companyinfoInput.name = 'company_info';
+      companyinfoInput.value = company_info;
+      form.appendChild(companyinfoInput);
+      document.body.appendChild(form);
+
+      const useremailInput = document.createElement('input');
+      useremailInput.type = 'hidden';
+      useremailInput.name = 'useremail';
+      useremailInput.value = useremail;
+      form.appendChild(useremailInput);
+      document.body.appendChild(form);
+
+      const userTypeInput = document.createElement('input');
+      userTypeInput.type = 'hidden';
+      userTypeInput.name = 'user_type';
+      userTypeInput.value = user_type;
+      form.appendChild(userTypeInput);
+      document.body.appendChild(form);
+      
+      form.submit();
   }
   function distorderprod(email,company_info) {
       console.log("Email Distribution:", email);

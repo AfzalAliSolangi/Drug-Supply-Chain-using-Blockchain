@@ -218,12 +218,16 @@ def user_type(request):
             #Assuming you want to print the combined list to see the output
             print("\n",combined_list)
                     
-            return render(request, "Master1.html",{'company_info': company_info,'email':email_rcvd,'orders': combined_list})
+            return render(request, "Master1.html",{'company_info': company_info,'email':email_rcvd,'orders': combined_list,'user_type':userType})
         elif userType =='Distributor':
             print('2')
         elif userType == 'Pharmacy':
             print('3')
         return HttpResponse("Working!")
+    
+def deactive_user(request):
+    return HttpResponse("Working!")
+
     
 #### MANUFACTURER ####
 def signup_manufacturer(request):
