@@ -216,7 +216,7 @@ def user_type(request):
             #Assuming you want to print the combined list to see the output
             print("\n",combined_list)
                     
-            return render(request, "Master1.html",{'company_info': company_info,'email':email_rcvd})
+            return render(request, "Master1.html",{'company_info': company_info,'email':email_rcvd,'orders': combined_list})
         elif userType =='Distributor':
             print('2')
         elif userType == 'Pharmacy':

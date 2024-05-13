@@ -293,22 +293,20 @@ button#searchButton:hover {
       <input type="text" id="searchInput" class="form-control me-2" placeholder="Search orders..." style="width: 200px;">
       <button id="searchButton" class="btn searchbutton btn-outline-secondary" onclick="filterTable()">Search</button>
   
-      <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
   
       <!-- Status Filter Dropdown -->
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" style="margin-left: 20px;" >
           <label for="statusFilter" class="me-2">Filter by Status:</label>
           <select id="statusFilter" class="form-select" onchange="filterByStatus()" style="width: auto;">
               <option value="">All</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Pending">Pending</option>
-              <option value="Cancelled">Cancelled</option>
+              <option value="Active">Active</option>
+              <option value="Deactive">Deactive</option>
           </select>
       </div>
   
       <div class="ms-auto">
-          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm()">Confirm</button>
-          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Cancel</button>
+          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm()">Activate</button>
+          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Deactive</button>
       </div>
   </div>
 
@@ -320,17 +318,12 @@ button#searchButton:hover {
             <th width="100" scope="col">
               <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);">
           </th>
-            <th width="100" scope="col">OrderID</th>
-            <th width="100" scope="col">Trx</th>
-            <th width="100" scope="col">Pharmacy</th>
-            <th width="100" scope="col">Date</th>
-            <th width="100" scope="col">Product</th>
-            <th width="100" scope="col">Batch</th>
-            <th width="100" scope="col">Product Code</th>
-            <th width="100" scope="col">Quantity</th>
-            <th width="100" scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
-              Total Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
-          </th>
+            <th width="100" scope="col">Name</th>
+            <th width="100" scope="col">Email</th>
+            <th width="100" scope="col">Address</th>
+            <th width="100" scope="col">State</th>
+            <th width="100" scope="col">City</th>
+            <th width="100" scope="col">Zip Code</th>
             <th width="100"scope="col">Status</th>
           </tr>
         </thead>
@@ -339,26 +332,19 @@ button#searchButton:hover {
             <tr class="table-row">
               <td>
                 <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
-                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
+                <input type="checkbox" name="selected" value="{{ order.email }}" onclick="updateSelection(this);">
+                       {% comment %} {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}> {% endcomment %}
             </td>
-                <td>{{ order.orderid }}</td>
-                <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
-                <td>{{ order.Distributor_name }}</td>
-                <td>{{ order.orderPlaceOn }}</td>
-                <td>{{ order.product_name }}</td>
-                <td>{{ order.batchId }}</td>
-                <td>{{ order.product_code }}</td>
-                <td>{{ order.quantity }}</td>
-                <td>{{ order.tot_price }}</td>
+                <td>{{ order.company_info }}</td>
+                <td> {{ order.email }} </td>
+                <td style="word-wrap: break-word; max-width: 150px;">{{ order.street_address }}</td>
+                <td>{{ order.state }}</td>
+                <td>{{ order.city }}</td>
+                <td>{{ order.zip_code }}</td>
                 <td>
                 <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
                   {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
                 </div>
-                <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
-                <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
-                <input type="hidden" name="product_name" value="{{ order.product_name }}">
-                <input type="hidden" name="timestamp" value="{{ order.timestamp }}">
               </td>
             </tr>
             {% endfor %}
@@ -371,20 +357,12 @@ button#searchButton:hover {
 
     function updateSelection(checkbox) {
         var row = checkbox.closest('tr');
-        var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
+        var email = row.cells[1].textContent.trim(); // Consistently capture the orderId
     
         if (checkbox.checked) {
             // If checked, gather data and add to the selectedOrders
             var orderData = {
-                orderId: orderId,
-                trxId: row.cells[2].textContent.trim(),
-                distributor: row.cells[3].textContent.trim(),
-                date: row.cells[4].textContent.trim(),
-                product: row.cells[5].textContent.trim(),
-                batchId: row.cells[6].textContent.trim(),
-                productCode: row.cells[7].textContent.trim(),
-                quantity: row.cells[8].textContent.trim(),
-                status: row.cells[9].textContent.trim()
+                email: email
             };
           
             // Collect hidden inputs within the row for additional data
@@ -396,7 +374,7 @@ button#searchButton:hover {
         } else {
             // If unchecked, remove the order from the array
             selectedOrders = selectedOrders.filter(function(order) {
-                return order.orderId !== orderId; // Correct filtering using orderId
+                return order.email !== email; // Correct filtering using orderId
             });
         }
       
@@ -460,29 +438,6 @@ button#searchButton:hover {
       });
     });
 
-    function filterByDate() {
-      var dateInput = document.getElementById('dateInput').value;
-      var table = document.getElementById('ordersTable');
-      var tr = table.getElementsByTagName('tr');
-  
-      if (!dateInput) {
-          // If no date is entered, show all rows
-          for (var i = 1; i < tr.length; i++) {
-              tr[i].style.display = "";
-          }
-          return;
-      }
-  
-      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
-  
-      for (var i = 1; i < tr.length; i++) {
-          var td = tr[i].getElementsByTagName('td')[4]; // Assuming Date is the 5th column
-          if (td) {
-              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
-              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
-          }
-      }
-  }
 
   function filterByStatus() {
     var statusInput = document.getElementById('statusFilter').value;
