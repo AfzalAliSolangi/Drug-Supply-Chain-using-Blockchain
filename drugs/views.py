@@ -932,7 +932,40 @@ def manu_sla_submit(request):
                                                                              ],
                                                                              {'json': {
                                                                                  "hash_sla": hash_sla}})
-    return HttpResponse("Working!")
+         #Manufacturer SLA
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print(Manufacturer_hash_sla)
+        else:
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+
+        #Distributor SLA
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            print(distributor_hash_sla)
+        else:
+            distributor_hash_sla = 'None'
+            print(distributor_hash_sla)
+
+        #Pharmacy SLA
+        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        json_string_pharmacy = json.dumps(response)
+        json_string_pharmacy = json.loads(json_string_pharmacy)
+        if len(json_string_pharmacy)>0:
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
+            print(pharmacy_hash_sla)
+        else:
+            pharmacy_hash_sla = 'None'
+            print(pharmacy_hash_sla)
+    return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla,'distributor_hash_sla':distributor_hash_sla,'pharmacy_hash_sla':pharmacy_hash_sla})
+
 
 def dist_sla_submit(request):
     print('submiting Distributor user SLA')
@@ -949,7 +982,40 @@ def dist_sla_submit(request):
                                                                              ],
                                                                              {'json': {
                                                                                  "hash_sla": hash_sla}})
-    return HttpResponse("Working!")
+        
+                 #Manufacturer SLA
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print(Manufacturer_hash_sla)
+        else:
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+
+        #Distributor SLA
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            print(distributor_hash_sla)
+        else:
+            distributor_hash_sla = 'None'
+            print(distributor_hash_sla)
+
+        #Pharmacy SLA
+        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        json_string_pharmacy = json.dumps(response)
+        json_string_pharmacy = json.loads(json_string_pharmacy)
+        if len(json_string_pharmacy)>0:
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
+            print(pharmacy_hash_sla)
+        else:
+            pharmacy_hash_sla = 'None'
+            print(pharmacy_hash_sla)
+    return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla,'distributor_hash_sla':distributor_hash_sla,'pharmacy_hash_sla':pharmacy_hash_sla})
 
 def pharm_sla_submit(request):
     print('submiting Pharmacy user SLA')
@@ -966,7 +1032,41 @@ def pharm_sla_submit(request):
                                                                              ],
                                                                              {'json': {
                                                                                  "hash_sla": hash_sla}})
-    return HttpResponse("Working!")
+ 
+                  #Manufacturer SLA
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print(Manufacturer_hash_sla)
+        else:
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+
+        #Distributor SLA
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            print(distributor_hash_sla)
+        else:
+            distributor_hash_sla = 'None'
+            print(distributor_hash_sla)
+
+        #Pharmacy SLA
+        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        json_string_pharmacy = json.dumps(response)
+        json_string_pharmacy = json.loads(json_string_pharmacy)
+        if len(json_string_pharmacy)>0:
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
+            print(pharmacy_hash_sla)
+        else:
+            pharmacy_hash_sla = 'None'
+            print(pharmacy_hash_sla)
+    return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla,'distributor_hash_sla':distributor_hash_sla,'pharmacy_hash_sla':pharmacy_hash_sla})
+
 
 #### MANUFACTURER ####
 def signup_manufacturer(request):
