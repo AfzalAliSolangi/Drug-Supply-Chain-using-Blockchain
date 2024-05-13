@@ -29,6 +29,9 @@ manufacturer_orders_stream = config.get('Section1','manufacturer_orders_stream')
 distributor_orders_stream = config.get('Section1','distributor_orders_stream') #Set a default for Manufacturer, add another for distributors
 users_distributor_stream = config.get('Section1','users_distributor_stream') #Need to add different user stream for all users
 users_pharmacy_stream = config.get('Section1','users_pharmacy_stream') #Need to add different user stream for all users
+manufacturer_SLA_stream = config.get('Section1','manufacturer_SLA_stream')
+distributor_SLA_stream = config.get('Section1','distributor_SLA_stream')
+pharmacy_SLA_stream = config.get('Section1','pharmacy_SLA_stream')
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
 
@@ -880,10 +883,42 @@ def manage_sla(request):
         email_rcvd = request.POST.get('email',None)
         company_info = request.POST.get('company_info',None)
 
-        print(email_rcvd)
-        print(company_info)
-        
-    return HttpResponse("Working!")
+        #Manufacturer SLA
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            data = json_string_manufacturer[-1]['data']['json']
+            print(data)
+        else:
+            data = 'None'
+            print(data)
+
+        #Distributor SLA
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            data = json_string_distributor[-1]['data']['json']
+            print(data)
+        else:
+            data = 'None'
+            print(data)
+
+        #Pharmacy SLA
+        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        json_string_pharmacy = json.dumps(response)
+        json_string_pharmacy = json.loads(json_string_pharmacy)
+        if len(json_string_pharmacy)>0:
+            data = json_string_pharmacy[-1]['data']['json']
+            print(data)
+        else:
+            data = 'None'
+            print(data)
+
+
+
+    return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd})
 
 #### MANUFACTURER ####
 def signup_manufacturer(request):
