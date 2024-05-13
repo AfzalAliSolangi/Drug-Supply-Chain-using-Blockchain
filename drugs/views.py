@@ -420,7 +420,16 @@ def deactive_user(request):
             else:
                 print("error")
         elif userType == 'Pharmacy':
-            print('3')    
+            print('Deactivating 3')
+            response = rpc_connection.liststreamkeyitems(users_pharmacy_stream, useremail)
+            json_string = json.dumps(response)
+            json_string = json.loads(json_string)
+            data = json_string[-1]['data']['json']
+            txid = rpc_connection.publish(users_pharmacy_stream, [useremail,'False',timestamp_utc], {'json' : data})
+            if txid:
+                print("Done")
+            else:
+                print("error")    
     return HttpResponse("Working!")
 
 def active_user(request):
@@ -456,7 +465,16 @@ def active_user(request):
             else:
                 print("error")
         elif userType == 'Pharmacy':
-            print('3')    
+            print('Activating 3')
+            response = rpc_connection.liststreamkeyitems(users_pharmacy_stream, useremail)
+            json_string = json.dumps(response)
+            json_string = json.loads(json_string)
+            data = json_string[-1]['data']['json']
+            txid = rpc_connection.publish(users_pharmacy_stream, [useremail,'True',timestamp_utc], {'json' : data})
+            if txid:
+                print("Done")
+            else:
+                print("error")  
     return HttpResponse("Working!")
 
 
