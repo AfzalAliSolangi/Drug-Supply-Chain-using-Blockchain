@@ -164,11 +164,29 @@ def login_check_master(request): #Implement Password authentication
             print(passw_frm_chain)
             if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
                 print(email_rcvd)
-                return render(request, "Master1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
+                return render(request, "Master12.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
+            else:
+                return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
+        else:
+            return render(request, "login_master.html", {'error_message': "Incorrect email or password."})
 
 
-
-
+def user_type(request):
+    print('Selected UserType master')
+    if request.method == 'GET':
+        email_dist = request.GET.get('email',None)
+        company_info = request.GET.get('comp_info',None)
+        userType = request.GET.get('userType', None)
+        print('\nDistributor Email: ',email_dist)
+        print('Company Info: ',company_info)
+        if userType=='Manufacturer':
+            print('1')
+        elif userType =='Distributor':
+            print('2')
+        elif userType == 'Pharmacy':
+            print('3')
+        return HttpResponse("Working!")
+    
 #### MANUFACTURER ####
 def signup_manufacturer(request):
     print("signup-manufacturer check")

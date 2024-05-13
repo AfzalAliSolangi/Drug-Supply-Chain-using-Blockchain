@@ -20,6 +20,7 @@ urlpatterns = [
     path('signup-manufacturer', views.signup_manufacturer, name='signup-manufacturer'),
     path('signup-distributor', views.signup_distributor, name='signup-distributor'),
     path('signup-pharmacy', views.signup_pharmacy, name='signup-pharmacy'),
+    path('user_type', views.user_type, name='user_type'),
     path('base', views.base, name='base'),
     path('prddata', views.prddata, name='dealup'),
     path('adddrug', views.adddrug, name='adddrug'),
