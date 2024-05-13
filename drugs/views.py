@@ -148,7 +148,6 @@ def login_check_master(request): #Implement Password authentication
         email_rcvd = request.POST.get('email')
         password_rcvd = request.POST.get('passw')
         result = rpc_connection.liststreamkeyitems(users_master_stream, email_rcvd)
-        print("email: ",email_rcvd)
         data = json.dumps(result)
         json_load = json.loads(data)
         #apply length check for json_load
