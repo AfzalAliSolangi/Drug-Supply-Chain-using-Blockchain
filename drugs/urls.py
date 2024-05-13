@@ -22,6 +22,7 @@ urlpatterns = [
     path('signup-pharmacy', views.signup_pharmacy, name='signup-pharmacy'),
     path('user_type', views.user_type, name='user_type'),
     path('deactive_user', views.deactive_user, name='deactive_user'),
+    path('active_user', views.active_user, name='active_user'),
     path('base', views.base, name='base'),
     path('prddata', views.prddata, name='dealup'),
     path('adddrug', views.adddrug, name='adddrug'),
