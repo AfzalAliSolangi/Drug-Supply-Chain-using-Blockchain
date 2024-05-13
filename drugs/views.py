@@ -107,26 +107,37 @@ def email_check_master(request):
         return render(request, "signup-master1.html",{'email': email}) #if the email is not present then render this page
 
 def process_registration_master(request):
-    print("process_registration_manufacturer")
+    print("process_registration_master")
     if request.method == 'POST':
         # print("method check")
         email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Hash the password
+        hashed_password = make_password(password)
+        # Encrypt other user details
+        encrypted_company_info = encrypt_data(request.POST.get('company_info'))
+        encrypted_street_address = encrypt_data(request.POST.get('street_address'))
+        encrypted_business_details = encrypt_data(request.POST.get('business_details'))
+        encrypted_state = encrypt_data(request.POST.get('state'))
+        encrypted_city = encrypt_data(request.POST.get('city'))
+        encrypted_zip_code = encrypt_data(request.POST.get('zip_code'))
         request_data = {
             "email": request.POST.get('email'),
-            "company_info": request.POST.get('company_info'),
-            "street_address": request.POST.get('street_address'),
-            "business_details": request.POST.get('business_details'),
-            "state": request.POST.get('state'),
-            "city": request.POST.get('city'),
-            "zip_code": request.POST.get('zip_code'),
-            "password": request.POST.get('password'),
-            "license_certification": request.POST.get('license_certification')
+            "company_info": bytes_to_base64(encrypted_company_info),
+            "street_address": bytes_to_base64(encrypted_street_address),
+            "business_details": bytes_to_base64(encrypted_business_details),
+            "state": bytes_to_base64(encrypted_state),
+            "city": bytes_to_base64(encrypted_city),
+            "zip_code": bytes_to_base64(encrypted_zip_code),
+            "password": hashed_password,
+            "license_certification": request.POST.get('license_certification') #Hash calculated from the front end don't need to encrypt it
         }
         data = json.dumps(request_data)
         data = json.loads(data)
         txid = rpc_connection.publish(users_master_stream, '{}'.format(email), {'json' : data})
         if txid:
-            return HttpResponse("process_registration_master")
+            return render(request, "login_master.html")
         
 def login_master(request):
         return render(request, "login_master.html")
@@ -134,12 +145,27 @@ def login_master(request):
 def login_check_master(request): #Implement Password authentication
     print('login_check_master')
     if request.method == 'POST':
-        name = request.POST.get('name')
-        password = request.POST.get('passw')
-        print(name)
-        print(password)
-        return render(request, "master.html")
-
+        email_rcvd = request.POST.get('email')
+        password_rcvd = request.POST.get('passw')
+        result = rpc_connection.liststreamkeyitems(users_master_stream, email_rcvd)
+        print("email: ",email_rcvd)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        #apply length check for json_load
+        if(len(json_load)>0):
+            email_frm_chain = json_load[0]['keys'][0]
+            passw_frm_chain = json_load[0]['data']['json']['password']
+            manufacturer_name = decrypt_data(base64_to_bytes(json_load[0]['data']['json']['company_info']))
+            comp_info = json_load[0]['data']['json']['company_info']
+            print(data)
+            print(comp_info)
+            print("Email from front end: ",email_rcvd)
+            print("Email from stream: ",email_frm_chain)
+            print(password_rcvd)
+            print(passw_frm_chain)
+            if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
+                print(email_rcvd)
+                return render(request, "Master1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
 
 
 
