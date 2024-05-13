@@ -226,9 +226,24 @@ def user_type(request):
         return HttpResponse("Working!")
     
 def deactive_user(request):
+    print('Activating a user')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        useremail = request.POST.get('useremail',None)
+        userType = request.POST.get('user_type', None)
+        print(email_rcvd)
+        print(company_info)
+        print(useremail)
+        if userType == 'Manufacturer':
+            print('1')
+        elif userType =='Distributor':
+            print('2')
+        elif userType == 'Pharmacy':
+            print('3')    
     return HttpResponse("Working!")
 
-    
+
 #### MANUFACTURER ####
 def signup_manufacturer(request):
     print("signup-manufacturer check")
