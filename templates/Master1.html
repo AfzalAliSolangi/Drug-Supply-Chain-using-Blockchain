@@ -349,7 +349,7 @@ button#searchButton:hover {
                 <td>{{ order.zip_code }}</td>
                 <td>
                 <div class="oval-box" style="background-color: {% if order.status == 'False' %}red{% elif order.status == 'True' %}green{% endif %} !important;">
-                  {% if order.status == 'True' %}Acive{% else %}Deactive{% endif %}
+                  {% if order.status == 'True' %}Active{% else %}Deactive{% endif %}
                 </div>
               </td>
             </tr>
