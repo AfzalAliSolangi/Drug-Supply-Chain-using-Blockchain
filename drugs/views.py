@@ -928,6 +928,28 @@ def manu_sla_submit(request):
         print(hash_sla)
     return HttpResponse("Working!")
 
+def dist_sla_submit(request):
+    print('submiting Distributor user SLA')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        hash_sla = request.POST.get('hash_sla',None)
+        print(email_rcvd)
+        print(company_info)
+        print(hash_sla)
+    return HttpResponse("Working!")
+
+def pharm_sla_submit(request):
+    print('submiting Pharmacy user SLA')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        hash_sla = request.POST.get('hash_sla',None)
+        print(email_rcvd)
+        print(company_info)
+        print(hash_sla)
+    return HttpResponse("Working!")
+
 #### MANUFACTURER ####
 def signup_manufacturer(request):
     print("signup-manufacturer check")

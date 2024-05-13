@@ -359,7 +359,7 @@
                 <td>
                     <input type="file" name="manufacturer_file_input" accept=".pdf,.doc,.docx" style="width: 150px;">
                     <input type="hidden" id="manufacturer_hash_input" name="hash_sla">
-                    <button onclick="manufacturerSLAUpload('{{ email }}', '{{ company_info }}','manufacturer_file_input', 'manufacturer_hash_input', '/manu_sla_submit')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
+                    <button onclick="handleSLAUpload('{{ email }}', '{{ company_info }}','manufacturer_file_input', 'manufacturer_hash_input', '/manu_sla_submit')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
                 </td>
             </tr>
             <tr class="table-row">
@@ -368,7 +368,7 @@
                 <td>
                     <input type="file" name="distributor_file_input" accept=".pdf,.doc,.docx" style="width: 150px;">
                     <input type="hidden" id="distributor_hash_input" name="hash_sla">
-                    <button onclick="handleFileUpload('distributor_file_input', 'distributor_hash_input')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
+                    <button onclick="handleSLAUpload('{{ email }}', '{{ company_info }}','distributor_file_input', 'distributor_hash_input', '/dist_sla_submit')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
                 </td>
             </tr>
             <tr class="table-row">
@@ -377,7 +377,7 @@
                 <td>
                     <input type="file" name="pharmacy_file_input" accept=".pdf,.doc,.docx" style="width: 150px;">
                     <input type="hidden" id="pharmacy_hash_input" name="hash_sla">
-                    <button onclick="handleFileUpload('{{ email }}', '{{ company_info }}','pharmacy_file_input', 'pharmacy_hash_input')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
+                    <button onclick="handleSLAUpload('{{ email }}', '{{ company_info }}','pharmacy_file_input', 'pharmacy_hash_input', '/pharm_sla_submit')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
                 </td>
             </tr>
         </tbody>
@@ -390,7 +390,7 @@
 <script>
   var selectedOrders = []; // Array to store selected orders' data
 
-  function manufacturerSLAUpload(email, company_info, fileInputName, hashInputId) {
+  function handleSLAUpload(email, company_info, fileInputName, hashInputId,submitUrl) {
     const fileInput = document.querySelector(`input[name="${fileInputName}"]`);
     if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -404,7 +404,7 @@
             // Create a form and submit it
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/manu_sla_submit';
+            form.action = submitUrl;
             form.style.display = 'none';
 
             // Add hash to the form
