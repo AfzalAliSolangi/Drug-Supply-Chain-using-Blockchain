@@ -330,8 +330,14 @@ button#searchButton:hover {
               <td>
                 
                 <div>
-                    <button style="width: 100px;" id="confirmButton" class="btn btn-success" onclick="handleConfirm()">Activate</button>
-                    <button style="width: 100px; margin-top: 5px;" id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Deactive</button>
+                    <button style="width: 100px;" id="confirmButton" class="btn btn-success"
+            {% if order.status == 'True' %}disabled{% endif %}
+            onclick="handleConfirm()">Acitve</button>
+
+        <!-- Example for a cancel button -->
+        <button style="width: 100px; margin-top: 5px;" id="cancelButton" class="btn btn-danger"
+            {% if order.status == 'False' %}disabled{% endif %}
+            onclick="handleCancel()">Deactive</button>
                 </div>
                        {% comment %} {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}> {% endcomment %}
             </td>
@@ -342,8 +348,8 @@ button#searchButton:hover {
                 <td>{{ order.city }}</td>
                 <td>{{ order.zip_code }}</td>
                 <td>
-                <div class="oval-box" style="background-color: {% if order.confirmed == 'Cancelled' %}red{% elif order.confirmed == 'Confirmed' %}green{% else %}yellow{% endif %} !important;">
-                  {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
+                <div class="oval-box" style="background-color: {% if order.status == 'False' %}red{% elif order.status == 'True' %}green{% endif %} !important;">
+                  {% if order.status == 'True' %}Acive{% else %}Deactive{% endif %}
                 </div>
               </td>
             </tr>

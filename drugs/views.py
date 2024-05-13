@@ -112,7 +112,7 @@ def process_registration_master(request):
         # print("method check")
         email = request.POST.get('email')
         password = request.POST.get('password')
-
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
         # Hash the password
         hashed_password = make_password(password)
         # Encrypt other user details
@@ -135,7 +135,7 @@ def process_registration_master(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish(users_master_stream, '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish(users_master_stream, [email,'True',timestamp_utc], {'json' : data})
         if txid:
             return render(request, "login_master.html")
         
@@ -191,7 +191,7 @@ def user_type(request):
 
             for item in json_string:
                 confirmed_status = item['data']['json']
-
+                status = item['keys'][1]
                 # Decrypting the data fields after converting from base64
                 user_email = confirmed_status.get('email', '')
                 decrypted_company_info = decrypt_data(base64_to_bytes(confirmed_status.get('company_info', '')))
@@ -211,7 +211,8 @@ def user_type(request):
                     'state': decrypted_state,
                     'city': decrypted_city,
                     'zip_code': decrypted_zip_code,
-                    'license_certification' : license_certification
+                    'license_certification' : license_certification,
+                    'status': status
                 })
             
             #Assuming you want to print the combined list to see the output
@@ -253,7 +254,7 @@ def process_registration_manufacturer(request):
         # print("method check")
         email = request.POST.get('email')
         password = request.POST.get('password')
-
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
         # Hash the password
         hashed_password = make_password(password)
         # Encrypt other user details
@@ -276,7 +277,7 @@ def process_registration_manufacturer(request):
         }
         data = json.dumps(request_data)
         data = json.loads(data)
-        txid = rpc_connection.publish(users_manufacturer_stream, '{}'.format(email), {'json' : data})
+        txid = rpc_connection.publish(users_manufacturer_stream, [email,'True',timestamp_utc], {'json' : data})
         if txid:
             return render(request, "login_manufacturer.html")
         
