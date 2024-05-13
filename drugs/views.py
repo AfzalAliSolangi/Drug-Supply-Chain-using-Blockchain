@@ -888,7 +888,7 @@ def manage_sla(request):
         json_string_manufacturer = json.dumps(response)
         json_string_manufacturer = json.loads(json_string_manufacturer)
         if len(json_string_manufacturer)>0:
-            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
             print(Manufacturer_hash_sla)
         else:
             Manufacturer_hash_sla = 'None'
@@ -899,7 +899,7 @@ def manage_sla(request):
         json_string_distributor = json.dumps(response)
         json_string_distributor = json.loads(json_string_distributor)
         if len(json_string_distributor)>0:
-            distributor_hash_sla = json_string_distributor[-1]['data']['json']
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
             print(distributor_hash_sla)
         else:
             distributor_hash_sla = 'None'
@@ -910,7 +910,7 @@ def manage_sla(request):
         json_string_pharmacy = json.dumps(response)
         json_string_pharmacy = json.loads(json_string_pharmacy)
         if len(json_string_pharmacy)>0:
-            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
             print(pharmacy_hash_sla)
         else:
             pharmacy_hash_sla = 'None'
@@ -923,9 +923,15 @@ def manu_sla_submit(request):
         email_rcvd = request.POST.get('email',None)
         company_info = request.POST.get('company_info',None)
         hash_sla = request.POST.get('hash_sla',None)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
+        txid = rpc_connection.publish('{}'.format(manufacturer_SLA_stream), ['Manufacturer',
+                                                                                   timestamp_utc  
+                                                                             ],
+                                                                             {'json': {
+                                                                                 "hash_sla": hash_sla}})
     return HttpResponse("Working!")
 
 def dist_sla_submit(request):
@@ -937,6 +943,12 @@ def dist_sla_submit(request):
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
+        txid = rpc_connection.publish('{}'.format(distributor_SLA_stream), ['Distributor',
+                                                                                   timestamp_utc  
+                                                                             ],
+                                                                             {'json': {
+                                                                                 "hash_sla": hash_sla}})
     return HttpResponse("Working!")
 
 def pharm_sla_submit(request):
@@ -948,6 +960,12 @@ def pharm_sla_submit(request):
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
+        txid = rpc_connection.publish('{}'.format(pharmacy_SLA_stream), ['Pharmacy',
+                                                                                   timestamp_utc  
+                                                                             ],
+                                                                             {'json': {
+                                                                                 "hash_sla": hash_sla}})
     return HttpResponse("Working!")
 
 #### MANUFACTURER ####
