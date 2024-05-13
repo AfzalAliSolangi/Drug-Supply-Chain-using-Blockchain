@@ -888,10 +888,10 @@ def manage_sla(request):
         json_string_manufacturer = json.dumps(response)
         json_string_manufacturer = json.loads(json_string_manufacturer)
         if len(json_string_manufacturer)>0:
-            data = json_string_manufacturer[-1]['data']['json']
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']
             print(data)
         else:
-            data = 'None'
+            Manufacturer_hash_sla = 'None'
             print(data)
 
         #Distributor SLA
@@ -899,7 +899,7 @@ def manage_sla(request):
         json_string_distributor = json.dumps(response)
         json_string_distributor = json.loads(json_string_distributor)
         if len(json_string_distributor)>0:
-            data = json_string_distributor[-1]['data']['json']
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']
             print(data)
         else:
             data = 'None'
@@ -910,11 +910,11 @@ def manage_sla(request):
         json_string_pharmacy = json.dumps(response)
         json_string_pharmacy = json.loads(json_string_pharmacy)
         if len(json_string_pharmacy)>0:
-            data = json_string_pharmacy[-1]['data']['json']
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']
             print(data)
         else:
             data = 'None'
-            print(data)
+            pharmacy_hash_sla(data)
 
 
 
