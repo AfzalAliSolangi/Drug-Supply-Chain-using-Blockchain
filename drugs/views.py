@@ -226,17 +226,23 @@ def user_type(request):
         return HttpResponse("Working!")
     
 def deactive_user(request):
-    print('Activating a user')
+    print('deActivating a user')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email',None)
         company_info = request.POST.get('company_info',None)
         useremail = request.POST.get('useremail',None)
         userType = request.POST.get('user_type', None)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
         print(email_rcvd)
         print(company_info)
         print(useremail)
         if userType == 'Manufacturer':
-            print('1')
+            response = rpc_connection.liststreamkeyitems(users_manufacturer_stream, useremail)
+            json_string = json.dumps(response)
+            json_string = json.loads(json_string)
+            data = json_string[-1]['data']['json']
+            txid = rpc_connection.publish(users_manufacturer_stream, [useremail,'False',timestamp_utc], {'json' : data})
+
         elif userType =='Distributor':
             print('2')
         elif userType == 'Pharmacy':
