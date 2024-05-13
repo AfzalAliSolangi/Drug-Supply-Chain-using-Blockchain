@@ -183,15 +183,42 @@ def user_type(request):
         if userType=='Manufacturer':
             print('1')
             response = rpc_connection.liststreamitems(users_manufacturer_stream)
-            json_string = json.dumps(response)
+            
+            
+
+            user_map = {}  # Initialize a dictionary to store user data based on the latest timestamp
+
+            # Sort the response list based on timestamp
+            response.sort(key=lambda x: x['keys'][-1], reverse=True)
+
+            for item in response:
+                data = item['data']['json']
+                email = data['email']
+                timestamp = item['keys'][-1]  # Get the timestamp from the last element of keys
+                status = item['keys'][1]
+                if email not in user_map or timestamp > user_map[email]['timestamp']:
+                    user_map[email] = {
+                        'timestamp': timestamp,
+                        'user_data': data,
+                        'status': status
+                    }
+
+            users_with_latest_info = [{
+                'email': key,
+                'timestamp': value['timestamp'],
+                'user_data': value['user_data'],
+                'status': value['status']
+            } for key, value in user_map.items()]
+
+            # print(users_with_latest_info)
+            json_string = json.dumps(users_with_latest_info)
             json_string = json.loads(json_string)
             print(json_string)
-
             combined_list = []
 
             for item in json_string:
-                confirmed_status = item['data']['json']
-                status = item['keys'][1]
+                confirmed_status = item['user_data']
+                status = item['status']
                 # Decrypting the data fields after converting from base64
                 user_email = confirmed_status.get('email', '')
                 decrypted_company_info = decrypt_data(base64_to_bytes(confirmed_status.get('company_info', '')))
@@ -217,6 +244,8 @@ def user_type(request):
             
             #Assuming you want to print the combined list to see the output
             print("\n",combined_list)
+
+            
                     
             return render(request, "Master1.html",{'company_info': company_info,'email':email_rcvd,'orders': combined_list,'user_type':userType})
         elif userType =='Distributor':
@@ -242,7 +271,10 @@ def deactive_user(request):
             json_string = json.loads(json_string)
             data = json_string[-1]['data']['json']
             txid = rpc_connection.publish(users_manufacturer_stream, [useremail,'False',timestamp_utc], {'json' : data})
-
+            if txid:
+                print("Done")
+            else:
+                print("error")
         elif userType =='Distributor':
             print('2')
         elif userType == 'Pharmacy':
