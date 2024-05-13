@@ -170,7 +170,6 @@ def login_check_master(request): #Implement Password authentication
         else:
             return render(request, "login_master.html", {'error_message': "Incorrect email or password."})
 
-
 def user_type(request):
     print('Selected UserType master')
     if request.method == 'GET':
@@ -476,6 +475,7 @@ def active_user(request):
             else:
                 print("error")  
     return HttpResponse("Working!")
+
 
 
 #### MANUFACTURER ####
