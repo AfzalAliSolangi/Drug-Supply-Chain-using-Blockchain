@@ -290,7 +290,7 @@ button#searchButton:hover {
 
     <!-- Search Input Section with Search Button -->
     <div class="d-flex align-items-center ps-4 pt-3" style="margin-left: 180px; margin-top: 60px;">
-      <input type="text" id="searchInput" class="form-control me-2" placeholder="Search orders..." style="width: 200px;">
+      <input type="text" id="searchInput" class="form-control me-2" placeholder="Search Users..." style="width: 200px;">
       <button id="searchButton" class="btn searchbutton btn-outline-secondary" onclick="filterTable()">Search</button>
   
   
@@ -301,6 +301,41 @@ button#searchButton:hover {
               <option value="">All</option>
               <option value="Active">Active</option>
               <option value="Deactive">Deactive</option>
+          </select>
+      </div>
+
+      <!-- Status Filter Dropdown -->
+      <div class="d-flex align-items-center" style="margin-left: 20px;" >
+          <label for="stateFilter" class="me-2">Filter by State:</label>
+          <select id="stateFilter" class="form-select" onchange="filterByState()" style="width: auto;">
+              <option value="">All</option>
+              <option value="Sindh">Sindh</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
+              <option value="Deactive">Balochistan</option>
+          </select>
+      </div>
+
+      <!-- Status Filter Dropdown -->
+      <div class="d-flex align-items-center" style="margin-left: 20px;" >
+          <label for="cityFilter" class="me-2">Filter by City:</label>
+          <select id="cityFilter" class="form-select" onchange="filterByCity()" style="width: auto;">
+              <option value="">All</option>
+              <option value="Karachi">Karachi</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Sukkur">Sukkur</option>
+              <option value="Larkana">Larkana</option>
+              <option value="Lahore">Lahore</option>
+              <option value="Faisalabad">Faisalabad</option>
+              <option value="Rawalpindi">Rawalpindi</option>
+              <option value="Gujranwala">Gujranwala</option>
+              <option value="Peshawar">Peshawar</option>
+              <option value="Mardan">Mardan</option>
+              <option value="Kohat">Kohat</option>
+              <option value="Abbottabad">Abbottabad</option>
+              <option value="Quetta">Quetta</option>
+              <option value="Gwadar">Gwadar</option>
+              <option value="Hub">Hub</option>
           </select>
       </div>
   
@@ -416,9 +451,7 @@ button#searchButton:hover {
           var tds = [tr[i].getElementsByTagName('td')[1], // OrderID (adjust index as necessary)
                      tr[i].getElementsByTagName('td')[2], // Trx ID
                      tr[i].getElementsByTagName('td')[3], // Distributor
-                     tr[i].getElementsByTagName('td')[5], // Product
                      tr[i].getElementsByTagName('td')[6], // Batch ID	
-                     tr[i].getElementsByTagName('td')[7], // Product Code
                      ]; // Product
       
           for (var j = 0; j < tds.length; j++) {
@@ -451,7 +484,7 @@ button#searchButton:hover {
     var tr = table.getElementsByTagName('tr');
 
     for (var i = 1; i < tr.length; i++) {
-        var td = tr[i].getElementsByTagName('td')[10]; // Adjust if the index changes
+        var td = tr[i].getElementsByTagName('td')[7]; // Adjust if the index changes
         var div = td.querySelector('.oval-box'); // Assuming this is the div with the color
         if (div) {
             // Determine the status based on background color
@@ -461,9 +494,9 @@ button#searchButton:hover {
             // Map background colors to statuses
             var status = '';
             if (backgroundColor === 'rgb(255, 0, 0)') { // Example RGB for red
-                status = 'Cancelled';
+                status = 'Active';
             } else if (backgroundColor === 'rgb(0, 128, 0)') { // Example RGB for green
-                status = 'Confirmed';
+                status = 'Deactive';
             } else if (backgroundColor === 'rgb(255, 255, 0)') { // Example RGB for yellow
                 status = 'Pending';
             }
@@ -477,57 +510,44 @@ button#searchButton:hover {
     }
   }
 
-  function toggleSelectAll(source) {
-    // Select all checkboxes within table rows that are not disabled and are visible
-    var checkboxes = document.querySelectorAll('#ordersTable tbody tr:not([style*="display: none"]) input[type="checkbox"]:not(:disabled)');
-    for (var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = source.checked;
-        updateSelection(checkboxes[i]); // Ensure this action updates the selectedOrders array appropriately
+  function filterByState() {
+    var stateInput = document.getElementById('stateFilter').value; // Get the selected state from dropdown
+    var table = document.getElementById('ordersTable');
+    var tr = table.getElementsByTagName('tr'); // Get all rows in the table
+    console.log(stateInput)
+    for (var i = 1; i < tr.length; i++) {
+        var td = tr[i].getElementsByTagName('td')[4]; // State is the 5th column in the table
+        if (td) {
+            var state = td.textContent || td.innerText; // Get the text content of the state cell
+
+            if (stateInput === "" || state === stateInput) {
+                tr[i].style.display = ""; // Show the row
+            } else {
+                tr[i].style.display = "none"; // Hide the row
+            }
+        }
     }
-  }
+ }
 
-  let priceSortAsc = true; // Initialize sort direction
 
-  function sortTableByPrice() {
-      var table, rows, switching, i, x, y, shouldSwitch;
-      var sortIcon = document.getElementById('priceSortIcon');
-      table = document.getElementById("ordersTable");
-      switching = true;
+  function filterByCity() {
+    var stateInput = document.getElementById('cityFilter').value; // Get the selected state from dropdown
+    var table = document.getElementById('ordersTable');
+    var tr = table.getElementsByTagName('tr'); // Get all rows in the table
+    console.log(stateInput)
+    for (var i = 1; i < tr.length; i++) {
+        var td = tr[i].getElementsByTagName('td')[5]; // State is the 5th column in the table
+        if (td) {
+            var state = td.textContent || td.innerText; // Get the text content of the state cell
 
-      // Update icon based on current sort direction
-      if (priceSortAsc) {
-          sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
-      } else {
-          sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
-      }
-
-      while (switching) {
-          switching = false;
-          rows = table.getElementsByTagName("TR");
-          for (i = 1; i < (rows.length - 1); i++) {
-              shouldSwitch = false;
-              x = rows[i].getElementsByTagName("TD")[9];
-              y = rows[i + 1].getElementsByTagName("TD")[9];
-              if (priceSortAsc) {
-                  if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
-                      shouldSwitch = true;
-                      break;
-                  }
-              } else {
-                  if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
-                      shouldSwitch = true;
-                      break;
-                  }
-              }
-          }
-          if (shouldSwitch) {
-              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-              switching = true;
-          }
-      }
-      priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
-  }
-
+            if (stateInput === "" || state === stateInput) {
+                tr[i].style.display = ""; // Show the row
+            } else {
+                tr[i].style.display = "none"; // Hide the row
+            }
+        }
+    }
+ }
 
   function handleConfirm(email,company_info,useremail,user_type) {
     console.log("Email Distribution:", email);
