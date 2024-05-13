@@ -173,6 +173,21 @@ def login_check_master(request): #Implement Password authentication
         else:
             return render(request, "login_master.html", {'error_message': "Incorrect email or password."})
 
+def select_user_type(request): #Implement Password authentication
+    print('login_check_master')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        print(email_rcvd)
+        print(company_info)
+        result = rpc_connection.liststreamkeyitems(users_master_stream, email_rcvd)
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        if(len(json_load)>0):
+            comp_info = json_load[0]['data']['json']['company_info']
+            manufacturer_name = decrypt_data(base64_to_bytes(json_load[0]['data']['json']['company_info']))
+            return render(request, "select_usertype.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
+        
 def user_type(request):
     print('Selected UserType master')
     if request.method == 'GET':

@@ -249,6 +249,7 @@
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
+    onclick="event.preventDefault(); select_user_type('{{ email }}', '{{ company_info }}')"
     >Users</a
   >
   <a
@@ -668,11 +669,11 @@
       
       form.submit();
   }
-  function distorderprod(email,company_info) {
+  function select_user_type(email,company_info) {
       console.log("Email Distribution:", email);
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = '/distorderprod';  // Replace with the actual URL for completing purchase
+      form.action = '/select_user_type';  // Replace with the actual URL for completing purchase
       form.style.display = 'none';
 
       const emailInput = document.createElement('input');
