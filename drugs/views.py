@@ -164,9 +164,9 @@ def login_check_master(request): #Implement Password authentication
             print(passw_frm_chain)
             if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
                 print(email_rcvd)
-                return render(request, "Master12.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
+                return render(request, "select_usertype.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
             else:
-                return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
+                return render(request, "login_master.html", {'error_message': "Incorrect email or password."})
         else:
             return render(request, "login_master.html", {'error_message': "Incorrect email or password."})
 
@@ -174,13 +174,49 @@ def login_check_master(request): #Implement Password authentication
 def user_type(request):
     print('Selected UserType master')
     if request.method == 'GET':
-        email_dist = request.GET.get('email',None)
+        email_rcvd = request.GET.get('email',None)
         company_info = request.GET.get('comp_info',None)
         userType = request.GET.get('userType', None)
-        print('\nDistributor Email: ',email_dist)
+        print('\nDistributor Email: ',email_rcvd)
         print('Company Info: ',company_info)
         if userType=='Manufacturer':
             print('1')
+            response = rpc_connection.liststreamitems(users_manufacturer_stream)
+            json_string = json.dumps(response)
+            json_string = json.loads(json_string)
+            print(json_string)
+
+            combined_list = []
+
+            for item in json_string:
+                confirmed_status = item['data']['json']
+
+                # Decrypting the data fields after converting from base64
+                user_email = confirmed_status.get('email', '')
+                decrypted_company_info = decrypt_data(base64_to_bytes(confirmed_status.get('company_info', '')))
+                decrypted_street_address = decrypt_data(base64_to_bytes(confirmed_status.get('street_address', '')))
+                decrypted_business_details = decrypt_data(base64_to_bytes(confirmed_status.get('business_details', '')))
+                decrypted_state = decrypt_data(base64_to_bytes(confirmed_status.get('state', '')))
+                decrypted_city = decrypt_data(base64_to_bytes(confirmed_status.get('city', '')))
+                decrypted_zip_code = decrypt_data(base64_to_bytes(confirmed_status.get('zip_code', '')))
+                decrypted_zip_code = decrypt_data(base64_to_bytes(confirmed_status.get('zip_code', '')))
+                license_certification = confirmed_status.get('license_certification', '')
+                # Add decrypted data to the combined list
+                combined_list.append({
+                    'email': user_email,
+                    'company_info': decrypted_company_info,
+                    'street_address': decrypted_street_address,
+                    'business_details': decrypted_business_details,
+                    'state': decrypted_state,
+                    'city': decrypted_city,
+                    'zip_code': decrypted_zip_code,
+                    'license_certification' : license_certification
+                })
+            
+            #Assuming you want to print the combined list to see the output
+            print("\n",combined_list)
+                    
+            return render(request, "Master1.html",{'company_info': company_info,'email':email_rcvd})
         elif userType =='Distributor':
             print('2')
         elif userType == 'Pharmacy':
