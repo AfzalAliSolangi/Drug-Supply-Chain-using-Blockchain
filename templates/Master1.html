@@ -200,39 +200,39 @@
   
     }
 
-  a.btn.btn-sidebar.w-100.mb-2:hover {
-    background: #fff;
-    border: 1px solid #00158f !important;
-    color: #00158f;
-}
-
-input {
-  border: 1px solid #e1e1e1 !important;
-  border-radius: 4px !important;
-}
-
-input:focus {
-  box-shadow: none !important;
-}
-
-button#searchButton {
-  background-color: #00158f !important;
-  border-color: #00158f !important;
-  color: #fff !important;
-}
-
-button#searchButton:hover {
-    background-color: #fff !important;
-    border-color: #00158f !important;
-    color: #00158f !important;
-  }
-
-  button#dropdownMenuButton1:focus {
-    background: transparent;
-    border: none !important;
-    color: #fff;
-    box-shadow: none !important;
-  }
+      a.btn.btn-sidebar.w-100.mb-2:hover {
+        background: #fff;
+        border: 1px solid #00158f !important;
+        color: #00158f;
+    }
+    
+    input {
+      border: 1px solid #e1e1e1 !important;
+      border-radius: 4px !important;
+    }
+    
+    input:focus {
+      box-shadow: none !important;
+    }
+    
+    button#searchButton {
+      background-color: #00158f !important;
+      border-color: #00158f !important;
+      color: #fff !important;
+    }
+    
+    button#searchButton:hover {
+        background-color: #fff !important;
+        border-color: #00158f !important;
+        color: #00158f !important;
+      }
+    
+      button#dropdownMenuButton1:focus {
+        background: transparent;
+        border: none !important;
+        color: #fff;
+        box-shadow: none !important;
+      }
 
   </style>
 </head>
@@ -255,7 +255,7 @@ button#searchButton:hover {
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    onclick="event.preventDefault(); viewdistinvent('{{ email }}', '{{ company_info }}')"
+    onclick="event.preventDefault(); manage_sla('{{ email }}', '{{ company_info }}')"
     >Manage SLA</a
   >
 </div>
@@ -647,11 +647,11 @@ button#searchButton:hover {
 
       form.submit();
   }
-  function viewdistinvent(email,company_info) {
+  function manage_sla(email,company_info) {
       console.log("Viewing inventory...");
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
+      form.action = '/manage_sla';  // Replace with the actual URL for completing purchase
       form.style.display = 'none';
 
       const emailInput = document.createElement('input');

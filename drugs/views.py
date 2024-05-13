@@ -874,7 +874,16 @@ def active_user(request):
                 print("error")  
     return HttpResponse("Working!")
 
+def manage_sla(request):
+    print('manage_sla user')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
 
+        print(email_rcvd)
+        print(company_info)
+        
+    return HttpResponse("Working!")
 
 #### MANUFACTURER ####
 def signup_manufacturer(request):
