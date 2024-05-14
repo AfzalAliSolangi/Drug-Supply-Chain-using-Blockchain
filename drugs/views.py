@@ -1724,6 +1724,52 @@ def adddrug(request): # Manufacturer Input
             
             return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
 
+def manuupdatesla(request):# Adding Drugs In Manufacturer Item Stream
+    print('manage_sla user')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+
+        #Manufacturer SLA
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print(Manufacturer_hash_sla)
+        else:
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+
+    return render(request, "manuupdatesla.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla}) 
+
+def manu_sla_upload(request):
+    print('submiting Manufacturer user SLA')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        hash_sla = request.POST.get('hash_sla',None)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
+        print(email_rcvd)
+        print(company_info)
+        print(hash_sla)
+        txid = rpc_connection.publish('{}'.format(manufacturer_SLA_stream), ['Manufacturer',
+                                                                                   timestamp_utc  
+                                                                             ],
+                                                                             {'json': {
+                                                                                 "hash_sla": hash_sla}})
+         #Manufacturer SLA
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print(Manufacturer_hash_sla)
+        else:
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+
+    return render(request, "manuupdatesla.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla})
 
 
 
