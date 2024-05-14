@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -20,7 +21,7 @@
       crossorigin="anonymous"
     />
 
-    <title>Orders Dashboard</title>
+    <title>Orders</title>
   </head>
   <style>
     body {
@@ -52,7 +53,7 @@
 
     .top-bar {
       /* background: linear-gradient(270deg, #fff 0, #00158f) !important; */
-      background: #00158f !important;
+      background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
       padding: 10px 20px;
       position: fixed; /* Makes the top bar fixed at the top */
       width: 100%; /* Ensures it covers the full width */
@@ -196,43 +197,44 @@
     }
 
     a.btn.btn-sidebar.w-100.mb-2 {
-      background: #00158f;
-  
+      background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+      border: 1px solid #00a0e9 !important;
     }
 
-      a.btn.btn-sidebar.w-100.mb-2:hover {
-        background: #fff;
-        border: 1px solid #00158f !important;
-        color: #00158f;
-    }
-    
-    input {
-      border: 1px solid #e1e1e1 !important;
-      border-radius: 4px !important;
-    }
-    
-    input:focus {
-      box-shadow: none !important;
-    }
-    
-    button#searchButton {
-      background-color: #00158f !important;
-      border-color: #00158f !important;
-      color: #fff !important;
-    }
-    
-    button#searchButton:hover {
-        background-color: #fff !important;
-        border-color: #00158f !important;
-        color: #00158f !important;
-      }
-    
-      button#dropdownMenuButton1:focus {
-        background: transparent;
-        border: none !important;
-        color: #fff;
-        box-shadow: none !important;
-      }
+  a.btn.btn-sidebar.w-100.mb-2:hover {
+    background: #fff !important;
+    border: 1px solid #00a0e9 !important;
+    color: #00a0e9;
+}
+
+input {
+  border: 1px solid #e1e1e1 !important;
+  border-radius: 4px !important;
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+
+button#searchButton {
+  color: #fff !important;
+  background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+  border-color: #00a0e9 !important;
+}
+
+button#searchButton:hover {
+    background-color: #fff !important;
+    background: none !important;
+    border-color: #00a0e9 !important;
+    color: #00a0e9 !important;
+  }
+
+  button#dropdownMenuButton1:focus {
+    background: transparent;
+    border: none !important;
+    color: #fff;
+    box-shadow: none !important;
+  }
 
   </style>
 </head>
@@ -271,7 +273,7 @@
       padding: 0;
       font-size: 26px;">Master Dashboard</h1>
       <div class="d-flex align-items-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" class="rounded-circle" style="height: 40px; width: 40px; margin-right: 10px;">
+        <img src="{% static 'assets/img/User_Icon.png' %}" alt="User Profile" class="rounded-circle" style="height: 40px; width: 40px; margin-right: 10px;">
           <span style="color: #fff; font-weight: 600;" class="me-3">{{ company_info }}</span>
           <!-- Bootstrap Dropdown Menu -->
           <div class="dropdown">
