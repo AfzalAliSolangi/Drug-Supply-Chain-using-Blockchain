@@ -251,7 +251,7 @@ button#searchButton:hover {
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    style="background:#fff !important; border-color:#00158f !important; color:#00158f !important"
+    style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
     onclick="event.preventDefault(); select_user_type('{{ email }}', '{{ company_info }}')"
     >Users</a
   >
@@ -346,7 +346,7 @@ button#searchButton:hover {
   </div>
 
 
-  <div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
+  <div class="table-responsive" style="margin-left: 180px; overflow-x: auto; margin-top: 30px;">
     <table id="ordersTable" class="table table-striped table-hover">
         <thead>
           <tr>
@@ -370,7 +370,7 @@ button#searchButton:hover {
                 <div>
                     <button style="width: 100px;" id="confirmButton" class="btn btn-success"
             {% if order.status == 'True' %}disabled{% endif %}
-            onclick="handleConfirm('{{ email }}', '{{ company_info }}','{{ order.email }}', '{{ user_type }}')">Acitve</button>
+            onclick="handleConfirm('{{ email }}', '{{ company_info }}','{{ order.email }}', '{{ user_type }}')">Active</button>
 
         <!-- Example for a cancel button -->
         <button style="width: 100px; margin-top: 5px;" id="cancelButton" class="btn btn-danger"
