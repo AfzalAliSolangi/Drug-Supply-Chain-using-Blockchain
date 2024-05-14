@@ -252,7 +252,7 @@ button#searchButton:hover {
     href="#"
     class="btn btn-sidebar w-100 mb-2"
     style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
-    >Orders</a
+    >Orders Status</a
   >
   <a
     href="#"
@@ -322,7 +322,7 @@ button#searchButton:hover {
         <thead>
             <th width="100" scope="col">OrderID</th>
             <th width="100" scope="col">Trx</th>
-            <th width="100" scope="col">Pharmacy</th>
+            <th width="100" scope="col">Distributor</th>
             <th width="100" scope="col">Date</th>
             <th width="100" scope="col">Product</th>
             <th width="100" scope="col">Batch</th>
@@ -339,7 +339,7 @@ button#searchButton:hover {
             <tr class="table-row">
                 <td>{{ order.orderid }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
-                <td>{{ order.Distributor_name }}</td>
+                <td style="word-wrap: break-word; max-width: 150px;">{{ order.Manufacturer_email }}</td>
                 <td>{{ order.orderPlaceOn }}</td>
                 <td>{{ order.product_name }}</td>
                 <td>{{ order.batchId }}</td>
