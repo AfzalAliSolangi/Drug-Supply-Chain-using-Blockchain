@@ -1,221 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-<title>Orders Dashboard</title>
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  .sidebar {
-    background-color: #5D3FD3;
-    width: 80px;
-    height: calc(100vh - 60px); /* Adjusts height to take top bar into account */
-    position: fixed;
-    padding-top: 20px;
-    top: 60px; /* Starts directly below the top bar */
-    left: 0;
-  }
-  .sidebar a {
-    display: block;
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    text-align: center;
-  }
-  .sidebar a:hover {
-    background-color: #4CAF50;
-  }
-  .top-bar {
-    background: #FFFFFF;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed; /* Makes the top bar fixed at the top */
-    width: 100%; /* Ensures it covers the full width */
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensures it stays on top */
-  }
-  .top-bar img {
-    border-radius: 50%; /* Makes the image rounded */
-    margin-right: 10px; /* Adds spacing between the image and the name */
-  }
-  
-  .top-bar span {
-    font-size: 16px; /* Adjust font size as needed */
-    margin-right: 20px; /* Adds spacing between the name and the logout button */
-  }
-  .table-container {
-    overflow-y: auto; /* Enables vertical scrolling */
-    margin-left: 80px;
-    margin-top: 10px;
-    width: calc(100% - 100px); /* Adjust based on your layout */
-    height: 500px; /* Adjust the height to fit your needs */
-}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
 
-.table-container table {
-    padding: 20px;
-    border-spacing: 0;
-    border-collapse: collapse;
-    width: 100%; /* Ensures the table fills the container width */
-    background-color: #fff; /* Sets a clean background */
-}
+    <title>Orders Dashboard</title>
+  </head>
+  <style>
+    body {
+      font-family: "Montserrat" !important;
+      margin: 0;
+      padding: 0;
+    }
 
-th, td {
-    padding: 15px 10px; /* Increased padding for a modern look */
-    text-align: Center; /* Typically modern tables align text to the left */
-    font-size: 14px; /* Adjust font size for readability */
-}
+    .sidebar {
+      background-color: #ededed !important;
+      width: 180px;
+      height: calc(100vh - 60px);
+      position: fixed;
+      top: 55px;
+      left: 0;
+    }
 
-th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f8f8; /* Light background for the header */
-    color: #333; /* Soft black for text */
-    z-index: 2; /* Ensures the header is above other content */
-}
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      text-align: center;
+    }
 
+    .sidebar a:hover {
+      background-color: #4caf50;
+    }
 
-.table-row td {
-    border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
-}
-  .button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  /* Style for the dropdown button */
-  .dropbtn {
-    background-color: #FFFFFF; /* White background */
-    color: black; /* Black text/icon */
-    padding: 8px 12px; /* Adjust padding to balance the button size */
-    font-size: 16px; /* Font size of the text/icon */
-    border: none; /* No border */
-    cursor: pointer; /* Indicates it's clickable */
-    border-radius: 4px; /* Rounded corners */
-    line-height: 1; /* Line height for text alignment */
-    display: flex; /* Use flex to center content */
-    align-items: center; /* Align items vertically */
-    justify-content: center; /* Center content horizontally */
-    height: 40px; /* Match height with other elements like image */
-    overflow: visible; /* Prevents clipping */
-}
+    .top-bar {
+      /* background: linear-gradient(270deg, #fff 0, #00158f) !important; */
+      background: #00158f !important;
+      padding: 10px 20px;
+      position: fixed; /* Makes the top bar fixed at the top */
+      width: 100%; /* Ensures it covers the full width */
+      top: 0;
+      left: 0;
+      z-index: 1000; /* Ensures it stays on top */
+    }
 
-  
-  
-  /* Container for the dropdown content. Hidden by default. */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 150px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    right: 0;                  /* Aligns the dropdown to the right of the button */
-}
-  
-  /* Links inside the dropdown */
-  .dropdown-content a {
+    .top-bar img {
+      border-radius: 50%; /* Makes the image rounded */
+      margin-right: 10px; /* Adds spacing between the image and the name */
+    }
+
+    .top-bar span {
+      font-size: 16px; /* Adjust font size as needed */
+      margin-right: 20px; /* Adds spacing between the name and the logout button */
+    }
+
+    .table-container {
+      overflow-y: auto; /* Enables vertical scrolling */
+      margin-left: 180px;
+      margin-top: 10px;
+      height: 500px; /* Adjust the height to fit your needs */
+    }
+
+    .table-container table {
+      padding: 20px;
+      border-spacing: 0;
+      border-collapse: collapse;
+      width: 100%; /* Ensures the table fills the container width */
+      background-color: #fff; /* Sets a clean background */
+    }
+
+    th,
+    td {
+      padding: 15px 10px; /* Increased padding for a modern look */
+      text-align: Center; /* Typically modern tables align text to the left */
+      font-size: 14px; /* Adjust font size for readability */
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8; /* Light background for the header */
+      color: #333; /* Soft black for text */
+      z-index: 2; /* Ensures the header is above other content */
+    }
+
+    .table-row td {
+      border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
+    }
+    .button {
+      background-color: #4caf50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    /* Style for the dropdown button */
+    .dropbtn {
+      background-color: #ffffff; /* White background */
+      color: black; /* Black text/icon */
+      padding: 8px 12px; /* Adjust padding to balance the button size */
+      font-size: 16px; /* Font size of the text/icon */
+      border: none; /* No border */
+      cursor: pointer; /* Indicates it's clickable */
+      border-radius: 4px; /* Rounded corners */
+      line-height: 1; /* Line height for text alignment */
+      display: flex; /* Use flex to center content */
+      align-items: center; /* Align items vertically */
+      justify-content: center; /* Center content horizontally */
+      height: 40px; /* Match height with other elements like image */
+      overflow: visible; /* Prevents clipping */
+    }
+
+    /* Container for the dropdown content. Hidden by default. */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 150px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      right: 0; /* Aligns the dropdown to the right of the button */
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
       color: black;
       padding: 12px 16px;
       text-decoration: none;
       display: block;
-  }
-  
-  /* Change color of dropdown links on hover */
-  .dropdown-content a:hover {background-color: #f1f1f1}
-  
-  /* Show the dropdown menu on hover */
-  .dropdown:hover .dropdown-content {
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {
       display: block;
-  }
+    }
+
+    /* Change the dropdown button style on hover */
+    .dropdown:hover .dropbtn {
+      background-color: #e8e8e8; /* Light gray to indicate hover */
+    }
+    /* Ensure the dropdown menu is correctly positioned */
+    .dropdown {
+      position: relative; /* Ensures the dropdown content is positioned relative to this container */
+      display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
+      margin-left: 5px; /* Minimal left margin for tight spacing */
+      margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+    }
+
+    #ordersLink {
+      background-color: #4caf50; /* Green color */
+      color: white; /* Ensures text is visible on the green background */
+    }
+
+    #ordersLink:hover {
+      background-color: #43a047; /* Slightly darker green on hover for feedback */
+    }
+
+    .oval-box {
+      width: 90px; /* Adjust according to your requirement */
+      height: 30px; /* Adjust according to your requirement */
+      border-radius: 15px; /* Half of the height for smoother corners */
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      color: black; /* Text color */
+      font-weight: bold; /* Make text bold */
+    }
+
+    a.btn.btn-sidebar.w-100.mb-2 {
+      background: #00158f;
   
-  /* Change the dropdown button style on hover */
-  .dropdown:hover .dropbtn {
-      background-color: #E8E8E8; /* Light gray to indicate hover */
+    }
+
+  a.btn.btn-sidebar.w-100.mb-2:hover {
+    background: #fff;
+    border: 1px solid #00158f !important;
+    color: #00158f;
+}
+
+input {
+  border: 1px solid #e1e1e1 !important;
+  border-radius: 4px !important;
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+
+button#searchButton {
+  background-color: #00158f !important;
+  border-color: #00158f !important;
+  color: #fff !important;
+}
+
+button#searchButton:hover {
+    background-color: #fff !important;
+    border-color: #00158f !important;
+    color: #00158f !important;
   }
-  /* Ensure the dropdown menu is correctly positioned */
-  .dropdown {
-    position: relative; /* Ensures the dropdown content is positioned relative to this container */
-    display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
-    margin-left: 5px; /* Minimal left margin for tight spacing */
-    margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
-}
 
-#ordersLink {
-  background-color: #4CAF50; /* Green color */
-  color: white; /* Ensures text is visible on the green background */
-}
+  button#dropdownMenuButton1:focus {
+    background: transparent;
+    border: none !important;
+    color: #fff;
+    box-shadow: none !important;
+  }
 
-#ordersLink:hover {
-  background-color: #43a047; /* Slightly darker green on hover for feedback */
-}
-
-.oval-box {
-  width: 90px; /* Adjust according to your requirement */
-  height: 30px; /* Adjust according to your requirement */
-  border-radius: 15px; /* Half of the height for smoother corners */
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  color: black; /* Text color */
-  font-weight: bold; /* Make text bold */
-}
-</style>
+  </style>
 </head>
 <body>
 
-<div class="sidebar">
+{% comment %} <div class="sidebar">
     <a href="#" onclick="event.preventDefault(); pharmorderstatus('{{ email }}', '{{ company_info }}')">Orders</a>
     <a href="#" id="ordersLink" class="btn">Inventory</a>
     <a href="#" class="btn" onclick="event.preventDefault(); pharmorderprod('{{ email }}', '{{ company_info }}')">Order Drugs</a>
-</div>
+</div> {% endcomment %}
 
-<div class="top-bar">
-    <b>Welcome, {{ company_info }}</b>
-    <div style="display: flex; align-items: center;">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" style="height: 40px; border-radius: 50%; margin-right: 5px;">
-      <span>{{ company_info }}</span>
-      <!-- Dropdown Menu -->    
-      <div class="dropdown">
-        <button class="dropbtn">▼</button>
-        <div class="dropdown-content">
-            <a href="{% url 'index' %}">logout</a>  <!-- Link to the home page -->
+
+<div class="sidebar d-flex flex-column align-items-start p-3 bg-light">
+    <a
+      href="#"
+      class="btn btn-sidebar w-100 mb-2"
+      onclick="event.preventDefault(); pharmorderstatus('{{ email }}', '{{ company_info }}')"
+      >Orders</a
+    >
+    <a
+      href="#"
+      class="btn btn-sidebar w-100 mb-2"
+      style="background:#fff !important; border-color:#00158f !important; color:#00158f !important"
+      >Inventory</a
+    >
+    <a
+      href="#"
+      class="btn btn-sidebar w-100 mb-2"
+      onclick="event.preventDefault(); pharmorderprod('{{ email }}', '{{ company_info }}')"
+      >Order Drugs</a
+    >
+  </div>
+
+  <div class="top-bar py-2 px-3 bg-light shadow-sm">
+    <div class="d-flex justify-content-between align-items-center">
+        <b style="color: #fff">Welcome, {{ company_info }}</b>
+        <h1 style="color: #fff;
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
+        font-size: 26px;">Distributor Dashboard</h1>
+        <div class="d-flex align-items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Profile" class="rounded-circle" style="height: 40px; width: 40px; margin-right: 10px;">
+            <span style="color: #fff; font-weight: 600;" class="me-3">{{ company_info }}</span>
+            <!-- Bootstrap Dropdown Menu -->
+            <div class="dropdown">
+                <button style="background: transparent;
+                border: none !important;
+                color: #fff;" class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="{% url 'index' %}">Logout</a></li>
+                    <!-- Add more links here as needed -->
+                </ul>
+            </div>
         </div>
-      </div>
     </div>
-</div>
+  </div>
 
-<!-- Search Input Section with Search Button -->
-<div style="display: flex; justify-content: flex-start; padding: 10px; align-items: center; margin-left: 80px; margin-top: 60px;">
-  
-  <input type="text" id="searchInput" placeholder="Search Products..." style="width: 200px; height: 20px; border: 2px solid #333333;">
-  <button id="searchButton" onclick="filterTable()" style="margin-left: 10px;">Search</button>
+      <!-- Search Input Section with Search Button -->
+      <div class="d-flex align-items-center ps-4 pt-3" style="margin-left: 180px; margin-top: 60px;">
+        <input type="text" id="searchInput" class="form-control me-2" placeholder="Search orders..." style="width: 200px;">
+        <button id="searchButton" class="btn searchbutton btn-outline-secondary" onclick="filterTable()">Search</button>
 
-  <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Mfg Date:</label>  
-  <input type="date" id="dateInput" onchange="filterByDate()" style="height: 20px; border: 2px solid #333333; margin-right: 10px;">
+      <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Mfg Date:</label>
+      <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
 
-  <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Exp Date:</label>  
-  <input type="date" id="dateInput" onchange="filterByDate1()" style="height: 20px; border: 2px solid #333333; margin-right: 10px;">
-</div>
+      <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Exp Date:</label>
+      <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
+    </div>
 
 
-<div class="table-container">
-    <table id="ordersTable">
+    <div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
+        <table id="ordersTable" class="table table-striped table-hover" style="margin-top: 20px;">
         <thead>
           <tr>
             <th scope="col">Product</th>
@@ -225,33 +317,37 @@ th {
             <th scope="col">Code</th>
             <th scope="col">Batch ID</th>
             <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
-                In-Stock <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+              In-Stock <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
             </th>
             <th scope="col">Mfg Date</th>
             <th scope="col">Exp Date</th>
             <th scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
               Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
-          </th>
+            </th>
           </tr>
         </thead>
         <tbody>
-            {% for product in products %}
+          {% for product in products %}
             <tr class="table-row">
-                <td><img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;"></td>
-                <td>{{ product.product_name }}</td>
-                <td>{{ product.product_data.form }}</td>
-                <td>{{ product.product_data.strength }}mg</td>
-                <td>{{ product.product_data.product_code }}</td>
-                <td>{{ product.batchId }}</td>
-                <td>{{ product.product_data.quantity_in_stock }}</td>
-                <td>{{ product.product_data.manufacturing_date }}</td>
-                <td>{{ product.product_data.expiry_date }}</td>
-                <td>{{ product.product_data.unit_price }}</td>
+              <td>
+                <img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;" />
+              </td>
+              <td>{{ product.product_name }}</td>
+              <td>{{ product.product_data.form }}</td>
+              <td>{{ product.product_data.strength }}mg</td>
+              <td>{{ product.product_data.product_code }}</td>
+              <td>{{ product.batchId }}</td>
+              <td>{{ product.product_data.quantity_in_stock }}</td>
+              <td>{{ product.product_data.manufacturing_date }}</td>
+              <td>{{ product.product_data.expiry_date }}</td>
+              <td>{{ product.product_data.unit_price }}</td>
             </tr>
-            {% endfor %}
+          {% endfor %}
         </tbody>
-    </table>
-</div>
+      </table>
+    </div>
+<input type="hidden" name="email_dist" value="{{ email_dist }}">
+<input type="hidden" name="comp_info" value="{{ company_info }}">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   var selectedOrders = []; // Array to store selected orders' data
