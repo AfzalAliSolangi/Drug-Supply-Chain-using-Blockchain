@@ -262,15 +262,33 @@ button#searchButton:hover {
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    onclick="event.preventDefault(); select_user_type('{{ email }}', '{{ company_info }}')"
-    >Users</a
+    onclick="event.preventDefault(); pharmorders('{{ email }}', '{{ company_info }}')"
+    >Orders</a
   >
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    onclick="event.preventDefault(); manage_sla('{{ email }}', '{{ company_info }}')"
+    onclick="event.preventDefault(); viewdistinvent('{{ email }}', '{{ company_info }}')"
+    >Inventory</a
+  >
+  <a
+    href="#"
+    class="btn btn-sidebar w-100 mb-2"
+    onclick="event.preventDefault(); distorderprod('{{ email }}', '{{ company_info }}')"
+    >Order Drugs</a
+  >
+  <a
+    href="#"
+    class="btn btn-sidebar w-100 mb-2"
+    onclick="event.preventDefault(); distorderstatus('{{ email }}', '{{ company_info }}')"
+    >Orders Status</a
+  >
+  <a
+    href="#"
+    class="btn btn-sidebar w-100 mb-2"
     style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
-    >Manage SLA</a
+    onclick="event.preventDefault(); distupdatesla('{{ email }}', '{{ company_info }}')"
+    >Update SLA</a
   >
 </div>
 
@@ -282,7 +300,7 @@ button#searchButton:hover {
       font-weight: 600;
       margin: 0;
       padding: 0;
-      font-size: 26px;">Master Dashboard</h1>
+      font-size: 26px;">Distributor Dashboard</h1>
       <div class="d-flex align-items-center">
         <img src="{% static 'assets/img/User_Icon.png' %}" alt="User Profile" class="rounded-circle" style="height: 40px; width: 40px; margin-right: 10px;">
           <span style="color: #fff; font-weight: 600;" class="me-3">{{ company_info }}</span>
@@ -671,6 +689,101 @@ button#searchButton:hover {
       document.body.appendChild(form);
       form.submit();
   }
+  function distorderstatus(email,company_info) {
+    console.log("Email Distribution:", email);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/distorderstatus';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+
+    const companyinfoInput = document.createElement('input');
+    companyinfoInput.type = 'hidden';
+    companyinfoInput.name = 'company_info';
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+function distorderprod(email,company_info) {
+  console.log("Email Distribution:", email);
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/distorderprod';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+  document.body.appendChild(form);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+  document.body.appendChild(form);
+
+  form.submit();
+}
+
+function viewdistinvent(email,company_info) {
+  console.log("Viewing inventory...");
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/viewdistinvent';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+  document.body.appendChild(form);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+  document.body.appendChild(form);
+
+  form.submit();
+}
+
+function pharmorders(email,company_info) {
+  console.log("Email Distribution:", email);
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+  document.body.appendChild(form);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+  document.body.appendChild(form);
+
+  form.submit();
+}
 </script>
 </body>
 </html>

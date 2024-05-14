@@ -278,6 +278,12 @@ button#searchButton:hover {
     onclick="event.preventDefault(); distorderstatus('{{ email }}', '{{ company_info }}')"
     >Orders Status</a
   >
+  <a
+  href="#"
+  class="btn btn-sidebar w-100 mb-2"
+  onclick="event.preventDefault(); distupdatesla('{{ email }}', '{{ company_info }}')"
+  >Update SLA</a
+>
   </div>
 
   <div class="top-bar py-2 px-3 bg-light shadow-sm">
@@ -448,6 +454,29 @@ margin-left: 200px;!important">
  
    form.submit();
  }
+ function distupdatesla(email,company_info) {
+  console.log("Viewing inventory...");
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/distupdatesla';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+  document.body.appendChild(form);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+  document.body.appendChild(form);
+
+  form.submit();
+}
 </script>
 </body>
 </html>
