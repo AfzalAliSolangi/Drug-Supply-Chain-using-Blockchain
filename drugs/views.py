@@ -2634,7 +2634,7 @@ def dist_sla_upload(request):
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
-        txid = rpc_connection.publish('{}'.format(manufacturer_SLA_stream), ['Manufacturer',
+        txid = rpc_connection.publish('{}'.format(distributor_SLA_stream), ['Manufacturer',
                                                                                    timestamp_utc  
                                                                              ],
                                                                              {'json': {

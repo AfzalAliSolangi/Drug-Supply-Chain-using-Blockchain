@@ -320,7 +320,7 @@ button#searchButton:hover {
                 <td>
                     <input type="file" name="distributor_file_input" accept=".pdf,.doc,.docx" style="width: 150px;">
                     <input type="hidden" id="distributor_hash_input" name="hash_sla">
-                    <button id="submitButton" onclick="handleSLAUpload('{{ email }}', '{{ company_info }}','distributor_file_input', 'distributor_hash_input', '/dist_sla_submit')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
+                    <button id="submitButton" onclick="handleSLAUpload('{{ email }}', '{{ company_info }}','distributor_file_input', 'distributor_hash_input')" class="btn btn-primary" style="margin-top: 5px;">Submit SLA</button>
                 </td>
             </tr>
         </tbody>
@@ -333,7 +333,7 @@ button#searchButton:hover {
 <script>
   var selectedOrders = []; // Array to store selected orders' data
 
-  function handleSLAUpload(email, company_info, fileInputName, hashInputId,submitUrl) {
+  function handleSLAUpload(email, company_info, fileInputName, hashInputId) {
     const fileInput = document.querySelector(`input[name="${fileInputName}"]`);
     if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -347,7 +347,7 @@ button#searchButton:hover {
             // Create a form and submit it
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = submitUrl;
+            form.action = '/dist_sla_upload';
             form.style.display = 'none';
 
             // Add hash to the form
