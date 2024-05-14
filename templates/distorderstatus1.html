@@ -251,7 +251,7 @@ button#searchButton:hover {
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
+    onclick="event.preventDefault(); pharmorders('{{ email }}', '{{ company_info }}')"
     >Orders</a
   >
   <a
@@ -269,6 +269,7 @@ button#searchButton:hover {
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
+    style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
     onclick="event.preventDefault(); distorderstatus('{{ email }}', '{{ company_info }}')"
     >Orders Status</a
   >
@@ -628,6 +629,7 @@ button#searchButton:hover {
 
       form.submit();
   }
+
   function distorderstatus(email,company_info) {
       console.log("Email Distribution:", email);
       const form = document.createElement('form');
@@ -651,6 +653,7 @@ button#searchButton:hover {
 
       form.submit();
   }
+
   function viewdistinvent(email,company_info) {
       console.log("Viewing inventory...");
       const form = document.createElement('form');
@@ -674,20 +677,29 @@ button#searchButton:hover {
 
       form.submit();
   }
-  function pharmorders(email) {
-      console.log("Email Distribution:", email);
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
-      form.style.display = 'none';
-      const emailInput = document.createElement('input');
-      emailInput.type = 'hidden';
-      emailInput.name = 'email';
-      emailInput.value = email;
-      form.appendChild(emailInput);
-      document.body.appendChild(form);
-      form.submit();
-  }
+  function pharmorders(email,company_info) {
+    console.log("Email Distribution:", email);
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+
+    const companyinfoInput = document.createElement('input');
+    companyinfoInput.type = 'hidden';
+    companyinfoInput.name = 'company_info';
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+    document.body.appendChild(form);
+
+    form.submit();
+}
 </script>
 </body>
 </html>
