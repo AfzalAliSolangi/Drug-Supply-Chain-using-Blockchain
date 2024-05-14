@@ -2485,6 +2485,79 @@ def distorderconfirm(request):
 
         return render(request, 'manuproducts.html')
 
+def distorderstatus(request):
+    print('\nOrders Statuses for distributor\n')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email')
+        print("Email :",email_rcvd)
+        comp_info = request.POST.get('company_info') #Name of the Distributor
+        print("comany_info:",comp_info)
+        response = rpc_connection.liststreamqueryitems('{}'.format(manufacturer_orders_stream), {'keys': [email_rcvd]})
+        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+        
+        print(json_string)
+        combined_list = []
+        for item in json_string:
+            keys = item['keys']
+            traxid = item['txid']
+            confirmed_status = item['data']['json']['confirmed']
+            totalprice = item['data']['json']['totalprice']
+            modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
+            combined_list.append(modified_keys)
+        print("\nCombined list\n")
+        print(combined_list)
+        # Sort the list based on the timestamp (second last index)
+        combined_list.sort(key=lambda x: x[-2], reverse=True)
+        
+        #######################################################################################################            
+        #NOTE: This is the logic for finding the latest order based on timestamp
+        # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
+        distinct_orders = {}
+        
+        # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
+        for order in combined_list:
+            key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+            if key not in distinct_orders:
+                distinct_orders[key] = order
+        
+        # Convert the dictionary to a list of lists
+        distinct_orders_list = list(distinct_orders.values())
+        #######################################################################################################
+        
+        
+        # # Print the distinct orders
+        for order in distinct_orders_list:
+            print(order)
+        # Iterate over the combined_list
+        orders = []
+        for index, item in enumerate(distinct_orders_list):
+            # Create a dictionary for each element in the combined_list
+            orderPlaceOn = datetime.datetime.fromisoformat(item[8])
+            # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+            orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
+            order = {
+                "orderid":item[0],
+                "trxid": item[9],
+                "Distributor_name": item[1],
+                "Manufacturer_email": item[2],
+                "distributor_email": item[3],
+                "batchId": item[5],
+                "product_name": item[7],
+                "product_code": item[6],
+                "orderPlaceOn": str(orderPlaceOn),
+                "quantity": item[4],
+                "tot_price": item[10],
+                "confirmed": item[12],
+                "timestamp": item[8],
+            }
+            # Append the dictionary to the orders list
+            orders.append(order)
+        # Print the resulting list of dictionaries
+        print(orders)
+        # return render(request, "distributor_orders.html",{'orders': orders})
+
+        return render(request, "distorderstatus1.html", {'comp_info': comp_info,'email':email_rcvd, 'company_info': comp_info,'orders': orders})
 
 
 

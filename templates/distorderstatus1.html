@@ -319,21 +319,12 @@ button#searchButton:hover {
               <option value="Cancelled">Cancelled</option>
           </select>
       </div>
-  
-      <div class="ms-auto">
-          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm()">Confirm</button>
-          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Cancel</button>
-      </div>
   </div>
 
 
   <div class="table-responsive" style="margin-left: 180px; overflow-x: auto; margin-top: 30px;">
     <table id="ordersTable" class="table table-striped table-hover">
         <thead>
-          <tr>
-            <th width="100" scope="col">
-              <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this);">
-          </th>
             <th width="100" scope="col">OrderID</th>
             <th width="100" scope="col">Trx</th>
             <th width="100" scope="col">Pharmacy</th>
@@ -351,11 +342,6 @@ button#searchButton:hover {
         <tbody>
             {% for order in orders %}
             <tr class="table-row">
-              <td>
-                <!-- Disable checkbox if status is 'Confirmed' or 'Cancelled' -->
-                <input type="checkbox" name="selected" value="{{ order.id }}" onclick="updateSelection(this);"
-                       {% if order.confirmed == 'Confirmed' or order.confirmed == 'Cancelled' %}disabled{% endif %}>
-            </td>
                 <td>{{ order.orderid }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
                 <td>{{ order.Distributor_name }}</td>

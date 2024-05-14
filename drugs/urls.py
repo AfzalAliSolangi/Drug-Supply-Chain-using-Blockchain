@@ -25,6 +25,7 @@ urlpatterns = [
     path('active_user', views.active_user, name='active_user'),
     path('manage_sla', views.manage_sla, name='manage_sla'),
     path('select_user_type', views.select_user_type, name='select_user_type'),
+    path('distorderstatus', views.distorderstatus, name='distorderstatus'),
     path('manu_sla_submit', views.manu_sla_submit, name='manu_sla_submit'),
     path('dist_sla_submit', views.dist_sla_submit, name='dist_sla_submit'),
     path('pharm_sla_submit', views.pharm_sla_submit, name='pharm_sla_submit'),
