@@ -2748,7 +2748,7 @@ def distproducts(request):
         print(products_with_timestamp)
         return render(request, 'distproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_distributor, 'email': email_pharm, 'company_info': comp_info})
     else:
-        return render(request, 'distproducts1.html', {'message': 'No products available'})
+        return render(request, 'distproducts1.html', {'message': 'No products available','manufacturer': selected_distributor, 'email': email_pharm, 'company_info': comp_info})
 
 @csrf_protect
 def pharmcheckout(request):
