@@ -289,62 +289,9 @@
   </div>
 </div>
 
-    <!-- Search Input Section with Search Button -->
-    <div class="d-flex align-items-center ps-4 pt-3" style="margin-left: 180px; margin-top: 60px;">
-      <input type="text" id="searchInput" class="form-control me-2" placeholder="Search Users..." style="width: 200px;">
-      <button id="searchButton" class="btn searchbutton btn-outline-secondary" onclick="filterTable()">Search</button>
-  
-  
-      <!-- Status Filter Dropdown -->
-      <div class="d-flex align-items-center" style="margin-left: 20px;" >
-          <label for="statusFilter" class="me-2">Filter by Status:</label>
-          <select id="statusFilter" class="form-select" onchange="filterByStatus()" style="width: auto;">
-              <option value="">All</option>
-              <option value="Active">Active</option>
-              <option value="Deactive">Deactive</option>
-          </select>
-      </div>
-
-      <!-- Status Filter Dropdown -->
-      <div class="d-flex align-items-center" style="margin-left: 20px;" >
-          <label for="stateFilter" class="me-2">Filter by State:</label>
-          <select id="stateFilter" class="form-select" onchange="filterByState()" style="width: auto;">
-              <option value="">All</option>
-              <option value="Sindh">Sindh</option>
-              <option value="Punjab">Punjab</option>
-              <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
-              <option value="Deactive">Balochistan</option>
-          </select>
-      </div>
-
-      <!-- Status Filter Dropdown -->
-      <div class="d-flex align-items-center" style="margin-left: 20px;" >
-          <label for="cityFilter" class="me-2">Filter by City:</label>
-          <select id="cityFilter" class="form-select" onchange="filterByCity()" style="width: auto;">
-              <option value="">All</option>
-              <option value="Karachi">Karachi</option>
-              <option value="Hyderabad">Hyderabad</option>
-              <option value="Sukkur">Sukkur</option>
-              <option value="Larkana">Larkana</option>
-              <option value="Lahore">Lahore</option>
-              <option value="Faisalabad">Faisalabad</option>
-              <option value="Rawalpindi">Rawalpindi</option>
-              <option value="Gujranwala">Gujranwala</option>
-              <option value="Peshawar">Peshawar</option>
-              <option value="Mardan">Mardan</option>
-              <option value="Kohat">Kohat</option>
-              <option value="Abbottabad">Abbottabad</option>
-              <option value="Quetta">Quetta</option>
-              <option value="Gwadar">Gwadar</option>
-              <option value="Hub">Hub</option>
-          </select>
-      </div>
-  
-      
-  </div>
 
 
-  <div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
+  <div class="table-responsive" style="margin-left: 180px; overflow-x: auto; margin-top: 100px;">
     <table id="ordersTable" class="table table-striped table-hover">
         <thead>
             <tr>
