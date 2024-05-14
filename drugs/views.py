@@ -2684,8 +2684,7 @@ def pharmorderprod(request):
         keys_company_info = {}
         i=1
         for item in json_load:
-            keys_company_info['key'+str(i)] = decrypt_data(base64_to_bytes(item['user_data']['company_info']))
-            i+=1
+            keys_company_info[item["email"]] = decrypt_data(base64_to_bytes(item['user_data']['company_info']))
         print("\nkeys_company_info:\n",keys_company_info)
         return render(request, "pharmorderprod1.html", {'keys_company_info': keys_company_info,'email': email_pharm, 'company_info' : company_info})
 
