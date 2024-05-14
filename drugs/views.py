@@ -1962,15 +1962,40 @@ def distorderprod(request):
         json_load = json.loads(data)
         comp_info = json_load[0]['data']['json']['company_info'] 
         
-        # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen
+        # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen        
         response = rpc_connection.liststreamitems(users_manufacturer_stream)
-        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-        print(json_string)
+        user_map = {}  # Initialize a dictionary to store user data based on the latest timestamp
+        # Sort the response list based on timestamp
+        response.sort(key=lambda x: x['keys'][-1], reverse=True)
+        for item in response:
+            data = item['data']['json']
+            email = data['email']
+            timestamp = item['keys'][-1]  # Get the timestamp from the last element of keys
+            status = item['keys'][1]
+            if email not in user_map or timestamp > user_map[email]['timestamp']:
+                user_map[email] = {
+                    'timestamp': timestamp,
+                    'user_data': data,
+                    'status': status
+                }
+
+        users_with_latest_info = [{
+            'email': key,
+            'timestamp': value['timestamp'],
+            'user_data': value['user_data'],
+            'status': value['status']
+        } for key, value in user_map.items()]
+
+        # print(users_with_latest_info)
+        json_string = json.dumps(users_with_latest_info)
         json_load = json.loads(json_string)
+        print(json_string)        
+
         keys_company_info = {}
+        i=1
         for item in json_load:
-            for key in item['keys']:
-                keys_company_info[key] = decrypt_data(base64_to_bytes(item['data']['json']['company_info']))
+            keys_company_info['key'+str(i)] = decrypt_data(base64_to_bytes(item['user_data']['company_info']))
+            i+=1
         print("\nkeys_company_info:\n",keys_company_info)
         return render(request, "distorderprod1.html", {'keys_company_info': keys_company_info,'email': email_dist, 'company_info' : company_info})
 
@@ -2631,13 +2656,38 @@ def pharmorderprod(request):
         
         # Now fetch the distributor names and their emails(keys), only names will be shown in the drop down of the distributor.html screen
         response = rpc_connection.liststreamitems(users_distributor_stream)
-        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-        print(json_string)
+        user_map = {}  # Initialize a dictionary to store user data based on the latest timestamp
+        # Sort the response list based on timestamp
+        response.sort(key=lambda x: x['keys'][-1], reverse=True)
+        for item in response:
+            data = item['data']['json']
+            email = data['email']
+            timestamp = item['keys'][-1]  # Get the timestamp from the last element of keys
+            status = item['keys'][1]
+            if email not in user_map or timestamp > user_map[email]['timestamp']:
+                user_map[email] = {
+                    'timestamp': timestamp,
+                    'user_data': data,
+                    'status': status
+                }
+
+        users_with_latest_info = [{
+            'email': key,
+            'timestamp': value['timestamp'],
+            'user_data': value['user_data'],
+            'status': value['status']
+        } for key, value in user_map.items()]
+
+        # print(users_with_latest_info)
+        json_string = json.dumps(users_with_latest_info)
         json_load = json.loads(json_string)
+        print(json_string)        
+
         keys_company_info = {}
+        i=1
         for item in json_load:
-            for key in item['keys']:
-                keys_company_info[key] = decrypt_data(base64_to_bytes(item['data']['json']['company_info']))
+            keys_company_info['key'+str(i)] = decrypt_data(base64_to_bytes(item['user_data']['company_info']))
+            i+=1
         print("\nkeys_company_info:\n",keys_company_info)
         return render(request, "pharmorderprod1.html", {'keys_company_info': keys_company_info,'email': email_pharm, 'company_info' : company_info})
 
