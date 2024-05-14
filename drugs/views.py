@@ -2605,6 +2605,52 @@ def distorderstatus(request):
 
         return render(request, "distorderstatus1.html", {'comp_info': comp_info,'email':email_rcvd, 'company_info': comp_info,'orders': orders})
 
+def distupdatesla(request):# Adding Drugs In Manufacturer Item Stream
+    print('manage_sla user')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+
+        #Distributor SLA
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            print(distributor_hash_sla)
+        else:
+            distributor_hash_sla = 'None'
+            print(distributor_hash_sla)
+
+    return render(request, "distupdatesla.html",{'company_info': company_info,'email':email_rcvd,'distributor_hash_sla':distributor_hash_sla}) 
+
+def dist_sla_upload(request):
+    print('submiting Manufacturer user SLA')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        hash_sla = request.POST.get('hash_sla',None)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
+        print(email_rcvd)
+        print(company_info)
+        print(hash_sla)
+        txid = rpc_connection.publish('{}'.format(manufacturer_SLA_stream), ['Manufacturer',
+                                                                                   timestamp_utc  
+                                                                             ],
+                                                                             {'json': {
+                                                                                 "hash_sla": hash_sla}})
+        #Distributor SLA
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            print(distributor_hash_sla)
+        else:
+            distributor_hash_sla = 'None'
+            print(distributor_hash_sla)
+
+    return render(request, "distupdatesla.html",{'company_info': company_info,'email':email_rcvd,'distributor_hash_sla':distributor_hash_sla})
 
 
 
