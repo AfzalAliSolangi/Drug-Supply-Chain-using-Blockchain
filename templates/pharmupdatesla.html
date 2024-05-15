@@ -262,15 +262,27 @@ button#searchButton:hover {
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    onclick="event.preventDefault(); select_user_type('{{ email }}', '{{ company_info }}')"
-    >Users</a
+    onclick="event.preventDefault(); pharmorderstatus('{{ email }}', '{{ company_info }}')"
+    >Orders Status</a
   >
   <a
     href="#"
     class="btn btn-sidebar w-100 mb-2"
-    onclick="event.preventDefault(); manage_sla('{{ email }}', '{{ company_info }}')"
-    style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
-    >Manage SLA</a
+    onclick="event.preventDefault(); viewpharminvent('{{ email }}', '{{ company_info }}')"
+    >Inventory</a
+  >
+  <a
+    href="#"
+    class="btn btn-sidebar w-100 mb-2"
+    onclick="event.preventDefault(); pharmorderprod('{{ email }}', '{{ company_info }}')"
+    >Order Drugs</a
+  >
+  <a
+  href="#"
+  class="btn btn-sidebar w-100 mb-2"
+  style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
+  onclick="event.preventDefault(); pharmupdatesla('{{ email }}', '{{ company_info }}')"
+  >Update SLA</a
   >
 </div>
 
@@ -671,6 +683,76 @@ button#searchButton:hover {
       document.body.appendChild(form);
       form.submit();
   }
+
+  function viewpharminvent(email,company_info) {
+    console.log("Viewing inventory...");
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/viewpharminvent';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+
+    const companyinfoInput = document.createElement('input');
+    companyinfoInput.type = 'hidden';
+    companyinfoInput.name = 'company_info';
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+function pharmorderprod(email,company_info) {
+  console.log("Email Distribution:", email);
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/pharmorderprod';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+  document.body.appendChild(form);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+  document.body.appendChild(form);
+
+  form.submit();
+}
+function pharmorderstatus(email,company_info) {
+  console.log("Email Distribution:", email);
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/pharmorderstatus';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+
+  document.body.appendChild(form);
+  form.submit();
+}
 </script>
 </body>
 </html>
