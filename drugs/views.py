@@ -1629,6 +1629,7 @@ def adddrugmenu(request):# Adding Drugs In Manufacturer Item Stream
     return render(request, "adddrug1.html",{'company_info': Company_name,'email':email_rcvd})
 
 def adddrug(request): # Manufacturer Input
+    print("\n\n")
     if request.method == 'POST':    
         data = json.loads(request.POST.get('product_data'))
         print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
