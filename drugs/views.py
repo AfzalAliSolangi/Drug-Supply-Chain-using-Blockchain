@@ -3129,6 +3129,54 @@ def pharmorderstatus(request):
         return render(request, "pharmacy1.html",{'company_info': comp_info,'email':email_rcvd, 'orders':orders })
 
 
+def pharmupdatesla(request):# Adding Drugs In Manufacturer Item Stream
+    print('manage_sla user')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+
+        #Pharmacy SLA
+        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        json_string_pharmacy = json.dumps(response)
+        json_string_pharmacy = json.loads(json_string_pharmacy)
+        if len(json_string_pharmacy)>0:
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
+            print(pharmacy_hash_sla)
+        else:
+            pharmacy_hash_sla = 'None'
+            print(pharmacy_hash_sla)
+
+    return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd, 'pharmacy_hash_sla':pharmacy_hash_sla})
+
+
+def pharm_sla_upload(request):
+    print('submiting Manufacturer user SLA')
+    if request.method == 'POST':
+        email_rcvd = request.POST.get('email',None)
+        company_info = request.POST.get('company_info',None)
+        hash_sla = request.POST.get('hash_sla',None)
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
+        print(email_rcvd)
+        print(company_info)
+        print(hash_sla)
+        txid = rpc_connection.publish('{}'.format(pharmacy_SLA_stream), ['Manufacturer',
+                                                                                   timestamp_utc  
+                                                                             ],
+                                                                             {'json': {
+                                                                                 "hash_sla": hash_sla}})
+        #Pharmacy SLA
+        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        json_string_pharmacy = json.dumps(response)
+        json_string_pharmacy = json.loads(json_string_pharmacy)
+        if len(json_string_pharmacy)>0:
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
+            print(pharmacy_hash_sla)
+        else:
+            pharmacy_hash_sla = 'None'
+            print(pharmacy_hash_sla)
+
+    return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd,'pharmacy_hash_sla':pharmacy_hash_sla})
+
 def getdetails(request):
     patid = int(request.GET['patid'])
     # k=webs3.retrive_data(patid)
