@@ -112,7 +112,7 @@
     </style>
 </head>
 <body>
-    <form action="process_registration_manufacturer" method="post" onsubmit="return validateForm()">
+    <form id="registrationForm" action="process_registration_manufacturer" method="post" enctype="multipart/form-data">
         <h3>User Manufacturer Registration Form</h3>
         <fieldset>
             <div class="input-group">
@@ -175,6 +175,8 @@
                 <label for="license_certification">PDF or Word document:</label>
                 <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required>
             </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+            <input type="hidden" id="hash_sla" name="hash_sla">
             <input type="submit" value="Sign Up">
         </fieldset>
         
@@ -183,6 +185,32 @@
     </form>
 
     <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            handleSLAUpload('{{ email }}', document.getElementById('company_info').value, 'license_certification', 'hash_sla', 'process_registration_master');
+        });
+
+        function handleSLAUpload(email, company_info, fileInputName, hashInputId, submitUrl) {
+            const fileInput = document.querySelector(`input[name="${fileInputName}"]`);
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const fileContent = e.target.result;
+                    const hash = CryptoJS.SHA256(CryptoJS.enc.Latin1.parse(fileContent)).toString(CryptoJS.enc.Hex);
+                    document.getElementById(hashInputId).value = hash;
+
+                    // Submit the form
+                    document.getElementById('registrationForm').submit();
+                };
+
+                reader.readAsBinaryString(file);
+            } else {
+                alert("Please select a file to generate the hash.");
+            }
+        }
+        
         function populateCities() {
             var stateSelect = document.getElementById("state");
             var citySelect = document.getElementById("city");
