@@ -1862,7 +1862,7 @@ def process_registration_distributor(request):
         distributor_hash_sla = json_load[-1]['data']['json']["hash_sla"]
         fetched_SLA = request.POST.get('hash_sla')
         email = request.POST.get('email')
-        
+
         if fetched_SLA==distributor_hash_sla:
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -1891,7 +1891,7 @@ def process_registration_distributor(request):
             data = json.loads(data)
             txid = rpc_connection.publish(users_distributor_stream, [email,'True',timestamp_utc], {'json' : data})
             if txid:
-                return render(request, "login_distributor.html")
+                return render(request, "login_distributor.html",{'message': "User already registered, Please Log In!"})
         else:
             return render(request, "signup-distributor1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
         
