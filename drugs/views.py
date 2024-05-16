@@ -1136,7 +1136,7 @@ def email_check_manufacturer(request):
         for each_email in email_keys:
             if each_email==email:
                 print("present")
-                return render(request, "login_manufacturer.html") #if the email is present prompt to login master page
+                return render(request, "login_manufacturer.html",{'message': "User already registered, Please Log In!"}) #if the email is present prompt to login master page
         return render(request, "signup-manufacturer1.html",{'email': email}) #if the email is not present then render this page
     
 def process_registration_manufacturer(request):
