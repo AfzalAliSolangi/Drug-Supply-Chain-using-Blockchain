@@ -1178,7 +1178,7 @@ def process_registration_manufacturer(request):
             data = json.loads(data)
             txid = rpc_connection.publish(users_manufacturer_stream, [email,'True',timestamp_utc], {'json' : data})
             if txid:
-                return render(request, "login_manufacturer.html")
+                return render(request, "login_manufacturer.html",{'message': "Please Log In using you credentials!"})
         else:
             return render(request, "signup-manufacturer1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
         
