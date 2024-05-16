@@ -147,6 +147,7 @@ def process_registration_master(request):
         # print("method check")
         email = request.POST.get('email')
         password = request.POST.get('password')
+        print(password)
         timestamp_utc = datetime.datetime.utcnow().isoformat()
         # Hash the password
         hashed_password = make_password(password)
@@ -166,7 +167,7 @@ def process_registration_master(request):
             "city": bytes_to_base64(encrypted_city),
             "zip_code": bytes_to_base64(encrypted_zip_code),
             "password": hashed_password,
-            "license_certification": request.POST.get('license_certification') #Hash calculated from the front end don't need to encrypt it
+            "license_certification": request.POST.get('hash_sla') #Hash calculated from the front end don't need to encrypt it
         }
         data = json.dumps(request_data)
         data = json.loads(data)
