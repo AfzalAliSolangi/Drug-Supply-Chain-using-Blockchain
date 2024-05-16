@@ -37,6 +37,7 @@ distributor_SLA_stream = config.get('Section1','distributor_SLA_stream')
 pharmacy_SLA_stream = config.get('Section1','pharmacy_SLA_stream')
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
+qr_codes_path = config.get('Section1','qr_codes_path') #Set a default for Manufacturer, add another for distributors
 
 # Configure your MultiChain connection here
 rpcuser = config.get('Section1','rpcuser')
@@ -50,7 +51,14 @@ rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassw
 SECRET_KEY = b'pGVMH7s1zlQMtcugRETEOx572lhVYcEjfSIn1X0OBCo='  # Generated using fernet.py
 cipher_suite = Fernet(SECRET_KEY)
 
-def generate_qr_code(data, save_path):
+def generate_qr_code(email,product_code,batchid,product_name):
+    data = {
+    "manufacturer_email": email,
+    "Product_code": product_code,
+    "Batch_id": batchid,
+    "product_name": product_name
+    }
+
     # Convert the data dictionary to a JSON string
     json_data = json.dumps(data)
     
@@ -66,10 +74,10 @@ def generate_qr_code(data, save_path):
 
     # Create an image from the QR Code instance
     img = qr.make_image(fill_color="black", back_color="white")
-
+    save_path = f"{qr_codes_path}+{product_name}_{batchid}.png"
+    save_path = "{}{}_{}.png".format(qr_codes_path,product_name,batchid)
     # Save the image to the specified path
     img.save(save_path)
-    print(f"QR Code saved to {save_path}")
 
 def encrypt_data(data):
     encrypted_data = cipher_suite.encrypt(data.encode())
@@ -1747,6 +1755,16 @@ def adddrug(request): # Manufacturer Input
                                                                                              'email': bytes_to_base64(encrypt_data(email)),
                                                                                              'products': list(structured_json['products'])}})#Add a timestamp for sub logic
             
+            qr_data = {
+                "manufacturer_email": email,
+                "Product_code": product["product_code"],
+                "Batch_id": batchid,
+                "product_name": product["product_name"] 
+            }
+
+            #Generating QR CODE for the product
+            generate_qr_code(email,product["product_code"],batchid,product["product_name"] )
+
             return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
 
 def manuupdatesla(request):# Adding Drugs In Manufacturer Item Stream
