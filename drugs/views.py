@@ -1142,35 +1142,45 @@ def email_check_manufacturer(request):
 def process_registration_manufacturer(request):
     print("process_registration_manufacturer")
     if request.method == 'POST':
-        # print("method check")
+
+        #Fetching the SLA published by the MASTER
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        data = json.dumps(response)
+        json_load = json.loads(data)
+        Manufacturer_hash_sla = json_load[-1]['data']['json']["hash_sla"]
+        fetched_SLA = request.POST.get('hash_sla')
         email = request.POST.get('email')
-        password = request.POST.get('password')
-        timestamp_utc = datetime.datetime.utcnow().isoformat()
-        # Hash the password
-        hashed_password = make_password(password)
-        # Encrypt other user details
-        encrypted_company_info = encrypt_data(request.POST.get('company_info'))
-        encrypted_street_address = encrypt_data(request.POST.get('street_address'))
-        encrypted_business_details = encrypt_data(request.POST.get('business_details'))
-        encrypted_state = encrypt_data(request.POST.get('state'))
-        encrypted_city = encrypt_data(request.POST.get('city'))
-        encrypted_zip_code = encrypt_data(request.POST.get('zip_code'))
-        request_data = {
-            "email": request.POST.get('email'),
-            "company_info": bytes_to_base64(encrypted_company_info),
-            "street_address": bytes_to_base64(encrypted_street_address),
-            "business_details": bytes_to_base64(encrypted_business_details),
-            "state": bytes_to_base64(encrypted_state),
-            "city": bytes_to_base64(encrypted_city),
-            "zip_code": bytes_to_base64(encrypted_zip_code),
-            "password": hashed_password,
-            "license_certification": request.POST.get('hash_sla') #Hash calculated from the front end don't need to encrypt it
-        }
-        data = json.dumps(request_data)
-        data = json.loads(data)
-        txid = rpc_connection.publish(users_manufacturer_stream, [email,'True',timestamp_utc], {'json' : data})
-        if txid:
-            return render(request, "login_manufacturer.html")
+
+        if fetched_SLA==Manufacturer_hash_sla:
+            password = request.POST.get('password')
+            timestamp_utc = datetime.datetime.utcnow().isoformat()
+            # Hash the password
+            hashed_password = make_password(password)
+            # Encrypt other user details
+            encrypted_company_info = encrypt_data(request.POST.get('company_info'))
+            encrypted_street_address = encrypt_data(request.POST.get('street_address'))
+            encrypted_business_details = encrypt_data(request.POST.get('business_details'))
+            encrypted_state = encrypt_data(request.POST.get('state'))
+            encrypted_city = encrypt_data(request.POST.get('city'))
+            encrypted_zip_code = encrypt_data(request.POST.get('zip_code'))
+            request_data = {
+                "email": request.POST.get('email'),
+                "company_info": bytes_to_base64(encrypted_company_info),
+                "street_address": bytes_to_base64(encrypted_street_address),
+                "business_details": bytes_to_base64(encrypted_business_details),
+                "state": bytes_to_base64(encrypted_state),
+                "city": bytes_to_base64(encrypted_city),
+                "zip_code": bytes_to_base64(encrypted_zip_code),
+                "password": hashed_password,
+                "license_certification": request.POST.get('hash_sla') #Hash calculated from the front end don't need to encrypt it
+            }
+            data = json.dumps(request_data)
+            data = json.loads(data)
+            txid = rpc_connection.publish(users_manufacturer_stream, [email,'True',timestamp_utc], {'json' : data})
+            if txid:
+                return render(request, "login_manufacturer.html")
+        else:
+            return render(request, "signup-manufacturer1.html",{'email': email})
         
 def login_manufacturer(request):
         return render(request, "login_manufacturer.html")
