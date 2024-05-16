@@ -13,6 +13,9 @@ import hashlib
 from cryptography.fernet import Fernet
 from django.contrib.auth.hashers import make_password,check_password
 import base64
+import qrcode
+import json
+import os
 
 config = configparser.ConfigParser()
 
@@ -46,6 +49,27 @@ rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassw
 # Generate a secret key for encryption and decryption of the data
 SECRET_KEY = b'pGVMH7s1zlQMtcugRETEOx572lhVYcEjfSIn1X0OBCo='  # Generated using fernet.py
 cipher_suite = Fernet(SECRET_KEY)
+
+def generate_qr_code(data, save_path):
+    # Convert the data dictionary to a JSON string
+    json_data = json.dumps(data)
+    
+    # Generate the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(json_data)
+    qr.make(fit=True)
+
+    # Create an image from the QR Code instance
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Save the image to the specified path
+    img.save(save_path)
+    print(f"QR Code saved to {save_path}")
 
 def encrypt_data(data):
     encrypted_data = cipher_suite.encrypt(data.encode())
