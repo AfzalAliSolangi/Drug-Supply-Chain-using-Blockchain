@@ -1164,7 +1164,7 @@ def process_registration_manufacturer(request):
             "city": bytes_to_base64(encrypted_city),
             "zip_code": bytes_to_base64(encrypted_zip_code),
             "password": hashed_password,
-            "license_certification": request.POST.get('license_certification') #Hash calculated from the front end don't need to encrypt it
+            "license_certification": request.POST.get('hash_sla') #Hash calculated from the front end don't need to encrypt it
         }
         data = json.dumps(request_data)
         data = json.loads(data)
@@ -1866,7 +1866,7 @@ def process_registration_distributor(request):
             "city": bytes_to_base64(encrypted_city),
             "zip_code": bytes_to_base64(encrypted_zip_code),
             "password": hashed_password,
-            "license_certification": request.POST.get('license_certification') #Hash calculated from the front end don't need to encrypt it
+            "license_certification": request.POST.get('hash_sla') #Hash calculated from the front end don't need to encrypt it
         }
         data = json.dumps(request_data)
         data = json.loads(data)
