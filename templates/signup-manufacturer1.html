@@ -18,6 +18,7 @@
         }
 
         form {
+            margin-top: 50px;
             background-color: #ffffff;
             padding: 10px;
             border-radius: 8px;
@@ -109,9 +110,32 @@
             background-color: #ff0000;
             border-radius: 5px;
         }
+
+        .notification {
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FFFFFF;
+            color: #cc0000;
+            text-align: center;
+            padding: 10px;
+            transition: top 0.5s ease-in-out;
+            z-index: 1000;
+            width: 80%;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            max-width: 600px;
+            border-radius: 5px;
+          }
+          
+          .notification.show {
+            top: 20px;
+          }
+      
     </style>
 </head>
 <body>
+    <div class="notification" id="notification"></div>
     <form id="registrationForm" action="process_registration_manufacturer" method="post" enctype="multipart/form-data">
         <h3>User Manufacturer Registration Form</h3>
         <fieldset>
@@ -318,6 +342,20 @@
                 progressBar.style.backgroundColor = "green";
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var notification = document.getElementById('notification');
+            var message = "{{ message }}";
+            
+            if (message) {
+              notification.textContent = message;
+              notification.classList.add('show');
+              
+              setTimeout(function() {
+                notification.classList.remove('show');
+              }, 5000); // Hide after 5 seconds
+            }
+          });
     </script>
 </body>
 </html>

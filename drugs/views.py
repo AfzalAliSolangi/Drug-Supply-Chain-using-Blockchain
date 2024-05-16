@@ -1180,7 +1180,7 @@ def process_registration_manufacturer(request):
             if txid:
                 return render(request, "login_manufacturer.html")
         else:
-            return render(request, "signup-manufacturer1.html",{'email': email})
+            return render(request, "signup-manufacturer1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
         
 def login_manufacturer(request):
         return render(request, "login_manufacturer.html")
