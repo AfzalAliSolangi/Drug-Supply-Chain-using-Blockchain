@@ -2733,23 +2733,27 @@ def dist_sla_upload(request):
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
-        txid = rpc_connection.publish('{}'.format(distributor_SLA_stream), ['Manufacturer',
-                                                                                   timestamp_utc  
-                                                                             ],
-                                                                             {'json': {
-                                                                                 "hash_sla": hash_sla}})
-        #Distributor SLA
-        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+
+        #Getting the particular user for which sla will be updated
+        response = rpc_connection.liststreamkeyitems(users_distributor_stream, email_rcvd)
         json_string_distributor = json.dumps(response)
         json_string_distributor = json.loads(json_string_distributor)
+        #Logic for updating the SLA
         if len(json_string_distributor)>0:
-            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
-            print(distributor_hash_sla)
+            json_data = json_string_distributor[-1]
+            json_data['data']['json']["license_certification"] = hash_sla
+            data = json_data['data']['json']
+            keys = json_data['keys']
+            print("keys: ",keys)
+            Distributor_hash_sla = json_string_distributor[-1]['data']['json']["license_certification"]
+            txid = rpc_connection.publish('{}'.format(users_distributor_stream), keys,
+                                                                             {'json': data })
+            print(Distributor_hash_sla)
         else:
-            distributor_hash_sla = 'None'
-            print(distributor_hash_sla)
+            Distributor_hash_sla = 'None'
+            print(Distributor_hash_sla)
 
-    return render(request, "distupdatesla.html",{'company_info': company_info,'email':email_rcvd,'distributor_hash_sla':distributor_hash_sla})
+    return render(request, "distupdatesla.html",{'company_info': company_info,'email':email_rcvd,'distributor_hash_sla':Distributor_hash_sla})
 
 
 
