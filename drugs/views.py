@@ -1835,17 +1835,21 @@ def manu_sla_upload(request):
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
-        txid = rpc_connection.publish('{}'.format(manufacturer_SLA_stream), ['Manufacturer',
-                                                                                   timestamp_utc  
-                                                                             ],
-                                                                             {'json': {
-                                                                                 "hash_sla": hash_sla}})
-         #Manufacturer SLA
-        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+
+        #Getting the particular user for which sla will be updated
+        response = rpc_connection.liststreamkeyitems(users_manufacturer_stream, email_rcvd)
         json_string_manufacturer = json.dumps(response)
         json_string_manufacturer = json.loads(json_string_manufacturer)
+        #Logic for updating the SLA
         if len(json_string_manufacturer)>0:
-            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            json_data = json_string_manufacturer[-1]
+            json_data['data']['json']["license_certification"] = hash_sla
+            data = json_data['data']['json']
+            keys = json_data['keys']
+            print("keys: ",keys)
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["license_certification"]
+            txid = rpc_connection.publish('{}'.format(users_manufacturer_stream), keys,
+                                                                             {'json': data })
             print(Manufacturer_hash_sla)
         else:
             Manufacturer_hash_sla = 'None'
