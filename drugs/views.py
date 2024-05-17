@@ -1673,7 +1673,8 @@ def adddrugmenu(request):# Adding Drugs In Manufacturer Item Stream
 
 def adddrug(request): # Manufacturer Input
     print("\n\n")
-    if request.method == 'POST':    
+    if request.method == 'POST':
+
         data = json.loads(request.POST.get('product_data'))
         print("----PRODCUCTS fetched from MANUFACTURER.html screen----")
         print(data)
@@ -1688,95 +1689,120 @@ def adddrug(request): # Manufacturer Input
         print("----EMAIL----")
         print(email)
         print("--------\n")
-        structured_json = {
-            "products": []
-        }
 
-        for product in data["products"]:
+        #Logic for verifiying hash sla
 
-            ingredients_str = ", ".join(product["ingredients"])
-
-            structured_product = {
-                "product_name": bytes_to_base64(encrypt_data(product["product_name"])),
-                "product_code": bytes_to_base64(encrypt_data(product["product_code"])),
-                "description": bytes_to_base64(encrypt_data(product["description"])),
-                "ingredients": bytes_to_base64(encrypt_data(ingredients_str)),
-                "dosage": bytes_to_base64(encrypt_data(product["dosage"])),
-                "quantity_in_stock": bytes_to_base64(encrypt_data(str(product["quantity_in_stock"]))),
-                "unit_price": bytes_to_base64(encrypt_data(str(product["unit_price"]))),
-                "manufacturing_date": bytes_to_base64(encrypt_data(product["manufacturing_date"])),
-                "expiry_date": bytes_to_base64(encrypt_data(product["expiry_date"])),
-                "drugbank_id": bytes_to_base64(encrypt_data(product["drugbank_id"])),
-                "form": bytes_to_base64(encrypt_data(product["form"])),
-                "strength": bytes_to_base64(encrypt_data(product["strength"])),
-                "route": bytes_to_base64(encrypt_data(product["route"])),
-                "published_on": bytes_to_base64(encrypt_data(timestamp_utc))
-            }
-            structured_json["products"].append(structured_product)
-        
-        print(structured_json)
-        structured_json = json.dumps(structured_json, indent=4) #Converts OrderedDict to JSON String
-        structured_json = json.loads(structured_json) #Converts OrderedDict to JSON String
-
-
-        response = rpc_connection.liststreamitems(users_manufacturer_items_stream)
-        json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
-        json_string = json.loads(json_string) #Converts OrderedDict to JSON String
-        print('\n\nimp')
-        # print(json_string)
-        # Initialize an empty list to store keys
-        all_keys = []
-
-        #NOTE:
-        #Convert the logic to not consider the last index of each key array
-        #And adjust the check if for the keys
-        # Loop through each dictionary in the list and extract keys
-
-        for item in json_string:
-            keys = item['keys'][:-1]  # Remove the last element (timestamp)
-            all_keys.append(keys)
-            
-        print(all_keys)
-
-        input_key = [email,product["product_code"],batchid,product["product_name"]]
-        # Convert the list to a set for comparison
-        input_key_set = set(input_key)
-
-        # Check if any inner list in all_keys matches input_key
-        for key_list in all_keys:
-            if set(key_list) == input_key_set:
-                print("Match found:", key_list)
-                # return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})
-                return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'This Item already exists!'})
-                #Output a pop up on the screen saying the item exists
-                #also return a page show the exact details of the existing item
+        #Getting hash sla from the user stream
+        response = rpc_connection.liststreamkeyitems(users_manufacturer_stream, email)
+        json_string = json.dumps(response)
+        json_string = json.loads(json_string)
+        print(json_string)
+        fetched_sla = json_string[-1]['data']['json']['license_certification']
+        print("Fetched SLA from SLA stream", fetched_sla)
+        #Getting hash sla from the SLA stream
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print("Fetched SLA from USER stream",Manufacturer_hash_sla)
         else:
-            print("No match found")
-            x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream))
-            #publish data on the chain
-            txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,
-                                                                                         product["product_code"],
-                                                                                         batchid,
-                                                                                         product["product_name"],
-                                                                                         timestamp_utc
-                                                                                         ],
-                                                                                         {   'json': {
-                                                                                             'manufacturer': bytes_to_base64(encrypt_data(manufacturer)),
-                                                                                             'batchId': bytes_to_base64(encrypt_data(batchid)),
-                                                                                             'email': bytes_to_base64(encrypt_data(email)),
-                                                                                             'products': list(structured_json['products'])}})#Add a timestamp for sub logic
-            
-            qr_data = {
-                "manufacturer_email": email,
-                "Product_code": product["product_code"],
-                "Batch_id": batchid,
-                "product_name": product["product_name"] 
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+
+        if fetched_sla==Manufacturer_hash_sla:
+            structured_json = {
+                "products": []
             }
 
-            #Generating QR CODE for the product
-            generate_qr_code(email,product["product_code"],batchid,product["product_name"] )
+            for product in data["products"]:
 
-            return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
+                ingredients_str = ", ".join(product["ingredients"])
+
+                structured_product = {
+                    "product_name": bytes_to_base64(encrypt_data(product["product_name"])),
+                    "product_code": bytes_to_base64(encrypt_data(product["product_code"])),
+                    "description": bytes_to_base64(encrypt_data(product["description"])),
+                    "ingredients": bytes_to_base64(encrypt_data(ingredients_str)),
+                    "dosage": bytes_to_base64(encrypt_data(product["dosage"])),
+                    "quantity_in_stock": bytes_to_base64(encrypt_data(str(product["quantity_in_stock"]))),
+                    "unit_price": bytes_to_base64(encrypt_data(str(product["unit_price"]))),
+                    "manufacturing_date": bytes_to_base64(encrypt_data(product["manufacturing_date"])),
+                    "expiry_date": bytes_to_base64(encrypt_data(product["expiry_date"])),
+                    "drugbank_id": bytes_to_base64(encrypt_data(product["drugbank_id"])),
+                    "form": bytes_to_base64(encrypt_data(product["form"])),
+                    "strength": bytes_to_base64(encrypt_data(product["strength"])),
+                    "route": bytes_to_base64(encrypt_data(product["route"])),
+                    "published_on": bytes_to_base64(encrypt_data(timestamp_utc))
+                }
+                structured_json["products"].append(structured_product)
+
+            print(structured_json)
+            structured_json = json.dumps(structured_json, indent=4) #Converts OrderedDict to JSON String
+            structured_json = json.loads(structured_json) #Converts OrderedDict to JSON String
+
+
+            response = rpc_connection.liststreamitems(users_manufacturer_items_stream)
+            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+            json_string = json.loads(json_string) #Converts OrderedDict to JSON String
+            print('\n\nimp')
+            # print(json_string)
+            # Initialize an empty list to store keys
+            all_keys = []
+
+            #NOTE:
+            #Convert the logic to not consider the last index of each key array
+            #And adjust the check if for the keys
+            # Loop through each dictionary in the list and extract keys
+
+            for item in json_string:
+                keys = item['keys'][:-1]  # Remove the last element (timestamp)
+                all_keys.append(keys)
+
+            print(all_keys)
+
+            input_key = [email,product["product_code"],batchid,product["product_name"]]
+            # Convert the list to a set for comparison
+            input_key_set = set(input_key)
+
+            # Check if any inner list in all_keys matches input_key
+            for key_list in all_keys:
+                if set(key_list) == input_key_set:
+                    print("Match found:", key_list)
+                    # return render(request, "manufacturer.html", {"error": "Failed to publish data to MultiChain"})
+                    return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'This Item already exists!'})
+                    #Output a pop up on the screen saying the item exists
+                    #also return a page show the exact details of the existing item
+            else:
+                print("No match found")
+                x = rpc_connection.subscribe('{}'.format(users_manufacturer_items_stream))
+                #publish data on the chain
+                txid = rpc_connection.publish('{}'.format(users_manufacturer_items_stream), [email,
+                                                                                             product["product_code"],
+                                                                                             batchid,
+                                                                                             product["product_name"],
+                                                                                             timestamp_utc
+                                                                                             ],
+                                                                                             {   'json': {
+                                                                                                 'manufacturer': bytes_to_base64(encrypt_data(manufacturer)),
+                                                                                                 'batchId': bytes_to_base64(encrypt_data(batchid)),
+                                                                                                 'email': bytes_to_base64(encrypt_data(email)),
+                                                                                                 'products': list(structured_json['products'])}})#Add a timestamp for sub logic
+
+                qr_data = {
+                    "manufacturer_email": email,
+                    "Product_code": product["product_code"],
+                    "Batch_id": batchid,
+                    "product_name": product["product_name"] 
+                }
+
+                #Generating QR CODE for the product
+                generate_qr_code(email,product["product_code"],batchid,product["product_name"] )
+
+                return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
+        else:
+            return render(request, "manuupdatesla.html",{'company_info': manufacturer,'email':email,'Manufacturer_hash_sla':Manufacturer_hash_sla}) 
+
 
 def manuupdatesla(request):# Adding Drugs In Manufacturer Item Stream
     print('manage_sla user')
@@ -1785,11 +1811,13 @@ def manuupdatesla(request):# Adding Drugs In Manufacturer Item Stream
         company_info = request.POST.get('company_info',None)
 
         #Manufacturer SLA
-        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        #Getting hash sla from the user stream
+        response = rpc_connection.liststreamkeyitems(users_manufacturer_stream, email_rcvd)
         json_string_manufacturer = json.dumps(response)
         json_string_manufacturer = json.loads(json_string_manufacturer)
+        print(json_string_manufacturer)
         if len(json_string_manufacturer)>0:
-            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["license_certification"]
             print(Manufacturer_hash_sla)
         else:
             Manufacturer_hash_sla = 'None'
