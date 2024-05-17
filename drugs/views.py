@@ -3250,11 +3250,12 @@ def pharmupdatesla(request):# Adding Drugs In Manufacturer Item Stream
         company_info = request.POST.get('company_info',None)
 
         #Pharmacy SLA
-        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+        response = rpc_connection.liststreamkeyitems(users_pharmacy_stream,email_rcvd)
         json_string_pharmacy = json.dumps(response)
         json_string_pharmacy = json.loads(json_string_pharmacy)
+        print(json_string_pharmacy)
         if len(json_string_pharmacy)>0:
-            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
+            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["license_certification"]
             print(pharmacy_hash_sla)
         else:
             pharmacy_hash_sla = 'None'
@@ -3273,23 +3274,27 @@ def pharm_sla_upload(request):
         print(email_rcvd)
         print(company_info)
         print(hash_sla)
-        txid = rpc_connection.publish('{}'.format(pharmacy_SLA_stream), ['Manufacturer',
-                                                                                   timestamp_utc  
-                                                                             ],
-                                                                             {'json': {
-                                                                                 "hash_sla": hash_sla}})
-        #Pharmacy SLA
-        response = rpc_connection.liststreamitems(pharmacy_SLA_stream)
+
+        #Getting the particular user for which sla will be updated
+        response = rpc_connection.liststreamkeyitems(users_pharmacy_stream, email_rcvd)
         json_string_pharmacy = json.dumps(response)
         json_string_pharmacy = json.loads(json_string_pharmacy)
+        #Logic for updating the SLA
         if len(json_string_pharmacy)>0:
-            pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["hash_sla"]
-            print(pharmacy_hash_sla)
+            json_data = json_string_pharmacy[-1]
+            json_data['data']['json']["license_certification"] = hash_sla
+            data = json_data['data']['json']
+            keys = json_data['keys']
+            print("keys: ",keys)
+            Pharmacy_hash_sla = json_string_pharmacy[-1]['data']['json']["license_certification"]
+            txid = rpc_connection.publish('{}'.format(users_pharmacy_stream), keys,
+                                                                             {'json': data })
+            print(Pharmacy_hash_sla)
         else:
-            pharmacy_hash_sla = 'None'
-            print(pharmacy_hash_sla)
+            Pharmacy_hash_sla = 'None'
+            print(Pharmacy_hash_sla)
 
-    return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd,'pharmacy_hash_sla':pharmacy_hash_sla})
+    return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd,'pharmacy_hash_sla':Pharmacy_hash_sla})
 
 def getdetails(request):
     patid = int(request.GET['patid'])
