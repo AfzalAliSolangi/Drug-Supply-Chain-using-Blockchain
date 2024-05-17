@@ -2709,11 +2709,13 @@ def distupdatesla(request):# Adding Drugs In Manufacturer Item Stream
         company_info = request.POST.get('company_info',None)
 
         #Distributor SLA
-        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        #Getting hash sla from the user stream
+        response = rpc_connection.liststreamkeyitems(users_distributor_stream,email_rcvd)
         json_string_distributor = json.dumps(response)
         json_string_distributor = json.loads(json_string_distributor)
+        print(json_string_distributor)
         if len(json_string_distributor)>0:
-            distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            distributor_hash_sla = json_string_distributor[-1]['data']['json']["license_certification"]
             print(distributor_hash_sla)
         else:
             distributor_hash_sla = 'None'
