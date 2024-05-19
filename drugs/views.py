@@ -1371,46 +1371,73 @@ def manuorders(request): #If manufacturer is already logged in and move to other
 def manuordercancel(request):
     print('\Cancel Orders From distributors\n')
     if request.method == 'POST':
+        email_rcvd = request.POST.get('email')
+        print('email',email_rcvd)
+        Company_name = request.POST.get('company_info')
+        print('Company_name',Company_name)
+
         selectedOrders = request.POST.get('selectedOrders', None)
         print(selectedOrders)
         selectedOrders = json.loads(selectedOrders)
+        
+        #Getting hash sla from the user stream
+        response = rpc_connection.liststreamkeyitems(users_manufacturer_stream, email_rcvd)
+        json_string = json.dumps(response)
+        json_string = json.loads(json_string)
+        print(json_string)
+        fetched_sla = json_string[-1]['data']['json']['license_certification']
+        print("Fetched SLA from SLA stream", fetched_sla)
+        #Getting hash sla from the SLA stream
+        response = rpc_connection.liststreamitems(manufacturer_SLA_stream)
+        json_string_manufacturer = json.dumps(response)
+        json_string_manufacturer = json.loads(json_string_manufacturer)
+        if len(json_string_manufacturer)>0:
+            Manufacturer_hash_sla = json_string_manufacturer[-1]['data']['json']["hash_sla"]
+            print("Fetched SLA from USER stream",Manufacturer_hash_sla)
+        else:
+            Manufacturer_hash_sla = 'None'
+            print(Manufacturer_hash_sla)
+        
 
-        for i in range(len(selectedOrders)):
-            order = selectedOrders[i]
-            print('--------------------------------\n')
-            print(order)
-            print('--------------------------------\n')
-            orderid = order['orderId']
-            traxid = order['trxId']
-            Distributor_name = order['distributor']
-            Manufacturer_email = order['manufacturer_email']
-            distributor_email = order['distributor_email']
-            batchId = order['batchId']
-            product_name = order['product_name']
-            product_code = order['productCode']
-            order_timestamp = order['timestamp']
-            quantity_frm_order = order['quantity'] 
-            totalprice = order['status'] 
-            timestamp_utc = datetime.datetime.utcnow().isoformat()
+        if fetched_sla==Manufacturer_hash_sla:
+            for i in range(len(selectedOrders)):
+                order = selectedOrders[i]
+                print('--------------------------------\n')
+                print(order)
+                print('--------------------------------\n')
+                orderid = order['orderId']
+                traxid = order['trxId']
+                Distributor_name = order['distributor']
+                Manufacturer_email = order['manufacturer_email']
+                distributor_email = order['distributor_email']
+                batchId = order['batchId']
+                product_name = order['product_name']
+                product_code = order['productCode']
+                order_timestamp = order['timestamp']
+                quantity_frm_order = order['quantity'] 
+                totalprice = order['status'] 
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
 
-            #for debugging
-            print('Order_ID :', orderid)
-            print('traxid :', traxid)
-            print('Distributor_name :', Distributor_name)
-            print('Manufacturer_email :',Manufacturer_email)
-            print('distributor_email :',distributor_email)
-            print('batchId :',batchId)
-            print('product_code :', product_code)
-            print('timestamp :',order_timestamp)
-            print('quantity_frm_order :', quantity_frm_order)
-            print('Total Price :', totalprice)
-            timestamp_utc = datetime.datetime.utcnow().isoformat()
-            txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [orderid,Distributor_name,Manufacturer_email,distributor_email,quantity_frm_order, batchId, product_code, product_name,order_timestamp, timestamp_utc],{'json': {
+                #for debugging
+                print('Order_ID :', orderid)
+                print('traxid :', traxid)
+                print('Distributor_name :', Distributor_name)
+                print('Manufacturer_email :',Manufacturer_email)
+                print('distributor_email :',distributor_email)
+                print('batchId :',batchId)
+                print('product_code :', product_code)
+                print('timestamp :',order_timestamp)
+                print('quantity_frm_order :', quantity_frm_order)
+                print('Total Price :', totalprice)
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
+                txid = rpc_connection.publish('{}'.format(manufacturer_orders_stream), [orderid,Distributor_name,Manufacturer_email,distributor_email,quantity_frm_order, batchId, product_code, product_name,order_timestamp, timestamp_utc],{'json': {
                                                                                                                                                                                'confirmed': 'Cancelled',
                                                                                                                                                                                'totalprice' : totalprice
                                                                                                                                                                            }})
-        return HttpResponse("Order Cancelled!")
-
+            return HttpResponse("Order Cancelled!")
+        else:
+             return render(request, "manuupdatesla.html",{'company_info': Company_name,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
+        
 def manuorderconfirm(request):
     print('\nConfirm Orders From distributors\n')
     if request.method == 'POST':
