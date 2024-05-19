@@ -1441,6 +1441,8 @@ def manuordercancel(request):
 def manuorderconfirm(request):
     print('\nConfirm Orders From distributors\n')
     if request.method == 'POST':
+        
+
         selectedOrders = request.POST.get('selectedOrders', None)
         print(selectedOrders)
 
