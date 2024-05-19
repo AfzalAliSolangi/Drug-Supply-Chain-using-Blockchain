@@ -327,8 +327,8 @@ button#searchButton:hover {
       </div>
   
       <div class="ms-auto">
-          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm()">Confirm</button>
-          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel()">Cancel</button>
+          <button id="confirmButton" class="btn btn-success me-2" onclick="handleConfirm('{{ email }}', '{{ company_info }}')">Confirm</button>
+          <button id="cancelButton" class="btn btn-danger" onclick="handleCancel('{{ email }}', '{{ company_info }}')">Cancel</button>
       </div>
   </div>
 
@@ -588,7 +588,7 @@ button#searchButton:hover {
   }
 
 
-  function handleConfirm() {
+  function handleConfirm(email, company_info) {
     console.log("Confirmed Orders:", selectedOrders);
     // Additional logic for confirming orders can be added here
     // Add an input field for the selectedOrders data
@@ -603,11 +603,23 @@ button#searchButton:hover {
     selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
     form.appendChild(selectedOrdersInput);
 
+    const emailInput = document.createElement("input");
+    emailInput.type = "hidden";
+    emailInput.name = "email";
+    emailInput.value = email;
+    form.appendChild(emailInput);
+
+    const companyinfoInput = document.createElement("input");
+    companyinfoInput.type = "hidden";
+    companyinfoInput.name = "company_info";
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+
     document.body.appendChild(form);
     form.submit();
   }
 
-  function handleCancel() {
+  function handleCancel(email, company_info) {
     console.log("Cancelled Action");
     console.log("Confirmed Orders:", selectedOrders);
     // Logic to handle a cancellation or clear selections can be added here
@@ -622,6 +634,19 @@ button#searchButton:hover {
     selectedOrdersInput.name = 'selectedOrders';  // Name to use in Django for the selectedOrders data
     selectedOrdersInput.value = JSON.stringify(selectedOrders); // Serialize selectedOrders as JSON
     form.appendChild(selectedOrdersInput);
+
+    const emailInput = document.createElement("input");
+    emailInput.type = "hidden";
+    emailInput.name = "email";
+    emailInput.value = email;
+    form.appendChild(emailInput);
+
+    const companyinfoInput = document.createElement("input");
+    companyinfoInput.type = "hidden";
+    companyinfoInput.name = "company_info";
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+
     document.body.appendChild(form);
     form.submit();
   }

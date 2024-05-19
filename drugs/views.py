@@ -2457,53 +2457,79 @@ def pharmorders(request):
 def distordercancel(request):
     print('\Cancel Orders From Pharmacies\n')
     if request.method == 'POST':
-        selectedOrders = request.POST.get('selectedOrders', None)
-        print(selectedOrders)
-        selectedOrders = json.loads(selectedOrders)
-        for i in range(len(selectedOrders)):
-            order = selectedOrders[i]
-            print('--------------------------------\n')
-            print(order)
-            print('--------------------------------\n')
-            orderid = order['orderId']
-            traxid = order['trxId']
-            Pharmacy_name = order['distributor']
-            distributor_email = order['manufacturer_email']
-            pharmacy_email = order['distributor_email']
-            batchId = order['batchId']
-            product_name = order['product_name']
-            product_code = order['productCode']
-            order_timestamp = order['timestamp']
-            quantity_frm_order = order['quantity'] 
-            totalprice = order['status']  
-            timestamp_utc = datetime.datetime.utcnow().isoformat()
+        email_dist = request.POST.get('email', None)
+        comp_info = request.POST.get('comp_info', None) # Manufacturer name being passed from Distributor.html
+        print("1 ",email_dist)
+        print("2 ",comp_info)
 
-            #for debugging
-            print('Order_ID :', orderid)
-            print('traxid :', traxid)
-            print('Pharmacy_name :', Pharmacy_name)
-            print('distributor_email :',distributor_email)
-            print('pharmacy_email :',pharmacy_email)
-            print('batchId :',batchId)
-            print('product_code :', product_code)
-            print('timestamp :',order_timestamp)
-            print('quantity_frm_order :', quantity_frm_order)
-            print('Total Price :', totalprice)
-            timestamp_utc = datetime.datetime.utcnow().isoformat()
+        #Getting hash sla from the user stream
+        response = rpc_connection.liststreamkeyitems(users_distributor_stream, email_dist)
+        json_string = json.dumps(response)
+        json_string = json.loads(json_string)
+        print(json_string)
+        fetched_sla = json_string[-1]['data']['json']['license_certification']
+        print("Fetched SLA from SLA stream", fetched_sla)
+        #Getting hash sla from the SLA stream
+        response = rpc_connection.liststreamitems(distributor_SLA_stream)
+        json_string_distributor = json.dumps(response)
+        json_string_distributor = json.loads(json_string_distributor)
+        if len(json_string_distributor)>0:
+            Distributor_hash_sla = json_string_distributor[-1]['data']['json']["hash_sla"]
+            print("Fetched SLA from USER stream",Distributor_hash_sla)
+        else:
+            Distributor_hash_sla = 'None'
+            print(Distributor_hash_sla)
 
-            Manufacturer_email =  rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [orderid, Pharmacy_name, distributor_email, pharmacy_email, batchId, product_code, product_name,order_timestamp]})        # Have a logic which fetches out items based on latest_timestamp
-            Manufacturer_email = json.dumps(Manufacturer_email)
-            Manufacturer_email = json.loads(Manufacturer_email)
-            print(Manufacturer_email)
-            Manufacturer_email = Manufacturer_email[0]['keys'][4]
+        if fetched_sla==Distributor_hash_sla:
+            selectedOrders = request.POST.get('selectedOrders', None)
+            print(selectedOrders)
+            selectedOrders = json.loads(selectedOrders)
+            for i in range(len(selectedOrders)):
+                order = selectedOrders[i]
+                print('--------------------------------\n')
+                print(order)
+                print('--------------------------------\n')
+                orderid = order['orderId']
+                traxid = order['trxId']
+                Pharmacy_name = order['distributor']
+                distributor_email = order['manufacturer_email']
+                pharmacy_email = order['distributor_email']
+                batchId = order['batchId']
+                product_name = order['product_name']
+                product_code = order['productCode']
+                order_timestamp = order['timestamp']
+                quantity_frm_order = order['quantity'] 
+                totalprice = order['status']  
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
 
-            txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [orderid, Pharmacy_name,distributor_email,pharmacy_email,Manufacturer_email,quantity_frm_order, batchId, product_code, product_name, order_timestamp, timestamp_utc],{'json': {
-                                                                                                                                                                               'confirmed': 'Cancelled',
-                                                                                                                                                                               'totalprice' : totalprice
-                                                                                                                                                                               }})
+                #for debugging
+                print('Order_ID :', orderid)
+                print('traxid :', traxid)
+                print('Pharmacy_name :', Pharmacy_name)
+                print('distributor_email :',distributor_email)
+                print('pharmacy_email :',pharmacy_email)
+                print('batchId :',batchId)
+                print('product_code :', product_code)
+                print('timestamp :',order_timestamp)
+                print('quantity_frm_order :', quantity_frm_order)
+                print('Total Price :', totalprice)
+                timestamp_utc = datetime.datetime.utcnow().isoformat()
 
-        return HttpResponse("Order Cancelled!")
+                Manufacturer_email =  rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [orderid, Pharmacy_name, distributor_email, pharmacy_email, batchId, product_code, product_name,order_timestamp]})        # Have a logic which fetches out items based on latest_timestamp
+                Manufacturer_email = json.dumps(Manufacturer_email)
+                Manufacturer_email = json.loads(Manufacturer_email)
+                print(Manufacturer_email)
+                Manufacturer_email = Manufacturer_email[0]['keys'][4]
 
+                txid = rpc_connection.publish('{}'.format(distributor_orders_stream), [orderid, Pharmacy_name,distributor_email,pharmacy_email,Manufacturer_email,quantity_frm_order, batchId, product_code, product_name, order_timestamp, timestamp_utc],{'json': {
+                                                                                                                                                                                   'confirmed': 'Cancelled',
+                                                                                                                                                                                   'totalprice' : totalprice
+                                                                                                                                                                                   }})
+
+            return HttpResponse("Order Cancelled!")
+        else:
+            return render(request, "distupdatesla.html",{'company_info': comp_info,'email':email_dist,'distributor_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
+    
 def distorderconfirm(request):
     print('\nConfirm Orders From Pharmacies\n')
     if request.method == 'POST':
