@@ -1801,7 +1801,7 @@ def adddrug(request): # Manufacturer Input
 
                 return render(request, "adddrug1.html", {'company_info': manufacturer,'email':email, 'message': 'Drug Added'})
         else:
-            return render(request, "manuupdatesla.html",{'company_info': manufacturer,'email':email,'Manufacturer_hash_sla':Manufacturer_hash_sla}) 
+            return render(request, "manuupdatesla.html",{'company_info': manufacturer,'email':email,'Manufacturer_hash_sla':Manufacturer_hash_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
 
 
 def manuupdatesla(request):# Adding Drugs In Manufacturer Item Stream
