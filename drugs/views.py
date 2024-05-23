@@ -1498,7 +1498,7 @@ def manuordercancel(request):
 
             # Print the resulting list of dictionaries
             print(orders)
-            return render(request, "manufacturer1.html",{'comp_info': Company_name,'email':email_rcvd, 'company_info': Company_name,'orders': orders})
+            return render(request, "manufacturer1.html",{'comp_info': Company_name,'email':email_rcvd, 'company_info': Company_name,'orders': orders,'message': 'Order Request Cancelled!'})
         else:
              return render(request, "manuupdatesla.html",{'company_info': Company_name,'email':email_rcvd,'Manufacturer_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
         
@@ -1779,7 +1779,7 @@ def manuorderconfirm(request):
 
             # Print the resulting list of dictionaries
             print(orders)
-            return render(request, "manufacturer1.html",{'comp_info': Company_name,'email':email_rcvd, 'company_info': Company_name,'orders': orders})
+            return render(request, "manufacturer1.html",{'comp_info': Company_name,'email':email_rcvd, 'company_info': Company_name,'orders': orders,'message': 'Order Request Confirmed!'})
         else:
             return render(request, "manuupdatesla.html",{'company_info': Company_name,'email':email_rcvd,'Manufacturer_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
         
