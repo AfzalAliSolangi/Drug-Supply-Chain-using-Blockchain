@@ -3747,8 +3747,27 @@ def hostpitalinput(request):
 
 def qrscanned(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        scanned_data = json.loads(data.get('scannedData'))  # Parse the JSON string
+        required_keys = ['manufacturer_email', 'Product_code', 'Batch_id', 'product_name']
+        scanned_data = {}
+
+        try:
+            # Attempt to load the JSON data from request.body
+            data = json.loads(request.body)
+            scanned_data_str = data.get('scannedData')
+
+            if scanned_data_str:
+                try:
+                    # Attempt to load the scanned data JSON string
+                    scanned_data = json.loads(scanned_data_str)
+                except json.JSONDecodeError:
+                    pass  # Continue to set keys to empty string
+        except json.JSONDecodeError:
+            pass  # Continue to set keys to empty string
+
+        # Set missing keys to empty string
+        for key in required_keys:
+            if key not in scanned_data:
+                scanned_data[key] = ''
 
         Manufacturer_email = scanned_data['manufacturer_email']
         Product_code = scanned_data['Product_code']
@@ -3760,33 +3779,33 @@ def qrscanned(request):
         print(Batch_id)
         print(product_name)
 
-        #Manufacturer
-        result = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys': [Manufacturer_email,Product_code, Batch_id,product_name]})
+        # Manufacturer
+        result = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys': [Manufacturer_email, Product_code, Batch_id, product_name]})
         data = json.dumps(result)
         json_load = json.loads(data)
-        # print(json_load)
-        if(len(json_load)>0):
-            print('Exists In Manufacturer Items Stream')
+        if len(json_load) > 0:
+            print('Item exists in Manufacturer items Stream.')
         else:
-            print('no')
+            print('Item does not exist in Manufacturer items Stream.')
 
-        #Distributor
-        result = rpc_connection.liststreamqueryitems('{}'.format(users_distributor_items_stream), {'keys': [Manufacturer_email,Product_code, Batch_id,product_name]})
+        # Distributor
+        result = rpc_connection.liststreamqueryitems('{}'.format(users_distributor_items_stream), {'keys': [Manufacturer_email, Product_code, Batch_id, product_name]})
         data = json.dumps(result)
         json_load = json.loads(data)
-        # print(json_load)
-        if(len(json_load)>0):
-            print('Exists In Distributor Items Stream')
+        if len(json_load) > 0:
+            print('Item exists in Distributor items Stream.')
         else:
-            print('no')
+            print('Item does not exist in Distributor items Stream.')
 
-        #Pharmacy
-        result = rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [Manufacturer_email,Product_code, Batch_id,product_name]})
+        # Pharmacy
+        result = rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [Manufacturer_email, Product_code, Batch_id, product_name]})
         data = json.dumps(result)
         json_load = json.loads(data)
-        # print(json_load)
-        if(len(json_load)>0):
-            print('Exists In Pharmacy Items Stream')
+        if len(json_load) > 0:
+            print('Item exists in Pharmacy items Stream.')
         else:
-            print('no')
+            print('Item does not exist in Pharmacy items Stream.')
+
         return HttpResponse('ok')
+    else:
+        return HttpResponse('Invalid method', status=405)
