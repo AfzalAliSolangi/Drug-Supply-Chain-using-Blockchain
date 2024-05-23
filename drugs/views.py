@@ -200,7 +200,7 @@ def login_check_master(request): #Implement Password authentication
             print(passw_frm_chain)
             if email_rcvd==email_frm_chain and check_password(password_rcvd, passw_frm_chain):
                 print(email_rcvd)
-                return render(request, "select_usertype.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name})
+                return render(request, "select_usertype.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'message': f'Welcome, {manufacturer_name}!'})
             else:
                 return render(request, "login_master.html", {'error_message': "Incorrect email or password."})
         else:
