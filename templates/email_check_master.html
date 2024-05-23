@@ -34,6 +34,8 @@
       padding: 45px;
       text-align: center;
       box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+      border: transparent;
+      border-radius: 10px;
     }
 
     .form input {
@@ -97,7 +99,7 @@
         <form class="login-form" action="email_check_master" method="post">
           {%csrf_token%}
           <input name='email' type="text" placeholder="email" />
-          <button>Procced</button>
+          <button>PROCEED</button>
         </form>
       </div>
     </div>
