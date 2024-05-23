@@ -3292,7 +3292,7 @@ def login_check_pharmacy(request): #Implement Password authentication
                     # Print the resulting list of dictionaries
                     print(orders)
                 #####
-                    return render(request, "pharmacy1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': pharmacy_name, 'orders':orders })
+                    return render(request, "pharmacy1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': pharmacy_name, 'orders':orders, 'message':f'Welcome, {pharmacy_name}!'})
                 else:
                     return render(request, "login_pharmacy.html", {'error_message': "Incorrect email or password."})
             elif isActive=='False':
