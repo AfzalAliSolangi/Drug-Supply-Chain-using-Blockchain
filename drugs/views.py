@@ -3784,27 +3784,32 @@ def qrscanned(request):
         data = json.dumps(result)
         json_load = json.loads(data)
         if len(json_load) > 0:
-            print('Item exists in Manufacturer items Stream.')
+            rep1 = 'Item exists in Manufacturer items Stream.'
         else:
-            print('Item does not exist in Manufacturer items Stream.')
+            rep1 = 'Item does not exist in Manufacturer items Stream.'
 
         # Distributor
         result = rpc_connection.liststreamqueryitems('{}'.format(users_distributor_items_stream), {'keys': [Manufacturer_email, Product_code, Batch_id, product_name]})
         data = json.dumps(result)
         json_load = json.loads(data)
         if len(json_load) > 0:
-            print('Item exists in Distributor items Stream.')
+            rep2 = 'Item exists in Distributor items Stream.'
         else:
-            print('Item does not exist in Distributor items Stream.')
+            rep2 = 'Item does not exist in Distributor items Stream.'
 
         # Pharmacy
         result = rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [Manufacturer_email, Product_code, Batch_id, product_name]})
         data = json.dumps(result)
         json_load = json.loads(data)
         if len(json_load) > 0:
-            print('Item exists in Pharmacy items Stream.')
+            rep3 = 'Item exists in Pharmacy items Stream.'
         else:
-            print('Item does not exist in Pharmacy items Stream.')
+            rep3 = 'Item does not exist in Pharmacy items Stream.'
+
+
+        print(rep1)
+        print(rep2)
+        print(rep3)
 
         return HttpResponse('ok')
     else:
