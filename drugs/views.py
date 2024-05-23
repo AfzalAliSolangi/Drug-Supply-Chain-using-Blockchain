@@ -3760,4 +3760,33 @@ def qrscanned(request):
         print(Batch_id)
         print(product_name)
 
+        #Manufacturer
+        result = rpc_connection.liststreamqueryitems('{}'.format(users_manufacturer_items_stream), {'keys': [Manufacturer_email,Product_code, Batch_id,product_name]})
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        # print(json_load)
+        if(len(json_load)>0):
+            print('Exists In Manufacturer Items Stream')
+        else:
+            print('no')
+
+        #Distributor
+        result = rpc_connection.liststreamqueryitems('{}'.format(users_distributor_items_stream), {'keys': [Manufacturer_email,Product_code, Batch_id,product_name]})
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        # print(json_load)
+        if(len(json_load)>0):
+            print('Exists In Distributor Items Stream')
+        else:
+            print('no')
+
+        #Pharmacy
+        result = rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [Manufacturer_email,Product_code, Batch_id,product_name]})
+        data = json.dumps(result)
+        json_load = json.loads(data)
+        # print(json_load)
+        if(len(json_load)>0):
+            print('Exists In Pharmacy Items Stream')
+        else:
+            print('no')
         return HttpResponse('ok')
