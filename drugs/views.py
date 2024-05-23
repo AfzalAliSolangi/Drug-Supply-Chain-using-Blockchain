@@ -3746,3 +3746,8 @@ def hostpitalinput(request):
         return render(request, "hospitalinput.html", {"error": "Failed to publish data to MultiChain"})
 
 
+def qrscanned(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        scanned_data = data.get('scannedData')
+        print(f"Received scanned data: {scanned_data}")

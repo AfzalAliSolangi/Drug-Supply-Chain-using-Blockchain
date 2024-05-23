@@ -68,4 +68,5 @@ urlpatterns = [
     path('process_registration_master', views.process_registration_master, name='process_registration_master'),
     path('process_registration_distributor', views.process_registration_distributor, name='process_registration_distributor'),
     path('process_registration_pharmacy', views.process_registration_pharmacy, name='process_registration_pharmacy'),
+    path('qrscanned', views.qrscanned, name='qrscanned'),
 ]
