@@ -2719,7 +2719,7 @@ def distordercancel(request):
             print(orders)
             # return render(request, "distributor_orders.html",{'orders': orders})
 
-            return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders})
+            return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders,'message': 'Order Request Cancelled!'})
         else:
             return render(request, "distupdatesla.html",{'company_info': comp_info,'email':email_dist,'distributor_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
     
@@ -3007,7 +3007,7 @@ def distorderconfirm(request):
             print(orders)
             # return render(request, "distributor_orders.html",{'orders': orders})
 
-            return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders})
+            return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders,'message': 'Order Request Confirmed!'})
         else:
             return render(request, "distupdatesla.html",{'company_info': comp_info,'email':email_dist,'distributor_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
         
