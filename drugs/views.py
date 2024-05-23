@@ -2207,7 +2207,7 @@ def login_check_distributor(request):
 
                     # return render(request, "distributor_orders.html",{'orders': orders})
 
-                    return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders})
+                    return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders,'message':f'Welcome, {manufacturer_name}!'})
                 else:
                     return render(request, "login_distributor.html", {'error_message': "Incorrect email or password."})
             elif isActive=='False':
