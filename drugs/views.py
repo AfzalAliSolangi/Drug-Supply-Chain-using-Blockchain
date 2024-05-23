@@ -2653,8 +2653,73 @@ def distordercancel(request):
                                                                                                                                                                                    'confirmed': 'Cancelled',
                                                                                                                                                                                    'totalprice' : totalprice
                                                                                                                                                                                    }})
+            response = rpc_connection.liststreamqueryitems('{}'.format(distributor_orders_stream), {'keys': [email_dist]})
+            json_string = json.dumps(response, indent=4) #Converts OrderedDict to JSON String
+            json_string = json.loads(json_string) #Converts OrderedDict to JSON String
 
-            return HttpResponse("Order Cancelled!")
+            print(json_string)
+            combined_list = []
+            for item in json_string:
+                keys = item['keys']
+                traxid = item['txid']
+                confirmed_status = item['data']['json']['confirmed']
+                totalprice = item['data']['json']['totalprice']
+                modified_keys = keys[:9] + [traxid] + [totalprice] + keys[9:] + [confirmed_status]
+                combined_list.append(modified_keys)
+            print("\nCombined list\n")
+            print(combined_list)
+            # Sort the list based on the timestamp (second last index)
+            combined_list.sort(key=lambda x: x[-2], reverse=True)
+
+            #######################################################################################################            
+            #NOTE: This is the logic for finding the latest order based on timestamp
+            # Dictionary to store distinct orders based on combined elements (except the second last index) and timestamp
+            distinct_orders = {}
+
+            # Iterate through the sorted list and collect the latest orders based on combined elements and timestamp
+            for order in combined_list:
+                key = tuple(order[:9])  # Using elements at indices 0 to 7 as the key (excluding the second last index)
+                if key not in distinct_orders:
+                    distinct_orders[key] = order
+
+            # Convert the dictionary to a list of lists
+            distinct_orders_list = list(distinct_orders.values())
+            #######################################################################################################
+
+
+            # # Print the distinct orders
+            for order in distinct_orders_list:
+                print(order)
+            # Iterate over the combined_list
+            orders = []
+            for index, item in enumerate(distinct_orders_list):
+                # Create a dictionary for each element in the combined_list
+                orderPlaceOn = datetime.datetime.fromisoformat(item[11])
+                # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+                orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d')
+                order = {
+                    "orderid":item[0],
+                    "trxid": item[9],
+                    "Distributor_name": item[1],
+                    "Manufacturer_email": item[2],
+                    "distributor_email": item[3],
+                    "batchId": item[6],
+                    "product_name": item[8],
+                    "product_code": item[7],
+                    "orderPlaceOn": str(orderPlaceOn),
+                    "quantity": item[5],
+                    "tot_price": item[10],
+                    "confirmed": item[13],
+                    "timestamp": item[12],
+                    "manu_email": item[4],
+                }
+                # Append the dictionary to the orders list
+                orders.append(order)
+            # Print the resulting list of dictionaries
+            print(orders)
+            # return render(request, "distributor_orders.html",{'orders': orders})
+
+            return render(request, "Distributor1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders})
         else:
             return render(request, "distupdatesla.html",{'company_info': comp_info,'email':email_dist,'distributor_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
     
