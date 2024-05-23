@@ -1279,7 +1279,7 @@ def login_check_manufacturer(request): #Implement Password authentication
 
                     # Print the resulting list of dictionaries
                     print(orders)
-                    return render(request, "manufacturer1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders})
+                    return render(request, "manufacturer1.html",{'comp_info': comp_info,'email':email_rcvd, 'company_info': manufacturer_name,'orders': orders,'message':f'Welcome, {manufacturer_name}!'})
                 else:
                     return render(request, "login_manufacturer.html", {'error_message': "Incorrect email or password."})
         
