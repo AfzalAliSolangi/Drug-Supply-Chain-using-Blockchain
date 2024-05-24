@@ -98,7 +98,7 @@
         </div>
         <form class="login-form" action="email_check_distributor" method="post">
           {%csrf_token%}
-          <input name='email' type="text" placeholder="email" />
+          <input name='email' type="email" placeholder="email" required />
           <button>PROCEED</button>
         </form>
       </div>
