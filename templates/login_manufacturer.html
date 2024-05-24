@@ -135,7 +135,7 @@
       </div>
       <form class="login-form" action="login_check_manufacturer" method="post" id="loginForm">
         {% csrf_token %}
-        <input name='email' type="text" placeholder="email" />
+        <input name='email' type="email" placeholder="email" required />
         <input name='passw' type="password" placeholder="password" />
         <!-- Error message will be displayed here -->
         <div class="error-message">{{ error_message }}</div>

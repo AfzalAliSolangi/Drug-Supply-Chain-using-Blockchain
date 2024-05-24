@@ -114,8 +114,8 @@
       </div>
       <form class="login-form" action="login_check_master" method="post" id="loginForm">
         {% csrf_token %}
-        <input name='email' type="text" placeholder="email" />
-        <input name='passw' type="password" placeholder="password" />
+        <input name='email' type="email" placeholder="email" required />
+        <input name='passw' type="password" placeholder="password" required />
         <!-- Error message will be displayed here -->
         <div class="error-message">{{ error_message }}</div>
         <button type="submit">login</button>
