@@ -402,8 +402,8 @@ button#searchButton {
       <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Mfg Date:</label>
       <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
 
-      <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Exp Date:</label>
-      <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
+      <label for="dateInput1" style="margin-right: 0px; margin-left: 20px;">Exp Date:</label>
+      <input type="date" id="dateInput1" class="form-control ms-2 me-2" onchange="filterByDate1()" style="width: 180px;">
 
   <div class="cart-icon" onclick="viewCart()">
     <span class="icon-gradient">
@@ -416,7 +416,7 @@ button#searchButton {
 
 <div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
     <table id="ordersTable" class="table table-striped table-hover" style="margin-top: 20px;">
-    <table id="ordersTable">
+    <table id="ordersTable1">
         <thead>
           <tr>
             <th width="100" scope="col">Select</th>
@@ -426,8 +426,8 @@ button#searchButton {
             <th width="120" scope="col">strength</th>
             <th width="120" scope="col">Code</th>
             <th width="120" scope="col">Batch ID</th>
-            <th width="120" scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
-                In-Stock <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+            <th width="120" scope="col" onclick="sortTableByQuantity()" style="cursor: pointer;">
+                In-Stock <span id="priceSortIcon1" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
             </th>
             <th width="120" scope="col">Mfg Date</th>
             <th width="120" scope="col">Exp Date</th>
@@ -608,7 +608,7 @@ button#searchButton {
     function filterTable() {
       var input = document.getElementById('searchInput');
       var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
-      var table = document.getElementById('ordersTable');
+      var table = document.getElementById('ordersTable1');
       var tr = table.getElementsByTagName('tr');
     
       if (filter === "") {
@@ -623,12 +623,12 @@ button#searchButton {
       for (var i = 1; i < tr.length; i++) {
           var display = false; // Assume the row does not match
           // Define which columns to search (OrderID, Trx ID, Distributor, Product)
-          var tds = [tr[i].getElementsByTagName('td')[1], // Name
-                     tr[i].getElementsByTagName('td')[2], // Form   
-                     tr[i].getElementsByTagName('td')[3], // strength   
-                     tr[i].getElementsByTagName('td')[5], // Code
-                     tr[i].getElementsByTagName('td')[6], // Batch ID	
-                     tr[i].getElementsByTagName('td')[7], // Product Code
+          var tds = [
+          tr[i].getElementsByTagName('td')[2], // Name
+          tr[i].getElementsByTagName('td')[3], // Form   
+          tr[i].getElementsByTagName('td')[4], // Strength   
+          tr[i].getElementsByTagName('td')[5], // Code
+          tr[i].getElementsByTagName('td')[6], // Batch ID
                      ]; // Product
       
           for (var j = 0; j < tds.length; j++) {
@@ -656,31 +656,7 @@ button#searchButton {
 
     function filterByDate() {
       var dateInput = document.getElementById('dateInput').value;
-      var table = document.getElementById('ordersTable');
-      var tr = table.getElementsByTagName('tr');
-  
-      if (!dateInput) {
-          // If no date is entered, show all rows
-          for (var i = 1; i < tr.length; i++) {
-              tr[i].style.display = "";
-          }
-          return;
-      }
-  
-      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
-  
-      for (var i = 1; i < tr.length; i++) {
-          var td = tr[i].getElementsByTagName('td')[7]; // Assuming Date is the 5th column
-          if (td) {
-              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
-              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
-          }
-      }
-  }
-
-    function filterByDate1() {
-      var dateInput = document.getElementById('dateInput').value;
-      var table = document.getElementById('ordersTable');
+      var table = document.getElementById('ordersTable1');
       var tr = table.getElementsByTagName('tr');
   
       if (!dateInput) {
@@ -702,6 +678,30 @@ button#searchButton {
       }
   }
 
+    function filterByDate1() {
+      var dateInput = document.getElementById('dateInput1').value;
+      var table = document.getElementById('ordersTable1');
+      var tr = table.getElementsByTagName('tr');
+  
+      if (!dateInput) {
+          // If no date is entered, show all rows
+          for (var i = 1; i < tr.length; i++) {
+              tr[i].style.display = "";
+          }
+          return;
+      }
+  
+      var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+  
+      for (var i = 1; i < tr.length; i++) {
+          var td = tr[i].getElementsByTagName('td')[9]; // Assuming Date is the 5th column
+          if (td) {
+              var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
+              tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+          }
+      }
+  }
+
 
 
 
@@ -711,7 +711,7 @@ let priceSortAsc = true; // Initialize sort direction
 function sortTableByPrice() {
     var table, rows, switching, i, x, y, shouldSwitch;
     var sortIcon = document.getElementById('priceSortIcon');
-    table = document.getElementById("ordersTable");
+    table = document.getElementById("ordersTable1");
     switching = true;
 
     // Update icon based on current sort direction
@@ -726,8 +726,48 @@ function sortTableByPrice() {
         rows = table.getElementsByTagName("TR");
         for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
-            x = rows[i].getElementsByTagName("TD")[9];
-            y = rows[i + 1].getElementsByTagName("TD")[9];
+            x = rows[i].getElementsByTagName("TD")[10];
+            y = rows[i + 1].getElementsByTagName("TD")[10];
+            if (priceSortAsc) {
+                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+}
+
+function sortTableByQuantity() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    var sortIcon = document.getElementById('priceSortIcon1');
+    table = document.getElementById("ordersTable1");
+    switching = true;
+
+    // Update icon based on current sort direction
+    if (priceSortAsc) {
+        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
+    } else {
+        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+    }
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[7];
+            y = rows[i + 1].getElementsByTagName("TD")[7];
             if (priceSortAsc) {
                 if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
                     shouldSwitch = true;
