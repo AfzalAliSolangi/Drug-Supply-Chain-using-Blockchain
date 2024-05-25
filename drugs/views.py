@@ -2,6 +2,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.conf import settings
 import multichain
 import json
 import configparser
@@ -50,6 +52,13 @@ rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassw
 # Generate a secret key for encryption and decryption of the data
 SECRET_KEY = b'pGVMH7s1zlQMtcugRETEOx572lhVYcEjfSIn1X0OBCo='  # Generated using fernet.py
 cipher_suite = Fernet(SECRET_KEY)
+
+def send_otp_via_email(email,otp):
+    subject = 'MedConnect Email verification'
+    message = f'Hi,\nYour otp for verification is:  {otp}'
+    email_from = settings.EMAIL_HOST
+    send_mail(subject,message,email_from,[email])
+
 
 def capitalize_alphabets(s):
     result = ""
@@ -156,6 +165,7 @@ def email_check_master(request):
             if each_email==email:
                 print("present")
                 return render(request, "login_master.html",{'message':'User already registered, Please Log In!'}) #if the email is present prompt to login master page
+        send_otp_via_email(email,otp)
         return render(request, "tokin_master.html",{'email': email, 'otp': otp}) #if the email is not present then render this page
 
 def process_registration_master(request):
