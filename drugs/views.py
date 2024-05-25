@@ -53,11 +53,36 @@ rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassw
 SECRET_KEY = b'pGVMH7s1zlQMtcugRETEOx572lhVYcEjfSIn1X0OBCo='  # Generated using fernet.py
 cipher_suite = Fernet(SECRET_KEY)
 
-def send_otp_via_email(email,otp):
-    subject = 'MedConnect Email verification'
-    message = f'Hi,\nYour otp for verification is:  {otp}'
+def send_otp_via_email(email, otp):
+    subject = 'Your MedConnect OTP Verification Code'
+    plain_message = f'''Dear User,
+
+Thank you for choosing MedConnect for your medical supply needs. To ensure the security of your account, we require you to verify your email address.
+
+Your One-Time Password (OTP) for verification is:
+
+{otp}
+
+Thank you for using MedConnect!
+
+Best regards,
+The MedConnect Team'''
+
+    html_message = f'''<p>Dear User,</p>
+<p>Thank you for choosing MedConnect for your medical supply needs. To ensure the security of your account, we require you to verify your email address.</p>
+<p>Your One-Time Password (OTP) for verification is:</p>
+<p><strong>{otp}</strong></p>
+<p>Thank you for using MedConnect!</p>
+<p>Best regards,<br>The MedConnect Team</p>'''
+    
     email_from = settings.EMAIL_HOST
-    send_mail(subject,message,email_from,[email])
+    send_mail(
+        subject,
+        plain_message,
+        email_from,
+        [email],
+        html_message=html_message
+    )
 
 
 def capitalize_alphabets(s):
