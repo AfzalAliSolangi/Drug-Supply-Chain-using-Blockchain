@@ -190,7 +190,7 @@ def email_check_master(request):
             if each_email==email:
                 print("present")
                 return render(request, "login_master.html",{'message':'User already registered, Please Log In!'}) #if the email is present prompt to login master page
-        # send_otp_via_email(email,otp)
+        send_otp_via_email(email,otp)
         return render(request, "tokin_master.html",{'email': email, 'otp': otp}) #if the email is not present then render this page
 
 def process_registration_master(request):
