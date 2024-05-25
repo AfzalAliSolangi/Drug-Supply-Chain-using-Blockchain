@@ -70,4 +70,7 @@ urlpatterns = [
     path('process_registration_pharmacy', views.process_registration_pharmacy, name='process_registration_pharmacy'),
     path('qrscanned', views.qrscanned, name='qrscanned'),
     path('otp_master', views.otp_master, name='otp_master'),
+    path('otp_manufacturer', views.otp_manufacturer, name='otp_manufacturer'),
+    path('otp_distributor', views.otp_distributor, name='otp_distributor'),
+    path('otp_pharmacy', views.otp_pharmacy, name='otp_pharmacy'),
 ]

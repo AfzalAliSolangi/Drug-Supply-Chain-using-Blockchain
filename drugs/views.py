@@ -1226,11 +1226,14 @@ def email_check_manufacturer(request):
         # print(json_string)
         email_keys = [entry["key"] for entry in json_string]
         print(email_keys)
+        otp = capitalize_alphabets(otp_generator(email))
+        print(otp)
         for each_email in email_keys:
             if each_email==email:
                 print("present")
                 return render(request, "login_manufacturer.html",{'message': "User already registered, Please Log In!"}) #if the email is present prompt to login master page
-        return render(request, "signup-manufacturer1.html",{'email': email}) #if the email is not present then render this page
+        send_otp_via_email(email,otp)
+        return render(request, "tokin_manufacturer.html",{'email': email, 'otp': otp}) #if the email is not present then render this page
     
 def process_registration_manufacturer(request):
     print("process_registration_manufacturer")
@@ -1271,6 +1274,7 @@ def process_registration_manufacturer(request):
             data = json.loads(data)
             txid = rpc_connection.publish(users_manufacturer_stream, [email,'True',timestamp_utc], {'json' : data})
             if txid:
+                send_welcome_email(email,request.POST.get('company_info'))
                 return render(request, "login_manufacturer.html",{'message': "Please Log In using you credentials!"})
         else:
             return render(request, "signup-manufacturer1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
@@ -2132,7 +2136,12 @@ def manu_sla_upload(request):
 
     return render(request, "manuupdatesla.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla})
 
-
+def otp_manufacturer(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        print(email)
+        return render(request, "signup-manufacturer1.html",{'email': email}) #if the email is not present then render this page
+    
 
 
 #### DISTRIBUTOR #####
@@ -2152,11 +2161,14 @@ def email_check_distributor(request):
         # print(json_string)
         email_keys = [entry["key"] for entry in json_string]
         print(email_keys)
+        otp = capitalize_alphabets(otp_generator(email))
+        print(otp)
         for each_email in email_keys:
             if each_email==email:
                 print("present")
                 return render(request, "login_distributor.html",{'message': "User already registered, Please Log In!"}) #if the email is present prompt to login master page
-        return render(request, "signup-distributor1.html",{'email': email}) #if the email is not present then render this page
+        send_otp_via_email(email,otp)
+        return render(request, "tokin_distributor.html",{'email': email, 'otp': otp}) #if the email is not present then render this page
 
 def process_registration_distributor(request):
     print("process_registration_distributor")
@@ -2198,6 +2210,7 @@ def process_registration_distributor(request):
             data = json.loads(data)
             txid = rpc_connection.publish(users_distributor_stream, [email,'True',timestamp_utc], {'json' : data})
             if txid:
+                send_welcome_email(email,request.POST.get('company_info'))
                 return render(request, "login_distributor.html",{'message': "Please Log In using you credentials!"})
         else:
             return render(request, "signup-distributor1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
@@ -3231,7 +3244,12 @@ def dist_sla_upload(request):
 
     return render(request, "distupdatesla.html",{'company_info': company_info,'email':email_rcvd,'distributor_hash_sla':Distributor_hash_sla})
 
-
+def otp_distributor(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        print(email)
+        return render(request, "signup-distributor1.html",{'email': email}) #if the email is not present then render this page
+    
 
 #### PHARMACY #####
 def signup_pharmacy(request):
@@ -3250,11 +3268,14 @@ def email_check_pharmacy(request):
         # print(json_string)
         email_keys = [entry["key"] for entry in json_string]
         print(email_keys)
+        otp = capitalize_alphabets(otp_generator(email))
+        print(otp)
         for each_email in email_keys:
             if each_email==email:
                 print("present")
                 return render(request, "login_pharmacy.html",{'message': "User already registered, Please Log In!"}) #if the email is present prompt to login master page
-        return render(request, "Signup-pharmacy1.html",{'email': email}) #if the email is not present then render this page
+        send_otp_via_email(email,otp)
+        return render(request, "tokin_pharmacy.html",{'email': email, 'otp': otp}) #if the email is not present then render this page
 
 def process_registration_pharmacy(request):
     print("process_registration_pharmacy")
@@ -3296,6 +3317,7 @@ def process_registration_pharmacy(request):
             data = json.loads(data)
             txid = rpc_connection.publish(users_pharmacy_stream, [email,'True',timestamp_utc], {'json' : data})
             if txid:
+                send_welcome_email(email,request.POST.get('company_info'))
                 return render(request, "login_pharmacy.html",{'message': "Please Log In using you credentials!"})
         else:
             return render(request, "Signup-pharmacy1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
@@ -3915,3 +3937,10 @@ def qrscanned(request):
     
     else:
         return HttpResponse('Invalid method', status=405)
+    
+def otp_pharmacy(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        print(email)
+        return render(request, "Signup-pharmacy1.html",{'email': email}) #if the email is not present then render this page
+    
