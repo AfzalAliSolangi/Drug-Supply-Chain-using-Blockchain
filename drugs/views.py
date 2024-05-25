@@ -84,6 +84,41 @@ The MedConnect Team'''
         html_message=html_message
     )
 
+def send_welcome_email(email,user):
+    subject = 'Welcome to MedConnect!'
+    
+    plain_message = f'''Dear {user},
+
+Welcome to MedConnect!
+
+We are thrilled to have you on board. At MedConnect, we are committed to providing you with a seamless and secure medical supply experience. Whether you are a manufacturer, distributor, or pharmacy, our platform is designed to meet your specific needs and streamline your operations.
+
+Here are a few tips to get you started:
+- Explore Your Dashboard: Access your dashboard to manage your orders, inventory, and more.
+
+Thank you for choosing MedConnect. We look forward to serving you!
+
+Best regards,
+The MedConnect Team'''
+
+    html_message = f'''<p>Dear {user},</p>
+<p>Welcome to MedConnect!</p>
+<p>We are thrilled to have you on board. At MedConnect, we are committed to providing you with a seamless and secure medical supply experience. Whether you are a manufacturer, distributor, or pharmacy, our platform is designed to meet your specific needs and streamline your operations.</p>
+<p>Here are a few tips to get you started:</p>
+<ul>
+<li><strong>Explore Your Dashboard:</strong> Access your dashboard to manage your orders, inventory, and more.</li>
+</ul>
+<p>Thank you for choosing MedConnect. We look forward to serving you!</p>
+<p>Best regards,<br>The MedConnect Team</p>'''
+    
+    email_from = settings.EMAIL_HOST
+    send_mail(
+        subject,
+        plain_message,
+        email_from,
+        [email],
+        html_message=html_message
+    )
 
 def capitalize_alphabets(s):
     result = ""
@@ -225,6 +260,7 @@ def process_registration_master(request):
         data = json.loads(data)
         txid = rpc_connection.publish(users_master_stream, [email,'True',timestamp_utc], {'json' : data})
         if txid:
+            send_welcome_email(email,request.POST.get('company_info'))
             return render(request, "login_master.html")
         
 def login_master(request):
