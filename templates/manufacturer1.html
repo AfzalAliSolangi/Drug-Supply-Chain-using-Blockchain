@@ -382,10 +382,8 @@ button#searchButton:hover {
                 <td>
                   <div
                   class="oval-box"
-                  style="background-color: {% if order.confirmed == 'Cancelled' %}#dc3545{% elif order.confirmed == 'Confirmed' %}#198754{% else %}yellow{% endif %} !important;
-                  color: white;"
-                >
-                {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
+                  style="background-color: {% if order.confirmed == 'Cancelled' %}#dc3545{% elif order.confirmed == 'Confirmed' %}#198754{% else %}#ffff00{% endif %} !important; color: white;">
+                  {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
                 </div>
                     <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
                     <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
@@ -532,40 +530,62 @@ button#searchButton:hover {
         }
       }
 
-      function filterByStatus() {
+      function hexToRgb(hex) {
+        var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+            return r + r + g + g + b + b;
+        });
+    
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+    
+    function rgbToString(rgb) {
+        return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+    }
+    
+    function filterByStatus() {
         var statusInput = document.getElementById("statusFilter").value;
         var table = document.getElementById("ordersTable");
         var tr = table.getElementsByTagName("tr");
-
+    
+        // Define the colors
+        var colors = {
+            cancelled: hexToRgb('#dc3545'),
+            confirmed: hexToRgb('#198754'),
+            pending: hexToRgb('#ffff00') // Adjust hex for yellow if necessary
+        };
+    
         for (var i = 1; i < tr.length; i++) {
-          var td = tr[i].getElementsByTagName("td")[10]; // Adjust if the index changes
-          var div = td.querySelector(".oval-box"); // Assuming this is the div with the color
-          if (div) {
-            // Determine the status based on background color
-            var style = window.getComputedStyle(div);
-            var backgroundColor = style.backgroundColor;
-
-            // Map background colors to statuses
-            var status = "";
-            if (backgroundColor === "rgb(255, 0, 0)") {
-              // Example RGB for red
-              status = "Cancelled";
-            } else if (backgroundColor === "rgb(0, 128, 0)") {
-              // Example RGB for green
-              status = "Confirmed";
-            } else if (backgroundColor === "rgb(255, 255, 0)") {
-              // Example RGB for yellow
-              status = "Pending";
+            var td = tr[i].getElementsByTagName("td")[10]; // Adjust if the index changes
+            var div = td.querySelector(".oval-box"); // Assuming this is the div with the color
+            if (div) {
+                // Determine the status based on background color
+                var style = window.getComputedStyle(div);
+                var backgroundColor = style.backgroundColor;
+    
+                // Map background colors to statuses
+                var status = "";
+                if (backgroundColor === rgbToString(colors.cancelled)) {
+                    status = "Cancelled";
+                } else if (backgroundColor === rgbToString(colors.confirmed)) {
+                    status = "Confirmed";
+                } else if (backgroundColor === rgbToString(colors.pending)) {
+                    status = "Pending";
+                }
+    
+                if (statusInput === "" || status === statusInput) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
             }
-
-            if (statusInput === "" || status === statusInput) {
-              tr[i].style.display = "";
-            } else {
-              tr[i].style.display = "none";
-            }
-          }
         }
-      }
+    }
 
       function toggleSelectAll(source) {
         // Select all checkboxes within table rows that are not disabled and are visible
