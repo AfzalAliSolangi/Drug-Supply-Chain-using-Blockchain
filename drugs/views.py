@@ -2400,7 +2400,7 @@ def manuproducts(request):
             print(products_with_timestamp)
             return render(request, 'manuproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_manufacturer, 'email': email_dist, 'company_info': comp_info})
         else:
-            return render(request, 'manuproducts1.html', {'message': 'No products available', 'manufacturer': selected_manufacturer, 'email': email_dist, 'company_info': comp_info})
+            return render(request, 'manuproducts1.html', {'message': 'No products available!', 'manufacturer': selected_manufacturer, 'email': email_dist, 'company_info': comp_info})
     else:
          return render(request, "distupdatesla.html",{'company_info': comp_info,'email':email_dist,'distributor_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
 @csrf_protect
@@ -3429,7 +3429,7 @@ def distproducts(request):
             print(products_with_timestamp)
             return render(request, 'distproducts1.html', {'products': products_with_timestamp, 'manufacturer': selected_distributor, 'email': email_pharm, 'company_info': comp_info})
         else:
-            return render(request, 'distproducts1.html', {'message': 'No products available','manufacturer': selected_distributor, 'email': email_pharm, 'company_info': comp_info})
+            return render(request, 'distproducts1.html', {'message': 'No products available!','manufacturer': selected_distributor, 'email': email_pharm, 'company_info': comp_info})
     else:
          return render(request, "pharmupdatesla.html",{'company_info': comp_info,'email':email_pharm,'pharmacy_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
 @csrf_protect
