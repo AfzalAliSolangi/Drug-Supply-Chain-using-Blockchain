@@ -1135,10 +1135,8 @@ def pharm_sla_submit(request):
 def otp_master(request):
     if request.method == 'POST':
         email = request.POST['email']
-        otp = request.POST['otp']
         print(email)
-        print(otp)
-        return HttpResponse("foo")
+        return render(request, "signup-master1.html",{'email': email}) #if the email is not present then render this page
     
 #### MANUFACTURER ####
 def signup_manufacturer(request):

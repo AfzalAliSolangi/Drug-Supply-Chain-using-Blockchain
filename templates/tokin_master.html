@@ -84,9 +84,29 @@
         transition: all 0.3 ease;
         cursor: pointer;
       }
+
+      .notification {
+        position: fixed;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #FFFFFF;
+        color: #cc0000;
+        text-align: center;
+        padding: 10px;
+        transition: top 0.5s ease-in-out;
+        z-index: 1000;
+        width: 80%;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        max-width: 600px;
+        border-radius: 5px;
+      }
+  
+      .notification.show {
+        top: 20px;
+      }
     </style>
   </head>
-
   <body>
     <div class="container height-100 d-flex justify-content-center align-items-center">
       <div class="position-relative">
@@ -110,6 +130,8 @@
         </div>
       </div>
     </div>
+  
+    <div id="notification" class="notification"></div>
   
     <script>
       document.addEventListener("DOMContentLoaded", function(event) {
@@ -147,13 +169,42 @@
         });
   
         const storedOtp = document.getElementById('storedOtp').value;
+        const email = '{{ email }}';  // Assuming email is passed from the backend
   
         if (enteredOtp === storedOtp) {
-          alert("OTP verified successfully!");
-          // Add logic to proceed with the verification process
+          showNotification("OTP verified successfully!", "#28a745");
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/otp_master';  // Replace with the actual URL for completing purchase
+          form.style.display = 'none';
+  
+          const emailInput = document.createElement('input');
+          emailInput.type = 'hidden';
+          emailInput.name = 'email';
+          emailInput.value = email;
+          form.appendChild(emailInput);
+  
+          const otpInput = document.createElement('input');
+          otpInput.type = 'hidden';
+          otpInput.name = 'otp';
+          otpInput.value = storedOtp;
+          form.appendChild(otpInput);
+  
+          document.body.appendChild(form);
+          form.submit();
         } else {
-          alert("Incorrect OTP. Please try again.");
+          showNotification("Incorrect OTP. Please try again.", "#cc0000");
         }
+      }
+  
+      function showNotification(message, color) {
+        const notification = document.getElementById('notification');
+        notification.innerText = message;
+        notification.style.color = color;
+        notification.classList.add('show');
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
       }
     </script>
   </body>
