@@ -2105,7 +2105,7 @@ def process_registration_distributor(request):
             data = json.loads(data)
             txid = rpc_connection.publish(users_distributor_stream, [email,'True',timestamp_utc], {'json' : data})
             if txid:
-                return render(request, "login_distributor.html",{'message': "User already registered, Please Log In!"})
+                return render(request, "login_distributor.html",{'message': "Please Log In using you credentials!"})
         else:
             return render(request, "signup-distributor1.html",{'email': email, 'message': "Wrong SLA, Please provide correct SLA file!"})
         
