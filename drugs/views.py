@@ -150,11 +150,13 @@ def email_check_master(request):
         # print(json_string)
         email_keys = [entry["key"] for entry in json_string]
         print(email_keys)
+        otp = capitalize_alphabets(otp_generator(email))
+        print(otp)
         for each_email in email_keys:
             if each_email==email:
                 print("present")
                 return render(request, "login_master.html",{'message':'User already registered, Please Log In!'}) #if the email is present prompt to login master page
-        return render(request, "tokin_master.html",{'email': email, 'otp': capitalize_alphabets(otp_generator(email))}) #if the email is not present then render this page
+        return render(request, "tokin_master.html",{'email': email, 'otp': otp}) #if the email is not present then render this page
 
 def process_registration_master(request):
     print("process_registration_master")
