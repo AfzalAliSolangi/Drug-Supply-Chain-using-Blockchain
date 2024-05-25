@@ -329,10 +329,31 @@ button#searchButton {
                 background-color: #fff !important;
                 background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
               }
+
+              .notification {
+                position: fixed;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #FFFFFF;
+                color: #cc0000;
+                text-align: center;
+                padding: 10px;
+                transition: top 0.5s ease-in-out;
+                z-index: 1000;
+                width: 80%;
+                box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+                max-width: 600px;
+                border-radius: 5px;
+              }
+              
+              .notification.show {
+                top: 55px;
+              }
 </style>
 </head>
 <body>
-
+    <div class="notification" id="notification"></div>
     <div class="sidebar d-flex flex-column align-items-start p-3 bg-light">
         <a
           href="#"
@@ -1046,6 +1067,20 @@ function sortTableByQuantity() {
       
           form.submit();
       }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var notification = document.getElementById('notification');
+        var message = "{{ message }}";
+        
+        if (message) {
+          notification.textContent = message;
+          notification.classList.add('show');
+          
+          setTimeout(function() {
+            notification.classList.remove('show');
+          }, 5000); // Hide after 5 seconds
+        }
+      });
 </script>
 </body>
 </html>
