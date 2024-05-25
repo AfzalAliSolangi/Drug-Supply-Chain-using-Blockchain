@@ -51,6 +51,21 @@ rpc_connection = multichain.MultiChainClient(rpchost, rpcport, rpcuser, rpcpassw
 SECRET_KEY = b'pGVMH7s1zlQMtcugRETEOx572lhVYcEjfSIn1X0OBCo='  # Generated using fernet.py
 cipher_suite = Fernet(SECRET_KEY)
 
+def capitalize_alphabets(s):
+    result = ""
+    for char in s:
+        if char.isalpha():
+            result += char.upper()
+        else:
+            result += char
+    return result
+
+def otp_generator(email):
+    base_string = f"{email}"
+    hashed = hashlib.sha256(base_string.encode()).hexdigest()
+    otp = ''.join(random.choices(hashed, k=6))
+    return otp
+
 def generate_qr_code(email,product_code,batchid,product_name):
     data = {
     "manufacturer_email": email,
@@ -139,7 +154,7 @@ def email_check_master(request):
             if each_email==email:
                 print("present")
                 return render(request, "login_master.html",{'message':'User already registered, Please Log In!'}) #if the email is present prompt to login master page
-        return render(request, "signup-master1.html",{'email': email}) #if the email is not present then render this page
+        return render(request, "tokin_master.html",{'email': email, 'otp': capitalize_alphabets(otp_generator(email))}) #if the email is not present then render this page
 
 def process_registration_master(request):
     print("process_registration_master")
@@ -1115,7 +1130,14 @@ def pharm_sla_submit(request):
             print(pharmacy_hash_sla)
     return render(request, "Manage_SLA.html",{'company_info': company_info,'email':email_rcvd,'Manufacturer_hash_sla':Manufacturer_hash_sla,'distributor_hash_sla':distributor_hash_sla,'pharmacy_hash_sla':pharmacy_hash_sla})
 
-
+def otp_master(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        otp = request.POST['otp']
+        print(email)
+        print(otp)
+        return HttpResponse("foo")
+    
 #### MANUFACTURER ####
 def signup_manufacturer(request):
     print("signup-manufacturer check")
