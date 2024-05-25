@@ -3811,6 +3811,14 @@ def qrscanned(request):
         print(rep2)
         print(rep3)
 
-        return HttpResponse('ok')
+        # Return the results as a JSON response
+        response_data = {
+            'rep1': rep1,
+            'rep2': rep2,
+            'rep3': rep3
+        }
+
+        return JsonResponse(response_data)
+    
     else:
         return HttpResponse('Invalid method', status=405)
