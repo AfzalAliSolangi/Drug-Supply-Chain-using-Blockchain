@@ -405,6 +405,16 @@ button#searchButton:hover {
     <script>
       var selectedOrders = []; // Array to store selected orders' data
 
+      function updateButtonStates() {
+        document.getElementById('confirmButton').disabled = selectedOrders.length === 0;
+        document.getElementById('cancelButton').disabled = selectedOrders.length === 0;
+      }
+
+      // Call this function whenever selectedOrders changes
+      function handleOrderSelectionChange() {
+        updateButtonStates();
+      }
+
       function updateSelection(checkbox) {
         var row = checkbox.closest("tr");
         var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
@@ -439,6 +449,7 @@ button#searchButton:hover {
         }
 
         console.log(selectedOrders); // Logs to console to monitor the selected orders
+        updateButtonStates();
       }
 
       // Attach event listeners to checkboxes on document load
@@ -706,6 +717,8 @@ button#searchButton:hover {
         document.body.appendChild(form);
         form.submit();
       }
+
+      updateButtonStates();
       function distorders(email) {
         console.log("Email Distribution:", email);
         const form = document.createElement("form");
