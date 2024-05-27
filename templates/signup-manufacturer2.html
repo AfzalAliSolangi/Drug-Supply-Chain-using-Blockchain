@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            background-image: linear-gradient(to bottom, #0077be, #00a0e9);
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        form {
+            margin-top: 50px;
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1.3em;
+            text-align: left;
+            margin: 0 0 0px;
+            grid-column: 1 / -1; /* Ensures it spans across all columns */
+        }
+
+        fieldset {
+            border: none;
+            padding: 2px;
+            grid-column: span 2; /* Make fieldsets span both columns */
+            margin-bottom: 2px; /* Reduced space between fieldsets */
+        }
+
+        legend {
+            font-size: 1.2em;
+            margin-bottom: 2px;
+        }
+
+        .input-group {
+            border: 2px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px; /* Reduced space between input groups */
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="file"],
+        textarea,
+        select,
+        input[type="checkbox"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #0079BF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            grid-column: span 2;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #005c99;
+        }
+
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        #password-strength-meter-container {
+            width: 100%;
+            height: 10px;
+            background-color: #f0f0f0;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        #password-strength-meter {
+            height: 100%;
+            width: 0;
+            background-color: #ff0000;
+            border-radius: 5px;
+        }
+
+        .notification {
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FFFFFF;
+            color: #cc0000;
+            text-align: center;
+            padding: 10px;
+            transition: top 0.5s ease-in-out;
+            z-index: 1000;
+            width: 80%;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            max-width: 600px;
+            border-radius: 5px;
+          }
+          
+          .notification.show {
+            top: 20px;
+          }
+      
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    <form id="registrationForm" action="process_registration_manufacturer" method="post" enctype="multipart/form-data">
+        <h3>User Manufacturer Registration Form</h3>
+        <fieldset>
+            <div class="input-group">
+                <label for="company_info">Company Name<span class="required">*</span>:</label>
+                <input type="text" id="company_info" name="company_info" required autocomplete="off" maxlength="70">
+            </div>
+
+            <div class="input-group">
+                <label for="street_address">Street Address:</label>
+                <input type="text" id="street_address" name="street_address" required autocomplete="off" maxlength="100">
+            </div>
+
+            <div class="input-group">
+                <label for="business_details">Business Details:</label>
+                <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off" maxlength="500"></textarea>
+                <small>Maximum 500 characters.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <div class="input-group">
+                <label for="state">State:</label>
+                <select id="state" name="state" onchange="populateCities()" required>
+                    <option value="">Select State</option>
+                    <option value="Sindh">Sindh</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
+                    <option value="Balochistan">Balochistan</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="city">City:</label>
+                <select id="city" name="city" required>
+                    <option value="">Select City</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="zip_code">Zip code<span class="required">*</span>:</label>
+                <input type="text" id="zip_code" name="zip_code" required autocomplete="off" pattern="[0-9]{5}">
+                <small>Zip code must contain exactly 5 numeric characters.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required autocomplete="off" onkeyup="checkPasswordStrength(this.value)">
+                <div id="password-strength-meter-container">
+                    <div id="password-strength-meter"></div>
+                </div>
+                <small>Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 6 characters long.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend></legend>
+            <div class="input-group">
+                <label for="license_certification">PDF or Word document:</label>
+                <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required>
+            </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+            <input type="hidden" id="hash_sla" name="hash_sla">
+            <input type="submit" value="Sign Up">
+        </fieldset>
+        
+        <input type="hidden" name="email" value="{{ email }}">
+       
+    </form>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            handleSLAUpload('{{ email }}', document.getElementById('company_info').value, 'license_certification', 'hash_sla', 'process_registration_master');
+        });
+
+        function handleSLAUpload(email, company_info, fileInputName, hashInputId, submitUrl) {
+            const fileInput = document.querySelector(`input[name="${fileInputName}"]`);
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const fileContent = e.target.result;
+                    const hash = CryptoJS.SHA256(CryptoJS.enc.Latin1.parse(fileContent)).toString(CryptoJS.enc.Hex);
+                    document.getElementById(hashInputId).value = hash;
+
+                    // Submit the form
+                    document.getElementById('registrationForm').submit();
+                };
+
+                reader.readAsBinaryString(file);
+            } else {
+                alert("Please select a file to generate the hash.");
+            }
+        }
+        
+        function populateCities() {
+            var stateSelect = document.getElementById("state");
+            var citySelect = document.getElementById("city");
+            var selectedState = stateSelect.value;
+            
+            // Clear previous options
+            citySelect.innerHTML = "<option value=''>Select City</option>";
+            
+            // Populate cities based on selected state
+            if (selectedState === "Sindh") {
+                var sindhCities = ["Karachi", "Hyderabad", "Sukkur", "Larkana"];
+                sindhCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Punjab") {
+                var punjabCities = ["Lahore", "Faisalabad", "Rawalpindi", "Gujranwala"];
+                punjabCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Kyber Pakhtun-Khwa") {
+                var kpCities = ["Peshawar", "Mardan", "Kohat", "Abbottabad"];
+                kpCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+            else if (selectedState === "Balochistan") {
+                var balochistanCities = ["Quetta", "Gwadar", "Hub"];
+                balochistanCities.forEach(function(city) {
+                    var option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        }
+
+        function validateForm() {
+            var companyInfo = document.getElementById("company_info").value;
+            var streetAddress = document.getElementById("street_address").value;
+            var businessDetails = document.getElementById("business_details").value;
+            var state = document.getElementById("state").value;
+            var city = document.getElementById("city").value;
+            var zipCode = document.getElementById("zip_code").value;
+            var password = document.getElementById("password").value;
+            var agreeTerms = document.getElementById("agree_terms").checked;
+
+            if (companyInfo === "" || streetAddress === "" || businessDetails === "" || state === "" || city === "" || zipCode === "" || password === "" || !agreeTerms) {
+                alert("Please fill in all fields.");
+                return false;
+            }
+            return true;
+        }
+
+        function checkPasswordStrength(password) {
+            var progressBar = document.getElementById("password-strength-meter");
+            var strength = 0;
+            
+            // Check for presence of lowercase letter
+            if (password.match(/[a-z]/)) {
+                strength += 1;
+            }
+        
+            // Check for presence of uppercase letter
+            if (password.match(/[A-Z]/)) {
+                strength += 1;
+            }
+        
+            // Check for presence of digit
+            if (password.match(/\d/)) {
+                strength += 1;
+            }
+        
+            // Check for presence of special character
+            if (password.match(/[!@#$%^&*]/)) {
+                strength += 1;
+            }
+        
+            // Check for length
+            if (password.length >= 6) {
+                strength += 1;
+            }
+        
+            // Update progress bar based on strength
+            progressBar.style.width = (strength * 20) + "%";
+        
+            // You can also provide feedback to the user based on the strength level
+            // For example:
+            // Change color based on strength
+            if (strength < 3) {
+                progressBar.style.backgroundColor = "red";
+            } else if (strength < 5) {
+                progressBar.style.backgroundColor = "orange";
+            } else {
+                progressBar.style.backgroundColor = "green";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var notification = document.getElementById('notification');
+            var message = "{{ message }}";
+            
+            if (message) {
+              notification.textContent = message;
+              notification.classList.add('show');
+              
+              setTimeout(function() {
+                notification.classList.remove('show');
+              }, 5000); // Hide after 5 seconds
+            }
+          });
+    </script>
+</body>
+</html>
