@@ -461,9 +461,10 @@ button#searchButton {
             {% for product in products %}
             <tr class="table-row">
                 <td><div class="d-flex flex-column">
-                    <button id="submitButton" class="btn btn-primary" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.batchId }}">
-                        Buy
-                    </button>
+                    <button id="submitButton" class="btn btn-primary" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.batchId }}"
+                    {% if product.product_data.quantity_in_stock == "0" %} disabled {% endif %}>
+                    Buy
+                </button>
                 </div></td>
                 <td><img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;"></td>
                 <td>{{ product.product_name }}</td>
