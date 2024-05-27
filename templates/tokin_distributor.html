@@ -138,32 +138,50 @@
     <div id="notification" class="notification"></div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function (event) {
+      document.addEventListener('DOMContentLoaded', function () {
         function OTPInput() {
-          const inputs = document.querySelectorAll('#otp > *[id]')
-          for (let i = 0; i < inputs.length; i++) {
-            inputs[i].addEventListener('keydown', function (event) {
-              if (event.key === 'Backspace') {
-                inputs[i].value = ''
-                if (i !== 0) inputs[i - 1].focus()
-              } else {
-                if (i === inputs.length - 1 && inputs[i].value !== '') {
-                  return true
-                } else if (event.keyCode > 47 && event.keyCode < 58) {
-                  inputs[i].value = event.key
-                  if (i !== inputs.length - 1) inputs[i + 1].focus()
-                  event.preventDefault()
-                } else if (event.keyCode > 64 && event.keyCode < 91) {
-                  inputs[i].value = String.fromCharCode(event.keyCode)
-                  if (i !== inputs.length - 1) inputs[i + 1].focus()
-                  event.preventDefault()
-                }
-              }
-            })
-          }
+            const inputs = document.querySelectorAll('#otp > input');
+    
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].addEventListener('keydown', function (event) {
+                    if (event.key === 'Backspace') {
+                        inputs[i].value = '';
+                        if (i !== 0) inputs[i - 1].focus();
+                    } else if ((event.keyCode > 47 && event.keyCode < 58) || (event.keyCode > 64 && event.keyCode < 91)) {
+                        inputs[i].value = event.key.toUpperCase();
+                        if (i !== inputs.length - 1) inputs[i + 1].focus();
+                        event.preventDefault();
+                    } else if (event.key === 'ArrowLeft' && i !== 0) {
+                        inputs[i - 1].focus();
+                    } else if (event.key === 'ArrowRight' && i !== inputs.length - 1) {
+                        inputs[i + 1].focus();
+                    }
+                });
+    
+                inputs[i].addEventListener('input', function () {
+                    if (inputs[i].value.length === 1) {
+                        inputs[i].value = inputs[i].value.toUpperCase();
+                        if (i !== inputs.length - 1) inputs[i + 1].focus();
+                    }
+                });
+    
+                inputs[i].addEventListener('paste', function (event) {
+                    event.preventDefault();
+                    const pasteData = event.clipboardData.getData('text').toUpperCase();
+                    const otpValues = pasteData.split('');
+                    otpValues.forEach((char, index) => {
+                        if (index < inputs.length) {
+                            inputs[index].value = char;
+                        }
+                    });
+                    if (otpValues.length <= inputs.length) {
+                        inputs[otpValues.length - 1].focus();
+                    }
+                });
+            }
         }
-        OTPInput()
-      })
+        OTPInput();
+    });
       
       function verifyOTP() {
         const inputs = document.querySelectorAll('#otp > *[id]')
