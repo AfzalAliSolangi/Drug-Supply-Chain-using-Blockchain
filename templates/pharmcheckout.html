@@ -9,9 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
         body {
+            background-image: linear-gradient(to bottom, #0077be, #00a0e9);
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
+            padding: 10px;
+            min-height: 100vh;
         }
 
         .container {
@@ -41,15 +47,29 @@
         h2 {
             color: #007bff;
         }
+        button#searchButton {
+            background-color: #fff !important;
+            background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            border-color: #00a0e9 !important;
+            color: #fff;
+          }
+          
+          button#searchButton:hover {
+            background-color: #fff !important; 
+            background: none !important;
+            border-color: #00a0e9 !important;
+            color: #00a0e9 !important;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            }
     </style>
 </head>
 <body>
     <main>
-        <section>
-            <h2>Shipping Information</h2>
-            <!-- Your existing shipping form here -->
-        </section>
-
         <section>
             <h2>Order Summary</h2>
             <ul>
@@ -72,15 +92,11 @@
                     </li>
                 {% endfor %}
             </ul>
-        </section>
-        <section>
-            <h2>Payment</h2>
-            <!-- Add your payment form here -->
+            <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            <input type="hidden" name="comp_info" value="{{ comp_info }}">
+            <button id="searchButton"  onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}', '{{ email_dist }}', '{{ comp_info }}')">Complete Purchase</button>
         </section>
         
-        <input type="hidden" name="email_dist" value="{{ email_dist }}">
-        <input type="hidden" name="comp_info" value="{{ comp_info }}">
-        <button onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}', '{{ email_dist }}', '{{ comp_info }}')">Complete Purchase</button>
     </main>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
