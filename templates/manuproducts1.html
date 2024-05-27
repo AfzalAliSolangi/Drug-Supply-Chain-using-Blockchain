@@ -517,7 +517,7 @@ button#searchButton {
         <div id="cartContent"></div> <!-- Display cart items here -->
         <div class="cart-buttons">
             <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
-            <button class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}', '{{ email }}', '{{ company_info }}')">Proceed to Checkout</button>
+            <button id="sendOrderButton" class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}', '{{ email }}', '{{ company_info }}')" disabled>Send Order Request</button>
             <input type="hidden" name="email_dist" value="{{ email_dist }}">
             <input type="hidden" name="comp_info" value="{{ comp_info }}">
         </div>
@@ -527,64 +527,72 @@ button#searchButton {
 <script>
   var selectedOrders = []; // Array to store selected orders' data
   
-  var cartItems = [];
+    var cartItems = [];
 
-  function addToCart(manu_email,timestamp,manu_name,batchId,productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
-    var quantityInput = document.getElementById('quantity'+batchId);
-    var quantity = parseInt(quantityInput.value, 10);
-    console.log(quantity)
-    console.log(maxQuantity)
-    console.log(cartItems)
-
-    if (quantity > 0 && quantity <= maxQuantity) {
-        // Check if the product is already in the cart
-        var existingItem = cartItems.find(item => item.productCode === productCode);
-
-        if (existingItem) {
-            // Product already in the cart, update the quantity
-            existingItem.quantity += quantity;
-        } else {
-            // Create a new cart item for each product
-            
-            var cartItem = {
-                expiry_date: expiry_date,
-                manufacturing_date: manufacturing_date,
-                dosage: dosage,
-                ingredients: ingredients,
-                description: description,
-                batchId: batchId,
-                manu_name: manu_name,
-                timestamp: timestamp,
-                manu_email: manu_email,
-                productName: productName,
-                productCode: productCode,
-                unitPrice: unitPrice,
-                quantity: quantity,
-
-                totalprice : quantity*unitPrice
-                // Add other properties if needed
-            };
-
-            // Add the cart item to the cartItems array
-            cartItems.push(cartItem);
-
-            // Update the cart counter only for new products
-            var cartCounter = document.getElementById('cartCounter');
-            var currentCount = parseInt(cartCounter.innerText, 10);
-            cartCounter.innerText = currentCount + 1;
-        }
-
-        // Reset quantity input
-        quantityInput.value = 0;
-
-        // Hide the modal
-        $('#addToCartModal' + batchId).modal('hide');
-        
-        // Additional logic here to update the cart or perform other actions
-    } else {
-        alert('Invalid quantity. Please enter a valid quantity.');
+    function updateButtonState() {
+        document.getElementById('sendOrderButton').disabled = cartItems.length === 0;
     }
-}
+
+    function addToCart(manu_email, timestamp, manu_name, batchId, productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
+        var quantityInput = document.getElementById('quantity' + batchId);
+        var quantity = parseInt(quantityInput.value, 10);
+        console.log(quantity);
+        console.log(maxQuantity);
+        console.log(cartItems);
+
+        if (quantity > 0 && quantity <= maxQuantity) {
+            // Check if the product is already in the cart
+            var existingItem = cartItems.find(item => item.productCode === productCode);
+
+            if (existingItem) {
+                // Product already in the cart, update the quantity
+                existingItem.quantity += quantity;
+            } else {
+                // Create a new cart item for each product
+                var cartItem = {
+                    expiry_date: expiry_date,
+                    manufacturing_date: manufacturing_date,
+                    dosage: dosage,
+                    ingredients: ingredients,
+                    description: description,
+                    batchId: batchId,
+                    manu_name: manu_name,
+                    timestamp: timestamp,
+                    manu_email: manu_email,
+                    productName: productName,
+                    productCode: productCode,
+                    unitPrice: unitPrice,
+                    quantity: quantity,
+                    totalprice: quantity * unitPrice
+                };
+
+                // Add the cart item to the cartItems array
+                cartItems.push(cartItem);
+
+                // Update the cart counter only for new products
+                var cartCounter = document.getElementById('cartCounter');
+                var currentCount = parseInt(cartCounter.innerText, 10);
+                cartCounter.innerText = currentCount + 1;
+            }
+
+            // Reset quantity input
+            quantityInput.value = 0;
+
+            // Hide the modal
+            $('#addToCartModal' + batchId).modal('hide');
+
+            // Update the button state
+            updateButtonState();
+
+            // Additional logic here to update the cart or perform other actions
+        } else {
+            alert('Invalid quantity. Please enter a valid quantity.');
+        }
+    }
+
+    // Initial call to set the correct button state
+    updateButtonState();
+
     function updateSelection(checkbox) {
         var row = checkbox.closest('tr');
         var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
