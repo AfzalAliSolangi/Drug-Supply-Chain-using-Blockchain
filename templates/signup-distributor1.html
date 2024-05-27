@@ -1,213 +1,371 @@
 <!DOCTYPE html>
+<!-- Coding By CodingNepal - codingnepalweb.com -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-    <style>
-        body {
-            background-image: linear-gradient(to bottom, #0077be, #00a0e9);
-            font-family: "Roboto", sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 10px;
-            min-height: 100vh;
-        }
+    
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="style.css">
+     
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+<style>
+    /* ===== Google Font Import - Poppins ===== */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;600&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+body{
+    background-image: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #4070f4;
+}
+.container{
+    position: relative;
+    max-width: 900px;
+    width: 100%;
+    border-radius: 6px;
+    padding: 30px;
+    margin: 0 15px;
+    background-color: #fff;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+.container header{
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+.container header::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 3px;
+    width: 27px;
+    border-radius: 8px;
+    background-color: #4070f4;
+}
+.container form{
+    position: relative;
+    margin-top: 16px;
+    min-height: 490px;
+    background-color: #fff;
+    overflow: hidden;
+}
+.container form .form{
+    position: absolute;
+    background-color: #fff;
+    transition: 0.3s ease;
+}
+.container form .form.second{
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(100%);
+}
+form.secActive .form.second{
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+form.secActive .form.first{
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-100%);
+}
+.container form .title{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+.container form .fields{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+form .fields .input-field{
+    display: flex;
+    width: calc(100% / 3 - 15px);
+    flex-direction: column;
+    margin: 4px 0;
+}
+.input-field label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+}
+.input-field input, select{
+    outline: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    padding: 0 15px;
+    height: 42px;
+    margin: 8px 0;
+}
+.input-field input :focus,
+.input-field select:focus{
+    box-shadow: 0 3px 6px rgba(0,0,0,0.13);
+}
+.input-field select,
+.input-field input[type="date"]{
+    color: #707070;
+}
+.input-field input[type="date"]:valid{
+    color: #333;
+}
+.container form button, .backBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 45px;
+    max-width: 200px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 5px;
+    margin: 25px 0;
+    background-color: #4070f4;
+    transition: all 0.3s linear;
+    cursor: pointer;
+}
+.container form .btnText{
+    font-size: 14px;
+    font-weight: 400;
+}
+form button:hover{
+    background-color: #265df2;
+}
+form button i,
+form .backBtn i{
+    margin: 0 6px;
+}
+form .backBtn i{
+    transform: rotate(180deg);
+}
+form .buttons{
+    display: flex;
+    align-items: center;
+}
+form .buttons button , .backBtn{
+    margin-right: 14px;
+}
 
-        form {
-            margin-top: 50px;
-            background-color: #ffffff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
+@media (max-width: 750px) {
+    .container form{
+        overflow-y: scroll;
+    }
+    .container form::-webkit-scrollbar{
+       display: none;
+    }
+    form .fields .input-field{
+        width: calc(100% / 2 - 15px);
+    }
+}
 
-        h3 {
-            color: #333;
-            font-size: 1.3em;
-            text-align: left;
-            margin: 0 0 0px;
-            grid-column: 1 / -1; /* Ensures it spans across all columns */
-        }
+@media (max-width: 550px) {
+    form .fields .input-field{
+        width: 100%;
+    }
+}
+#password-strength-meter-container {
+    width: 100%;
+    height: 10px;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
 
-        fieldset {
-            border: none;
-            padding: 2px;
-            grid-column: span 2; /* Make fieldsets span both columns */
-            margin-bottom: 2px; /* Reduced space between fieldsets */
-        }
+#password-strength-meter {
+    height: 100%;
+    width: 0;
+    background-color: #ff0000;
+    border-radius: 5px;
+}
 
-        legend {
-            font-size: 1.2em;
-            margin-bottom: 2px;
-        }
+.submitButton {
+    display: flex;
+    justify-content: center; /* Center the button horizontally */
+    align-items: center;    /* Center the button vertically */
+    margin-top: 20px;       /* Add some space at the top */
+}
 
-        .input-group {
-            border: 2px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 5px; /* Reduced space between input groups */
-        }
+.styledSubmitButton {
+    background:linear-gradient(to bottom, #0077be, #00a0e9) !important; /* Green background */
+    border-color: #00a0e9 !important;           /* Remove borders */
+    color: #fff !important;             /* White text */
+    padding: 15px 32px;        /* Add some padding */
+    text-align: center;        /* Center the text */
+    text-decoration: none;     /* Remove underline from text */
+    display: inline-block;     /* Display as inline-block */
+    font-size: 16px;           /* Increase font size */
+    margin: 4px 2px;           /* Add some margin */
+    cursor: pointer;           /* Add a pointer cursor on hover */
+    border-radius: 4px;        /* Add rounded corners */
+    transition-duration: 0.4s; /* Smooth transition */
+}
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
+.styledSubmitButton:hover {
+    background: none !important;
+    background-color: #fff !important;   /* Change background color on hover */
+    color:  #00a0e9 !important;   /* Change text color on hover */
+    border-color: #00a0e9 !important;
+    border: 2px solid #4CAF50; /* Add border on hover */
+}
 
-        input[type="text"],
-        input[type="password"],
-        input[type="file"],
-        textarea,
-        select,
-        input[type="checkbox"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
+.file-input-container {
+    margin-left: 20px;
+    padding-left: 10px;
+}
 
-        input[type="submit"] {
-            background-color: #0079BF;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto;
-            grid-column: span 2;
-        }
+input[type="file"] {
+    display: none; /* Hide the default file input */
+}
 
-        input[type="submit"]:hover {
-            background-color: #005c99;
-        }
+.custom-file-label {
+    background:linear-gradient(to bottom, #0077be, #00a0e9) !important; /* Green background */
+    color: white;              /* White text */
+    padding: 10px 20px;        /* Add some padding */
+    border-radius: 4px;        /* Rounded corners */
+    cursor: pointer;           /* Pointer cursor on hover */
+    margin-right: 5px;        /* Space between label and file name */
+}
 
-        .required::after {
-            content: " *";
-            color: red;
-        }
+.custom-file-label:hover {
+    background: none !important;
+    background-color: #fff !important;   /* Change background color on hover */
+    color:  #00a0e9 !important;   /* Change text color on hover */
+    border-color: #00a0e9 !important;
+    border: 1px solid #4CAF50; /* Add border on hover */
+}
 
-        #password-strength-meter-container {
-            width: 100%;
-            height: 10px;
-            background-color: #f0f0f0;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
+.file-name {
+    font-size: 14px;           /* Font size for the file name */
+    color: #555;               /* Text color for the file name */
+}
 
-        #password-strength-meter {
-            height: 100%;
-            width: 0;
-            background-color: #ff0000;
-            border-radius: 5px;
-        }
+.notification {
+    position: fixed;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #FFFFFF;
+    color: #cc0000;
+    text-align: center;
+    padding: 10px;
+    transition: top 0.5s ease-in-out;
+    z-index: 1000;
+    width: 80%;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    max-width: 600px;
+    border-radius: 5px;
+  }
+  
+  .notification.show {
+    top: 20px;
+  }
 
-        .notification {
-            position: fixed;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #FFFFFF;
-            color: #cc0000;
-            text-align: center;
-            padding: 10px;
-            transition: top 0.5s ease-in-out;
-            z-index: 1000;
-            width: 80%;
-            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-            max-width: 600px;
-            border-radius: 5px;
-          }
-          
-          .notification.show {
-            top: 20px;
-          }
-
-    </style>
+</style>    
+   <title>User Registration </title>
 </head>
 <body>
     <div class="notification" id="notification"></div>
-    <form id="registrationForm" action="process_registration_distributor" method="post" enctype="multipart/form-data">
-        <h3>User Distributor Registration Form</h3>
-        <fieldset>
-            <div class="input-group">
-                <label for="company_info">Company Name<span class="required">*</span>:</label>
-                <input type="text" id="company_info" name="company_info" required autocomplete="off" maxlength="70">
-            </div>
+    <div class="container">
+        <header>User Distributor Registration</header>
 
-            <div class="input-group">
-                <label for="street_address">Street Address:</label>
-                <input type="text" id="street_address" name="street_address" required autocomplete="off" maxlength="100">
-            </div>
+        <form id="registrationForm" action="process_registration_distributor" method="post" enctype="multipart/form-data">
+            <div class="form first">
+                <div class="details personal">
+                    <span class="title">Personal Details</span>
 
-            <div class="input-group">
-                <label for="business_details">Business Details:</label>
-                <textarea id="business_details" name="business_details" rows="4" cols="50" required autocomplete="off" maxlength="500"></textarea>
-                <small>Maximum 500 characters.</small>
-            </div>
-        </fieldset>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label for="company_info">Company Name<span class="required"></span>:</label>
+                            <input type="text" id="company_info" placeholder="Enter Company Name" name="company_info" required autocomplete="off" maxlength="70">
+                        </div>
 
-        <fieldset>
-            <div class="input-group">
-                <label for="state">State:</label>
-                <select id="state" name="state" onchange="populateCities()" required>
-                    <option value="">Select State</option>
-                    <option value="Sindh">Sindh</option>
-                    <option value="Punjab">Punjab</option>
-                    <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
-                    <option value="Balochistan">Balochistan</option>
-                </select>
-            </div>
+                        <div class="input-field">
+                            <label for="street_address">Street Address:</label>
+                            <input type="text" id="street_address" placeholder="Enter Street Address" name="street_address" required autocomplete="off" maxlength="100">
+                        </div>
 
-            <div class="input-group">
-                <label for="city">City:</label>
-                <select id="city" name="city" required>
-                    <option value="">Select City</option>
-                </select>
-            </div>
+                        <div class="input-field">
+                            <label for="business_details">Business Details:</label>
+                <input id="business_details" type="text" id="business_details"  placeholder="Enter Business Details" name="business_details" required autocomplete="off" maxlength="100">
+                        </div>
 
-            <div class="input-group">
-                <label for="zip_code">Zip code<span class="required">*</span>:</label>
-                <input type="text" id="zip_code" name="zip_code" required autocomplete="off" pattern="[0-9]{5}">
-                <small>Zip code must contain exactly 5 numeric characters.</small>
-            </div>
-        </fieldset>
+                        <div class="input-field">
+                            <label for="mobile-number">Mobile Number</label>
+                            <input type="tel" id="mobile-number" name="mobile-number" placeholder="Enter mobile number" required pattern="\d{1,11}" maxlength="11" title="Please enter a valid mobile number with up to 11 digits" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                        </div>
 
-        <fieldset>
-            <div class="input-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required autocomplete="off" onkeyup="checkPasswordStrength(this.value)">
-                <div id="password-strength-meter-container">
-                    <div id="password-strength-meter"></div>
-                </div>
-                <small>Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 6 characters long.</small>
-            </div>
-        </fieldset>
+                        <div class="input-field">
+                            <label for="state">State:</label>
+                            <select id="state" name="state" onchange="populateCities()" required>
+                                <option value="">Select State</option>
+                                <option value="Sindh">Sindh</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Kyber Pakhtun-Khwa">Kyber Pakhtun-Khwa</option>
+                                <option value="Balochistan">Balochistan</option>
+                            </select>
+                        </div>  
 
-        <fieldset>
-            <legend></legend>
-            <div class="input-group">
-                <label for="license_certification">PDF or Word document:</label>
-                <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required>
-            </div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
-            <input type="hidden" id="hash_sla" name="hash_sla">
-            <input type="submit" value="Sign Up">
-        </fieldset>
-        
-        <input type="hidden" name="email" value="{{ email }}">
-       
-    </form>
+                        <div class="input-field">
+                            <label for="city">City:</label>
+                            <select id="city" name="city" required>
+                                <option value="">Select City</option>
+                            </select>
+                        </div>
+                    </div>
 
+
+                    <div class="fields">
+                        <div class="input-field">
+                            <label for="zip_code">Zip code<span class="required"></span>:</label>
+                            <input type="text" id="zip_code" name="zip_code"  placeholder="Enter Zip Code" required autocomplete="off" pattern="\d{5}" maxlength="5" title="Please enter a valid 5-digit zip code" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                        </div>
+
+                        <div class="input-field" style="margin-top: 20px !important;">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" required autocomplete="off" onkeyup="checkPasswordStrength(this.value)">
+                                <div id="password-strength-meter-container">
+                                    <div id="password-strength-meter"></div>
+                                </div>
+                        </div>
+
+                        <div class="file-input-container">
+                            <input type="file" id="license_certification" name="license_certification" accept=".pdf, .doc, .docx" required>
+                            <label for="license_certification" class="custom-file-label">Select SLA File</label>
+                            <span id="file-name" class="file-name">No file chosen</span>
+                        </div>
+
+                    </div>
+
+                    <div class="submitButton">
+                        <input type="hidden" id="hash_sla" name="hash_sla">
+                        <input type="submit" value="Sign Up" class="styledSubmitButton">
+                    </div>
+                </div> 
+            </div>
+            <input type="hidden" name="email" value="{{ email }}">
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
     <script>
         document.getElementById('registrationForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -234,6 +392,7 @@
                 alert("Please select a file to generate the hash.");
             }
         }
+
         function populateCities() {
             var stateSelect = document.getElementById("state");
             var citySelect = document.getElementById("city");
@@ -342,6 +501,11 @@
             }
         }
 
+        document.getElementById('license_certification').addEventListener('change', function() {
+            var fileName = this.files[0].name;
+            document.getElementById('file-name').textContent = fileName;
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             var notification = document.getElementById('notification');
             var message = "{{ message }}";
@@ -355,6 +519,6 @@
               }, 5000); // Hide after 5 seconds
             }
           });
-    </script>
+    </script>    
 </body>
 </html>
