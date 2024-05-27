@@ -2676,7 +2676,7 @@ def distreqorder(request):
             print(orders)
             # return render(request, "distributor_orders.html",{'orders': orders})
 
-            return render(request, "distorderstatus1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders})
+            return render(request, "distorderstatus1.html", {'comp_info': comp_info,'email':email_dist, 'company_info': comp_info,'orders': orders,'message':'Order Request sent to the Manufacturer!'})
             
 
 def pharmorders(request):
@@ -3816,7 +3816,7 @@ def pharmreqorder(request):
             print(orders)
             # return render(request, "distributor_orders.html",{'orders': orders})
 
-            return render(request, "pharmacy1.html",{'company_info': comp_info,'email':email_pharm, 'orders':orders })
+            return render(request, "pharmacy1.html",{'company_info': comp_info,'email':email_pharm, 'orders':orders,'message': 'Order Request sent to the Distributor!' })
 
 def pharmorderstatus(request):
     print('\nOrders From Pharmacies\n')
