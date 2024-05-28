@@ -37,6 +37,7 @@ users_pharmacy_stream = config.get('Section1','users_pharmacy_stream') #Need to 
 manufacturer_SLA_stream = config.get('Section1','manufacturer_SLA_stream')
 distributor_SLA_stream = config.get('Section1','distributor_SLA_stream')
 pharmacy_SLA_stream = config.get('Section1','pharmacy_SLA_stream')
+users_pharmacy_sold_items_stream = config.get('Section1','users_pharmacy_sold_items_stream')
 key = config.get('Section1','key') #Key - for manufacturer
 publisher = config.get('Section1','publisher') #Set a default for Manufacturer, add another for distributors
 qr_codes_path = config.get('Section1','qr_codes_path') #Set a default for Manufacturer, add another for distributors
@@ -4193,6 +4194,12 @@ def pharm_updateItems(request):
         print("email_rcvd: ",email_rcvd)
         print("company_info :",company_info)
         print("Cart Items :",cart_items)
+
+        base_string = f"{email_rcvd}{company_info}{timestamp_utc}"
+        hashed = hashlib.sha256(base_string.encode()).hexdigest()
+        orderid = ''.join(random.choices(hashed, k=6))
+        
+
         for cart_item in cart_items:
                 manu_email = cart_item['manu_email']
                 batchId = cart_item['batchId']
@@ -4213,6 +4220,8 @@ def pharm_updateItems(request):
                 response = json.loads(response)
                 distributor_email = response[0]['keys'][1]
                 print("distributor_email :",distributor_email)
+                manufacturer_email = response[0]['keys'][2]
+                print("distributor_email :",manufacturer_email)
                 manufacturer_name = response[0]['data']['json']['manufacturer']
                 print(manufacturer_name)
                 print(len(response))
@@ -4262,7 +4271,7 @@ def pharm_updateItems(request):
                     # latest_item['quantity_in_stock'] = str(new_quantity)
                     print('Item after updating quantity: \n', latest_item)
 
-                    # #publishing into users_manufacturer_items_stream
+                    #publishing into users_pharmacy_items_stream
                     txid = rpc_connection.publish('{}'.format(users_pharmacy_items_stream), [email_rcvd,
                                                                                                 distributor_email,
                                                                                                 manu_email,
@@ -4276,6 +4285,23 @@ def pharm_updateItems(request):
                                                                                                      "batchId": bytes_to_base64(encrypt_data(batchId)),
                                                                                                      "email": bytes_to_base64(encrypt_data(manu_email)),
                                                                                                      "products":[latest_item]
+                                                                                                     }
+                                                                                                     })#Add a timestamp for sub logic
+
+                    #publishing into users_pharmacy_sold_items_stream
+                    txid = rpc_connection.publish('{}'.format(users_pharmacy_sold_items_stream), [email_rcvd,
+                                                                                                  distributor_email,
+                                                                                                  manufacturer_email,
+                                                                                                  orderid,
+                                                                                                  timestamp_utc
+                                                                                                 ],
+                                                                                                 {'json': {
+                                                                                                     "pharmacy":bytes_to_base64(encrypt_data(company_info)),
+                                                                                                     "productName":bytes_to_base64(encrypt_data(productName)),
+                                                                                                     "batchId": bytes_to_base64(encrypt_data(batchId)),
+                                                                                                     "productCode":bytes_to_base64(encrypt_data(productCode)),
+                                                                                                     "quantity":bytes_to_base64(encrypt_data(str(quantity_frm_order))),
+                                                                                                     "totalprice":bytes_to_base64(encrypt_data(str(totalprice))),
                                                                                                      }
                                                                                                      })#Add a timestamp for sub logic
                 
