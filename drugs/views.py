@@ -4189,7 +4189,7 @@ def pharm_updateItems(request):
         company_info = request.POST.get('comp_info')
 
         cart_items = json.loads(cart_items_json)
-
+        timestamp_utc = datetime.datetime.utcnow().isoformat()
         print("email_rcvd: ",email_rcvd)
         print("company_info :",company_info)
         print("Cart Items :",cart_items)
@@ -4199,15 +4199,83 @@ def pharm_updateItems(request):
                 productCode = cart_item['productCode']
                 productName = cart_item['productName']
                 timestamp = cart_item['timestamp']
-                quantity = cart_item['quantity']
+                quantity_frm_order = cart_item['quantity']
                 totalprice = cart_item['totalprice']
                 print(manu_email)
                 print(batchId)
                 print(productCode)
                 print(productName)
                 print(timestamp)
-                print(quantity)
+                print(quantity_frm_order)
                 print(totalprice)
                 response =  rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [email_rcvd, batchId, productCode, productName]})               # print(len(response))
-                
+                response = json.dumps(response)
+                response = json.loads(response)
+                distributor_email = response[0]['keys'][1]
+                print("distributor_email :",distributor_email)
+                manufacturer_name = response[0]['data']['json']['manufacturer']
+                print(manufacturer_name)
+                print(len(response))
+
+                #for fetching latest timestamp item
+                if len(response) > 0:
+                    product_map = {}  # Initialize a dictionary to store product data and timestamp for each unique key
+
+                    # Sort the response list based on timestamp
+                    response.sort(key=lambda x: x['keys'][-1], reverse=True)
+
+                    for item in response:
+                        data = item['data']['json']
+                        key = (data['email'], data['products'][0]['product_code'], data['batchId'], data['products'][0]['product_name'])
+                        timestamp = item['keys'][-1]  # Get the timestamp from the last element of keys
+
+                        if key not in product_map or timestamp > product_map[key]['timestamp']:
+                            product_map[key] = {
+                                'product_data': data['products'][0],
+                                'timestamp': timestamp,
+                                'email': key[0],
+                                'product_code': key[1],
+                                'batchId': key[2],
+                                'product_name': key[3]
+                            }
+
+                    products_with_timestamp = [{
+                        'timestamp': value['timestamp'],
+                        'email': value['email'],
+                        'product_code': value['product_code'],
+                        'batchId': value['batchId'],
+                        'product_name': value['product_name'],
+                        'product_data': value['product_data']
+                    } for value in product_map.values()]
+
+                    print(products_with_timestamp)
+
+                    latest_item = products_with_timestamp[0]['product_data']
+                    prev_quantity = decrypt_data(base64_to_bytes(products_with_timestamp[0]['product_data']['quantity_in_stock'])) #From the user_manufacturer_items_stream
+                    new_quantity = int(prev_quantity)-int(quantity_frm_order)
+                    total_amout = int(quantity_frm_order) * int(decrypt_data(base64_to_bytes(products_with_timestamp[0]['product_data']['unit_price'])))
+
+                    print('new quantity :',new_quantity)
+                    print('tot_amount :', total_amout)
+
+                    latest_item['quantity_in_stock'] = bytes_to_base64(encrypt_data(str(new_quantity)))
+                    # latest_item['quantity_in_stock'] = str(new_quantity)
+                    print('Item after updating quantity: \n', latest_item)
+
+                    # #publishing into users_manufacturer_items_stream
+                    txid = rpc_connection.publish('{}'.format(users_pharmacy_items_stream), [email_rcvd,
+                                                                                                distributor_email,
+                                                                                                manu_email,
+                                                                                                 productCode,
+                                                                                                 batchId,
+                                                                                                 productName,
+                                                                                                 timestamp_utc
+                                                                                                 ],
+                                                                                                 {'json': {
+                                                                                                     "manufacturer":manufacturer_name,
+                                                                                                     "batchId": bytes_to_base64(encrypt_data(batchId)),
+                                                                                                     "email": bytes_to_base64(encrypt_data(manu_email)),
+                                                                                                     "products":[latest_item]
+                                                                                                     }
+                                                                                                     })#Add a timestamp for sub logic
                 
