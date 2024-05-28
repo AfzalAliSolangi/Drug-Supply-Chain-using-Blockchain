@@ -4157,3 +4157,29 @@ def sell_drugs(request):
             return render(request, 'selldrugs.html', {'message': 'No products available!', 'email': email_pharm, 'company_info': comp_info})
     else:
          return render(request, "pharmupdatesla.html",{'company_info': comp_info,'email':email_pharm,'pharmacy_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
+
+
+def sell_checkout(request):
+    print("\nSell Drugs checkout\n\n")
+    if request.method == 'POST':
+        # Retrieve the cartItems data from the POST request
+        cart_items_json = request.POST.get('cartItems', None)
+        email_dist = request.POST.get('email', None)
+        comp_info = request.POST.get('company_info', None)
+        print(email_dist)
+        print(comp_info)
+        print(cart_items_json)
+        if cart_items_json:
+            # Parse the JSON data
+            cart_items = json.loads(cart_items_json)
+
+            # Do something with the cart_items data (e.g., save to the database, process the order, etc.)
+            # For example, you can print it for demonstration purposes
+            print(cart_items)
+
+            # You can also render a template or return an appropriate HTTP response
+            return render(request, 'sellcheckout.html', {'cart_items': cart_items,  'email_dist': email_dist, 'comp_info':comp_info})
+        
+
+def pharm_updateItems(request):
+    ...

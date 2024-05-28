@@ -463,7 +463,7 @@ button#searchButton {
                 <td><div class="d-flex flex-column">
                     <button id="submitButton" class="btn btn-primary" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.batchId }}"
                     {% if product.product_data.quantity_in_stock == "0" %} disabled {% endif %}>
-                    Buy
+                    Select
                 </button>
                 </div></td>
                 <td><img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;"></td>
@@ -503,7 +503,7 @@ button#searchButton {
                         <label for="quantity{{ product.batchId }}">Quantity:</label>
                         <input type="number" class="form-control" id="quantity{{ product.batchId }}" name="quantity" value="1" min="1" max="{{ product.product_data.quantity_in_stock }}">
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.email }}', '{{ product.timestamp }}', '{{ manufacturer }}', '{{ product.batchId }}', '{{ product.product_code }}', '{{ product.product_data.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_data.unit_price }}', '{{ product.product_data.description }}', {{ product.product_data.ingredients | safe }}, '{{ product.product_data.dosage }}', '{{ product.product_data.manufacturing_date }}', '{{ product.product_data.expiry_date }}')">Add to Cart</button>
+                    <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.email }}', '{{ product.timestamp }}', '{{ manufacturer }}', '{{ product.batchId }}', '{{ product.product_code }}', '{{ product.product_data.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_data.unit_price }}', '{{ product.product_data.description }}', {{ product.product_data.ingredients | safe }}, '{{ product.product_data.dosage }}', '{{ product.product_data.manufacturing_date }}', '{{ product.product_data.expiry_date }}')">Done</button>
                 </form>
             </div>
         </div>
@@ -517,7 +517,7 @@ button#searchButton {
         <div id="cartContent"></div> <!-- Display cart items here -->
         <div class="cart-buttons">
             <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
-            <button id="sendOrderButton" class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}', '{{ email }}', '{{ company_info }}')" disabled>Send Order Request</button>
+            <button id="sendOrderButton" class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}', '{{ email }}', '{{ company_info }}')" disabled>Proceed To Checkout</button>
             <input type="hidden" name="email_dist" value="{{ email_dist }}">
             <input type="hidden" name="comp_info" value="{{ comp_info }}">
         </div>
@@ -922,7 +922,7 @@ function sortTableByQuantity() {
         // Create a form dynamically
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/pharmcheckout';  // Replace with the actual URL of your Django view
+        form.action = '/sell_checkout';  // Replace with the actual URL of your Django view
         form.style.display = 'none';
     
         // Add CSRF token

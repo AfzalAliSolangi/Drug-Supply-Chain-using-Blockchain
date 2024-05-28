@@ -74,4 +74,6 @@ urlpatterns = [
     path('otp_distributor', views.otp_distributor, name='otp_distributor'),
     path('otp_pharmacy', views.otp_pharmacy, name='otp_pharmacy'),
     path('sell_drugs', views.sell_drugs, name='sell_drugs'),
+    path('sell_checkout', views.sell_checkout, name='sell_checkout'),
+    path('pharm_updateItems', views.pharm_updateItems, name='pharm_updateItems'),
 ]

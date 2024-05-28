@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            background-image: linear-gradient(to bottom, #0077be, #00a0e9);
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        section {
+            border: 1px solid #ccc;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 0.25rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border-bottom: 1px solid #ccc;
+            padding: 1rem;
+        }
+
+        h2 {
+            color: #007bff;
+        }
+        button#searchButton {
+            background-color: #fff !important;
+            background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            border-color: #00a0e9 !important;
+            color: #fff;
+          }
+          
+          button#searchButton:hover {
+            background-color: #fff !important; 
+            background: none !important;
+            border-color: #00a0e9 !important;
+            color: #00a0e9 !important;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            }
+    </style>
+</head>
+<body>
+    <main>
+        <section>
+            <h2>Order Summary</h2>
+            <ul>
+                {% for item in cart_items %}
+                    <li>
+                        <p>Product: {{ item.productName }}</p>
+                        <p>Quantity: {{ item.quantity }}</p>
+                        <p>Unit Price: ${{ item.unitPrice }}</p>
+                        <p>Total Price: ${{ item.totalprice }}</p>
+                        <!-- Hidden fields for additional item information -->
+                        <input type="hidden" name="manufacturing_date[]" value="{{ item.manufacturing_date }}">
+                        <input type="hidden" name="expiry_date[]" value="{{ item.expiry_date }}">
+                        <input type="hidden" name="dosage[]" value="{{ item.dosage }}">
+                        <input type="hidden" name="ingredients[]" value="{{ item.ingredients|join:", " }}">
+                        <input type="hidden" name="description[]" value="{{ item.description }}">
+                        <input type="hidden" name="batchId[]" value="{{ item.batchId }}">
+                        <input type="hidden" name="manu_name[]" value="{{ item.manu_name }}">
+                        <input type="hidden" name="manu_email[]" value="{{ item.manu_email }}">
+                        <input type="hidden" name="productCode[]" value="{{ item.productCode }}">
+                    </li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            <input type="hidden" name="comp_info" value="{{ comp_info }}">
+            <button id="searchButton"  onclick="submitForm({{ cart_items|safe }}, '{{ manufacturer }}', '{{ email_dist }}', '{{ comp_info }}')">Sell Drugs</button>
+        </section>
+        
+    </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        function submitForm(cartItems, manufacturer) {
+            // Log the cart items to the console
+            console.log(cartItems);
+            console.log(manufacturer);
+            var email_dist = document.querySelector('input[name="email_dist"]').value;
+            var comp_info = document.querySelector('input[name="comp_info"]').value;
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/pharmreqorder';  // Replace with the actual URL of your Django view
+            form.style.display = 'none';
+        
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+            form.appendChild(csrfInput);
+        
+            // Create an input field to hold the cartItems data
+            const jsonInput = document.createElement('input');
+            jsonInput.type = 'hidden';
+            jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
+            jsonInput.value = JSON.stringify(cartItems);
+            form.appendChild(jsonInput);
+        
+            // Add an input field for the manufacturer name
+            const manufacturerInput = document.createElement('input');
+            manufacturerInput.type = 'hidden';
+            manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+            manufacturerInput.value = manufacturer;  // Use the manufacturer value passed as argument
+            form.appendChild(manufacturerInput);
+
+            // Add an input field for the email_dist value
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.value = email_dist;  // Pass the email_dist value
+            form.appendChild(emailInput);
+
+            // Add an input field for the email_dist value
+            const compinfoInput = document.createElement('input');
+            compinfoInput.type = 'hidden';
+            compinfoInput.name = 'comp_info';  // Name to use in Django for the email_dist
+            compinfoInput.value = comp_info;  // Pass the email_dist value
+            form.appendChild(compinfoInput);
+        
+            // Append the form to the document body
+            document.body.appendChild(form);
+        
+            // Submit the form
+            form.submit();
+        }
+        
+        // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+        
+    </script>
+</body>
+</html>
