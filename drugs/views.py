@@ -4392,11 +4392,19 @@ def view_solditem(request):
         if(len(json_load)>0):
             hist = []
             for items in json_load:
+
+                orderPlaceOn = datetime.datetime.fromisoformat(items['keys'][4])
+                        # orderPlaceOn = orderPlaceOn.strftime('%Y-%m-%d %H:%M:%S')
+                orderPlaceOndate = orderPlaceOn.strftime('%Y-%m-%d')
+
+                orderPlaceOnTime = orderPlaceOn.strftime('%H:%M:%S')
+
                 some = {
                     'Manufacturer_email': items['keys'][2],
                     'Distributor_email': items['keys'][1],
                     'recieptid': items['keys'][3],
-                    'orderPlaceOn': items['keys'][4],
+                    'orderPlaceOn': orderPlaceOndate,
+                    'orderPlaceOntime': orderPlaceOnTime,
                     'product_name': decrypt_data(base64_to_bytes(items['data']['json']['productName'])),
                     'batchId': decrypt_data(base64_to_bytes(items['data']['json']['batchId'])),
                     'product_code': decrypt_data(base64_to_bytes(items['data']['json']['productCode'])),

@@ -340,15 +340,6 @@ button#searchButton:hover {
   
       <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
   
-      <!-- Status Filter Dropdown -->
-      <div class="d-flex align-items-center">
-          <label for="statusFilter" class="me-2">Filter by Status:</label>
-          <select id="statusFilter" class="form-select" onchange="filterByStatus()" style="width: auto;">
-              <option value="">All</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Pending">Pending</option>
-              <option value="Cancelled">Cancelled</option>
-          </select>
       </div>
 
   </div>
@@ -362,6 +353,7 @@ button#searchButton:hover {
             <th width="100" scope="col">Manufacturer</th>
             <th width="100" scope="col">Distributor</th>
             <th width="100" scope="col">Date</th>
+            <th width="100" scope="col">Time</th>
             <th width="100" scope="col">Product</th>
             <th width="100" scope="col">Batch</th>
             <th width="100" scope="col">Product Code</th>
@@ -380,6 +372,7 @@ button#searchButton:hover {
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.Manufacturer_email }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.Distributor_email }}</td>
                 <td>{{ order.orderPlaceOn }}</td>
+                <td>{{ order.orderPlaceOntime }}</td>
                 <td>{{ order.product_name }}</td>
                 <td>{{ order.batchId }}</td>
                 <td>{{ order.product_code }}</td>
