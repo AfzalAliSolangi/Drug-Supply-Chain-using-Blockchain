@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <title>PHARMACY</title>
+</head>
+  <style>
+    body {
+      font-family: "Montserrat" !important;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sidebar {
+      background-color: #ededed !important;
+      width: 180px;
+      height: calc(100vh - 60px);
+      position: fixed;
+      top: 55px;
+      left: 0;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .sidebar a:hover {
+      background-color: #4caf50;
+    }
+
+    .top-bar {
+      /* background: linear-gradient(270deg, #fff 0, #00158f) !important; */
+      background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+      padding: 10px 20px;
+      position: fixed; /* Makes the top bar fixed at the top */
+      width: 100%; /* Ensures it covers the full width */
+      top: 0;
+      left: 0;
+      z-index: 1000; /* Ensures it stays on top */
+    }
+
+    .top-bar img {
+      border-radius: 50%; /* Makes the image rounded */
+      margin-right: 10px; /* Adds spacing between the image and the name */
+    }
+
+    .top-bar span {
+      font-size: 16px; /* Adjust font size as needed */
+      margin-right: 20px; /* Adds spacing between the name and the logout button */
+    }
+
+    .table-container {
+      overflow-y: auto; /* Enables vertical scrolling */
+      margin-left: 180px;
+      margin-top: 10px;
+      height: 500px; /* Adjust the height to fit your needs */
+    }
+
+    .table-container table {
+      padding: 20px;
+      border-spacing: 0;
+      border-collapse: collapse;
+      width: 100%; /* Ensures the table fills the container width */
+      background-color: #fff; /* Sets a clean background */
+    }
+
+    th,
+    td {
+      padding: 15px 10px; /* Increased padding for a modern look */
+      text-align: Center; /* Typically modern tables align text to the left */
+      font-size: 14px; /* Adjust font size for readability */
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8; /* Light background for the header */
+      color: #333; /* Soft black for text */
+      z-index: 2; /* Ensures the header is above other content */
+    }
+
+    .table-row td {
+      border-bottom: 1px solid #cccccc; /* Lighter and thinner border */
+    }
+    .button {
+      background-color: #4caf50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    /* Style for the dropdown button */
+    .dropbtn {
+      background-color: #ffffff; /* White background */
+      color: black; /* Black text/icon */
+      padding: 8px 12px; /* Adjust padding to balance the button size */
+      font-size: 16px; /* Font size of the text/icon */
+      border: none; /* No border */
+      cursor: pointer; /* Indicates it's clickable */
+      border-radius: 4px; /* Rounded corners */
+      line-height: 1; /* Line height for text alignment */
+      display: flex; /* Use flex to center content */
+      align-items: center; /* Align items vertically */
+      justify-content: center; /* Center content horizontally */
+      height: 40px; /* Match height with other elements like image */
+      overflow: visible; /* Prevents clipping */
+    }
+
+    /* Container for the dropdown content. Hidden by default. */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 150px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      right: 0; /* Aligns the dropdown to the right of the button */
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Show the dropdown menu on hover */
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    /* Change the dropdown button style on hover */
+    .dropdown:hover .dropbtn {
+      background-color: #e8e8e8; /* Light gray to indicate hover */
+    }
+    /* Ensure the dropdown menu is correctly positioned */
+    .dropdown {
+      position: relative; /* Ensures the dropdown content is positioned relative to this container */
+      display: inline-block; /* Keeps the dropdown button properly aligned with other inline or inline-block elements */
+      margin-left: 5px; /* Minimal left margin for tight spacing */
+      margin-right: 5px; /* Optional: adjust this to reduce/increase space to the next element on the right */
+    }
+
+    #ordersLink {
+      background-color: #4caf50; /* Green color */
+      color: white; /* Ensures text is visible on the green background */
+    }
+
+    #ordersLink:hover {
+      background-color: #43a047; /* Slightly darker green on hover for feedback */
+    }
+
+    .oval-box {
+      width: 90px; /* Adjust according to your requirement */
+      height: 30px; /* Adjust according to your requirement */
+      border-radius: 15px; /* Half of the height for smoother corners */
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      color: black; /* Text color */
+      font-weight: bold; /* Make text bold */
+    }
+
+    a.btn.btn-sidebar.w-100.mb-2 {
+        background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+        border: 1px solid #00a0e9 !important;
+      }
+  
+    a.btn.btn-sidebar.w-100.mb-2:hover {
+      background: #fff !important;
+      border: 1px solid #00a0e9 !important;
+      color: #00a0e9;
+  }
+
+input {
+  border: 1px solid #e1e1e1 !important;
+  border-radius: 4px !important;
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+
+button#searchButton {
+    color: #fff !important;
+    background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+    border-color: #00a0e9 !important;
+  }
+  
+  button#searchButton:hover {
+      background-color: #fff !important;
+      background: none !important;
+      border-color: #00a0e9 !important;
+      color: #00a0e9 !important;
+    }
+  
+    button#dropdownMenuButton1:focus {
+      background: transparent;
+      border: none !important;
+      color: #fff;
+      box-shadow: none !important;
+    }
+
+  
+
+    /* Cart Icon */
+            .cart-icon {
+                margin-left: 320px;
+                position: relative;
+                display: inline-block;
+            }
+            
+            .icon-gradient {
+                font-size: 40px; /* Ensure this matches the icon size */
+                background: linear-gradient(to bottom, #0077be, #00a0e9);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: transparent; /* Ensure the text itself is not visible */
+            }   
+            
+            .icon-gradient .fas {
+                font-size: 40px; /* Ensure this matches the icon size */
+            }
+
+            /* Cart Counter */
+            .cart-counter {
+                margin-top: 30px;
+                margin-left: 0px;
+                top: 80px;
+                right: 70px;    
+                background: linear-gradient(to bottom, #0077be, #00a0e9);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: transparent;
+                padding: 5px 10px;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.7);
+                font-size: 20px; /* Adjust as needed */ 
+            }
+            /* Add this to your existing CSS styles */
+            .cart-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .cart-popup {
+                padding: 20px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                z-index: 1001;
+                max-width: 400px; /* Adjust as needed */
+                margin: 0 auto;
+                border-radius: 0.25rem;
+            }
+
+            /* Close button style */
+            .btn-primary {
+                background-color: #fff !important;
+                background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+                padding: 5px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            .btn-primary:hover {
+                background-color: #fff !important; 
+                background: none !important;
+                border-color: #00a0e9 !important;
+                color: #00a0e9 !important;
+                padding: 5px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            .cart-buttons {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+
+            .cart-buttons button {
+                flex-grow: 1;
+                margin-right: 5px;
+            }
+
+            button#submitButton:hover {
+                background-color: #fff !important;
+                background: none !important;
+                border-color: #00a0e9 !important;
+                color: #00a0e9 !important;
+              }
+              
+              button#submitButton {
+                background-color: #fff !important;
+                background: linear-gradient(to bottom, #0077be, #00a0e9) !important;
+              }
+
+              .notification {
+                position: fixed;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #FFFFFF;
+                color: #cc0000;
+                text-align: center;
+                padding: 10px;
+                transition: top 0.5s ease-in-out;
+                z-index: 1000;
+                width: 80%;
+                box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+                max-width: 600px;
+                border-radius: 5px;
+              }
+              
+              .notification.show {
+                top: 55px;
+              }
+</style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    <div class="sidebar d-flex flex-column align-items-start p-3 bg-light">
+        <a
+          href="#"
+          class="btn btn-sidebar w-100 mb-2"
+          onclick="event.preventDefault(); pharmorderstatus('{{ email }}', '{{ company_info }}')"
+          >Orders Status</a
+        >
+        <a
+          href="#"
+          class="btn btn-sidebar w-100 mb-2"
+          onclick="event.preventDefault(); viewpharminvent('{{ email }}', '{{ company_info }}')"
+          >Inventory</a
+        >
+        <a
+          href="#"
+          class="btn btn-sidebar w-100 mb-2"
+          onclick="event.preventDefault(); pharmorderprod('{{ email }}', '{{ company_info }}')"
+          >Order Drugs</a
+        >
+        <a
+        href="#"
+        class="btn btn-sidebar w-100 mb-2"
+        onclick="event.preventDefault(); pharmupdatesla('{{ email }}', '{{ company_info }}')"
+        >Update SLA</a
+        >
+        <a
+        href="#"
+        class="btn btn-sidebar w-100 mb-2"
+        style="background:#fff !important; border-color:#00a0e9 !important; color:#00a0e9 !important"
+        onclick="event.preventDefault(); selldrugs('{{ email }}', '{{ company_info }}')"
+        >Sell Drugs</a
+        >
+      </div>
+
+<div class="top-bar py-2 px-3 bg-light shadow-sm">
+    <div class="d-flex justify-content-between align-items-center">
+        <b style="color: #fff">MedConnect</b>
+        <h1 style="color: #fff;
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
+        font-size: 26px;">Pharmacy Dashboard</h1>
+        <div class="d-flex align-items-center">
+            <img src="{% static 'assets/img/User_Icon.png' %}" alt="User Profile" class="rounded-circle" style="height: 40px; width: 40px; margin-right: 10px;">
+            <span style="color: #fff; font-weight: 600;" class="me-3">{{ company_info }}</span>
+            <!-- Bootstrap Dropdown Menu -->
+            <div class="dropdown">
+                <button style="background: transparent;
+                border: none !important;
+                color: #fff;" class="btn dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="{% url 'index' %}">Logout</a></li>
+                    <!-- Add more links here as needed -->
+                </ul>
+            </div>
+        </div>
+    </div>
+  </div>
+
+      <!-- Search Input Section with Search Button -->
+      <div class="d-flex align-items-center ps-4 pt-3" style="margin-left: 180px; margin-top: 60px;">
+        <input type="text" id="searchInput" class="form-control me-2" placeholder="Search orders..." style="width: 200px;">
+        <button id="searchButton" class="btn searchbutton btn-outline-secondary" onclick="filterTable()">Search</button>
+
+      <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Mfg Date:</label>
+      <input type="date" id="dateInput" class="form-control ms-2 me-2" onchange="filterByDate()" style="width: 180px;">
+
+      <label for="dateInput" style="margin-right: 0px; margin-left: 20px;">Exp Date:</label>
+      <input type="date" id="dateInput1" class="form-control ms-2 me-2" onchange="filterByDate1()" style="width: 180px;">
+
+  <div class="cart-icon" onclick="viewCart()">
+    <span class="icon-gradient">
+        <i class="fas fa-shopping-cart"></i>
+    </span>
+  </div>
+  <div class="cart-counter" id="cartCounter">0</div>
+</div>
+
+
+<div class="table-responsive" style="margin-left: 180px; overflow-x: auto;">
+    <table id="ordersTable" class="table table-striped table-hover" style="margin-top: 20px;">
+    <table id="ordersTable1">
+        <thead>
+          <tr>
+            <th width="100" scope="col">Select</th>
+            <th width="120" scope="col">Product</th>
+            <th width="120" scope="col">Name</th>
+            <th width="120" scope="col">Form</th>
+            <th width="120" scope="col">strength</th>
+            <th width="120" scope="col">Code</th>
+            <th width="120" scope="col">Batch ID</th>
+            <th width="120" scope="col" onclick="sortTableByQuantity()" style="cursor: pointer;">
+                In-Stock <span id="priceSortIcon1" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+            </th>
+            <th width="120" scope="col">Mfg Date</th>
+            <th width="120" scope="col">Exp Date</th>
+            <th width="100" scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
+              Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
+          </th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr class="table-row">
+                <td><div class="d-flex flex-column">
+                    <button id="submitButton" class="btn btn-primary" type="button" data-toggle="modal" data-target="#addToCartModal{{ product.batchId }}"
+                    {% if product.product_data.quantity_in_stock == "0" %} disabled {% endif %}>
+                    Buy
+                </button>
+                </div></td>
+                <td><img src="https://c8.alamy.com/comp/F2WFGT/placebo-medicine-package-with-colorful-capsules-a-medical-fake-product-F2WFGT.jpg" alt="Italian Trulli" style="width:246px;height:246px;"></td>
+                <td>{{ product.product_name }}</td>
+                <td>{{ product.product_data.form }}</td>
+                <td>{{ product.product_data.strength }}mg</td>
+                <td>{{ product.product_data.product_code }}</td>
+                <td>{{ product.batchId }}</td>
+                <td>{{ product.product_data.quantity_in_stock }}</td>
+                <td>{{ product.product_data.manufacturing_date }}</td>
+                <td>{{ product.product_data.expiry_date }}</td>
+                <td>{{ product.product_data.unit_price }}</td>
+                <input type="hidden" name="email" value="{{ product.email }}">
+                <input type="hidden" name="batch_id" value="{{ product.batchId }}">
+                <input type="hidden" name="timestamp" value="{{ product.timestamp }}">
+            </tr>
+            
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for product in products %}
+<!-- Add to Cart Modal -->
+<div class="modal fade" id="addToCartModal{{ product.batchId }}" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="quantity{{ product.batchId }}">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity{{ product.batchId }}" name="quantity" value="1" min="1" max="{{ product.product_data.quantity_in_stock }}">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.email }}', '{{ product.timestamp }}', '{{ manufacturer }}', '{{ product.batchId }}', '{{ product.product_code }}', '{{ product.product_data.quantity_in_stock }}', '{{ product.product_name }}', '{{ product.product_data.unit_price }}', '{{ product.product_data.description }}', {{ product.product_data.ingredients | safe }}, '{{ product.product_data.dosage }}', '{{ product.product_data.manufacturing_date }}', '{{ product.product_data.expiry_date }}')">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<div id="cartOverlay" class="cart-overlay" onclick="closeCartPopup()">
+    <div class="cart-popup" id="cartPopup">
+        <div id="cartContent"></div> <!-- Display cart items here -->
+        <div class="cart-buttons">
+            <button class="btn btn-primary" onclick="closeCartPopup()">Close</button>
+            <button id="sendOrderButton" class="btn btn-primary" onclick="proceedToCheckout('{{ manufacturer }}', '{{ email }}', '{{ company_info }}')" disabled>Send Order Request</button>
+            <input type="hidden" name="email_dist" value="{{ email_dist }}">
+            <input type="hidden" name="comp_info" value="{{ comp_info }}">
+        </div>
+    </div>
+</div>
+
+<script>
+  var selectedOrders = []; // Array to store selected orders' data
+  
+  var cartItems = [];
+
+  function updateButtonState() {
+      document.getElementById('sendOrderButton').disabled = cartItems.length === 0;
+  }
+
+  function addToCart(manu_email, timestamp, manu_name, batchId, productCode, maxQuantity, productName, unitPrice, description, ingredients, dosage, manufacturing_date, expiry_date) {
+      var quantityInput = document.getElementById('quantity' + batchId);
+      var quantity = parseInt(quantityInput.value, 10);
+      console.log(quantity);
+      console.log(maxQuantity);
+      console.log(cartItems);
+
+      if (quantity > 0 && quantity <= maxQuantity) {
+          // Check if the product is already in the cart
+          var existingItem = cartItems.find(item => item.productCode === productCode);
+
+          if (existingItem) {
+              // Product already in the cart, update the quantity
+              existingItem.quantity += quantity;
+          } else {
+              // Create a new cart item for each product
+              var cartItem = {
+                  expiry_date: expiry_date,
+                  manufacturing_date: manufacturing_date,
+                  dosage: dosage,
+                  ingredients: ingredients,
+                  description: description,
+                  batchId: batchId,
+                  manu_name: manu_name,
+                  timestamp: timestamp,
+                  manu_email: manu_email,
+                  productName: productName,
+                  productCode: productCode,
+                  unitPrice: unitPrice,
+                  quantity: quantity,
+                  totalprice: quantity * unitPrice
+              };
+
+              // Add the cart item to the cartItems array
+              cartItems.push(cartItem);
+
+              // Update the cart counter only for new products
+              var cartCounter = document.getElementById('cartCounter');
+              var currentCount = parseInt(cartCounter.innerText, 10);
+              cartCounter.innerText = currentCount + 1;
+          }
+
+          // Reset quantity input
+          quantityInput.value = 0;
+
+          // Hide the modal
+          $('#addToCartModal' + batchId).modal('hide');
+
+          // Update the button state
+          updateButtonState();
+
+          // Additional logic here to update the cart or perform other actions
+      } else {
+          alert('Invalid quantity. Please enter a valid quantity.');
+      }
+  }
+
+  // Initial call to set the correct button state
+  updateButtonState();
+    function updateSelection(checkbox) {
+        var row = checkbox.closest('tr');
+        var orderId = row.cells[1].textContent.trim(); // Consistently capture the orderId
+    
+        if (checkbox.checked) {
+            // If checked, gather data and add to the selectedOrders
+            var orderData = {
+                orderId: orderId,
+                trxId: row.cells[2].textContent.trim(),
+                distributor: row.cells[3].textContent.trim(),
+                date: row.cells[4].textContent.trim(),
+                product: row.cells[5].textContent.trim(),
+                batchId: row.cells[6].textContent.trim(),
+                productCode: row.cells[7].textContent.trim(),
+                quantity: row.cells[8].textContent.trim(),
+                status: row.cells[9].textContent.trim()
+            };
+          
+            // Collect hidden inputs within the row for additional data
+            row.querySelectorAll('td:last-child input[type="hidden"]').forEach(function(input) {
+                orderData[input.name] = input.value;
+            });
+          
+            selectedOrders.push(orderData); // Add the new order data to the array
+        } else {
+            // If unchecked, remove the order from the array
+            selectedOrders = selectedOrders.filter(function(order) {
+                return order.orderId !== orderId; // Correct filtering using orderId
+            });
+        }
+      
+        console.log(selectedOrders); // Logs to console to monitor the selected orders
+    }
+
+    // Attach event listeners to checkboxes on document load
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.table-row input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.onclick = function() { updateSelection(this); };
+        });
+    });
+
+    // Function to filter the table based on search input
+    function filterTable() {
+      var input = document.getElementById('searchInput');
+      var filter = input.value.toUpperCase().trim();  // Get the input text and trim whitespace
+      var table = document.getElementById('ordersTable1');
+      var tr = table.getElementsByTagName('tr');
+    
+      if (filter === "") {
+          // If the filter is empty, display all rows
+          for (var i = 1; i < tr.length; i++) { // Skip the header row
+              tr[i].style.display = "";
+          }
+          return; // Exit the function early
+      }
+    
+      // Continue with filtering only if there is some text in the input
+      for (var i = 1; i < tr.length; i++) {
+          var display = false; // Assume the row does not match
+          // Define which columns to search (OrderID, Trx ID, Distributor, Product)
+          var tds = [
+          tr[i].getElementsByTagName('td')[2], // Name
+          tr[i].getElementsByTagName('td')[3], // Form   
+          tr[i].getElementsByTagName('td')[4], // Strength   
+          tr[i].getElementsByTagName('td')[5], // Code
+          tr[i].getElementsByTagName('td')[6], // Batch ID
+                     ]; // Product
+      
+          for (var j = 0; j < tds.length; j++) {
+              var td = tds[j];
+              if (td) {
+                  var txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().trim() === filter) {
+                      display = true; // Show the row if the cell matches exactly
+                      break; // Stop checking further cells if a match is found
+                  }
+              }
+          }
+          tr[i].style.display = display ? "" : "none"; // Apply the display setting
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var input = document.getElementById('searchInput');
+      input.addEventListener('keyup', function(event) {
+          if (event.key === "Enter") {
+              filterTable();
+          }
+      });
+    });
+
+    function filterByDate() {
+        var dateInput = document.getElementById('dateInput').value;
+        var table = document.getElementById('ordersTable1');
+        var tr = table.getElementsByTagName('tr');
+    
+        if (!dateInput) {
+            // If no date is entered, show all rows
+            for (var i = 1; i < tr.length; i++) {
+                tr[i].style.display = "";
+            }
+            return;
+        }
+    
+        var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+    
+        for (var i = 1; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName('td')[8]; // Assuming Date is the 5th column
+            if (td) {
+                var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
+                tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+            }
+        }
+    }
+  
+      function filterByDate1() {
+        var dateInput = document.getElementById('dateInput1').value;
+        var table = document.getElementById('ordersTable1');
+        var tr = table.getElementsByTagName('tr');
+    
+        if (!dateInput) {
+            // If no date is entered, show all rows
+            for (var i = 1; i < tr.length; i++) {
+                tr[i].style.display = "";
+            }
+            return;
+        }
+    
+        var filterDate = new Date(dateInput).toISOString().slice(0, 10); // Standardize to yyyy-mm-dd format
+    
+        for (var i = 1; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName('td')[9]; // Assuming Date is the 5th column
+            if (td) {
+                var rowDate = new Date(td.textContent || td.innerText).toISOString().slice(0, 10);
+                tr[i].style.display = (rowDate === filterDate) ? "" : "none";
+            }
+        }
+    }
+  
+let priceSortAsc = true; // Initialize sort direction
+
+
+function sortTableByPrice() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    var sortIcon = document.getElementById('priceSortIcon');
+    table = document.getElementById("ordersTable1");
+    switching = true;
+
+    // Update icon based on current sort direction
+    if (priceSortAsc) {
+        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
+    } else {
+        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+    }
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[10];
+            y = rows[i + 1].getElementsByTagName("TD")[10];
+            if (priceSortAsc) {
+                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+}
+
+function sortTableByQuantity() {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    var sortIcon = document.getElementById('priceSortIcon1');
+    table = document.getElementById("ordersTable1");
+    switching = true;
+
+    // Update icon based on current sort direction
+    if (priceSortAsc) {
+        sortIcon.innerHTML = '&#8659;'; // Unicode for down arrow
+    } else {
+        sortIcon.innerHTML = '&#8657;'; // Unicode for up arrow
+    }
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[7];
+            y = rows[i + 1].getElementsByTagName("TD")[7];
+            if (priceSortAsc) {
+                if (parseFloat(x.textContent) > parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                if (parseFloat(x.textContent) < parseFloat(y.textContent)) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+    priceSortAsc = !priceSortAsc; // Toggle the direction for next sort
+}
+
+    function distorders(email,company_info) {
+        console.log("Email Distribution:", email);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/manuorders';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    function viewInventory(email,company_info) {
+        console.log("Viewing inventory...");
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/viewmanuinvent';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+
+        form.submit();
+    }
+    function addDrug(email, company_info) {
+        console.log("Adding drug...");
+        window.location.href = '/adddrugmenu';  // Replace with the actual URL for adding drug
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/adddrugmenu';  // Replace with the actual URL for adding drug
+        form.style.display = 'none';
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function viewCart() {
+        // Show the cart overlay
+        document.getElementById('cartOverlay').style.display = 'flex';
+    
+        // Display cart items
+        var cartContent = document.getElementById('cartContent');
+        cartContent.innerHTML = ''; // Clear previous content
+    
+        if (cartItems.length === 0) {
+            cartContent.innerHTML = '<p>Your cart is empty.</p>';
+        } else {
+            // Display each cart item
+            cartItems.forEach(function (item) {
+                var itemInfo = `
+                    <div>
+                        <p>Product: ${item.productName}</p>
+                        <p>Quantity: ${item.quantity}</p>
+                        <p>Total Price: $${item.unitPrice * item.quantity}</p>
+                    </div>
+                    <hr>
+                `;
+                var itemElement = document.createElement('div');
+                itemElement.innerHTML = itemInfo;
+                cartContent.appendChild(itemElement);
+            });
+        }
+    }
+
+    function closeCartPopup() {
+        // Hide the cart overlay
+        document.getElementById('cartOverlay').style.display = 'none';
+    }
+
+    function proceedToCheckout() {
+        // Log the cart items to the console
+        console.log(cartItems);
+    }
+
+    function proceedToCheckout(manufacturer,email,company_info) {
+        // Create a form dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/pharmcheckout';  // Replace with the actual URL of your Django view
+        form.style.display = 'none';
+    
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = getCSRFToken();  // Call a function to get the CSRF token
+        form.appendChild(csrfInput);
+    
+        // Create an input field to hold the cartItems data
+        const jsonInput = document.createElement('input');
+        jsonInput.type = 'hidden';
+        jsonInput.name = 'cartItems';  // Name to use in Django for the JSON data
+        jsonInput.value = JSON.stringify(cartItems);
+        form.appendChild(jsonInput);
+        document.body.appendChild(form);
+        // Add an input field for the manufacturer name
+        const manufacturerInput = document.createElement('input');
+        manufacturerInput.type = 'hidden';
+        manufacturerInput.name = 'manufacturer';  // Name to use in Django for the manufacturer
+        manufacturerInput.value = manufacturer;  // Pass the manufacturer value
+        form.appendChild(manufacturerInput);
+        document.body.appendChild(form);
+        // Add an input field for the email_dist value
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';  // Name to use in Django for the email_dist
+        emailInput.value = email;  // Pass the email_dist value
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+        // Add an input field for the email_dist value
+        const compinfoInput = document.createElement('input');
+        compinfoInput.type = 'hidden';
+        compinfoInput.name = 'company_info';  // Name to use in Django for the email_dist
+        compinfoInput.value = company_info;  // Pass the email_dist value
+        form.appendChild(compinfoInput);
+        document.body.appendChild(form);
+    
+        // Submit the form
+        form.submit();
+    }
+
+    function distorderprod(email,company_info) {
+        console.log("Email Distribution:", email);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/distorderprod';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+  
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+  
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+  
+        form.submit();
+    }
+    function viewpharminvent(email,company_info) {
+        console.log("Viewing inventory...");
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/viewpharminvent';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+  
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+  
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+  
+        form.submit();
+    }
+    function pharmorderstatus(email,company_info) {
+        console.log("Email Distribution:", email);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/pharmorderstatus';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+    // Function to get CSRF token from cookies
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    return cookie.substring('csrftoken='.length, cookie.length);
+                }
+            }
+            return null;
+        }
+
+        function pharmorders(email) {
+            console.log("Email Distribution:", email);
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/pharmorders';  // Replace with the actual URL for completing purchase
+            form.style.display = 'none';
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = email;
+            form.appendChild(emailInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+        function pharmupdatesla(email,company_info) {
+          console.log("Viewing inventory...");
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/pharmupdatesla';  // Replace with the actual URL for completing purchase
+          form.style.display = 'none';
+      
+          const emailInput = document.createElement('input');
+          emailInput.type = 'hidden';
+          emailInput.name = 'email';
+          emailInput.value = email;
+          form.appendChild(emailInput);
+          document.body.appendChild(form);
+      
+          const companyinfoInput = document.createElement('input');
+          companyinfoInput.type = 'hidden';
+          companyinfoInput.name = 'company_info';
+          companyinfoInput.value = company_info;
+          form.appendChild(companyinfoInput);
+          document.body.appendChild(form);
+      
+          form.submit();
+      }
+
+        function selldrugs(email,company_info) {
+          console.log("Viewing inventory...");
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/sell_drugs';  // Replace with the actual URL for completing purchase
+          form.style.display = 'none';
+      
+          const emailInput = document.createElement('input');
+          emailInput.type = 'hidden';
+          emailInput.name = 'email';
+          emailInput.value = email;
+          form.appendChild(emailInput);
+          document.body.appendChild(form);
+      
+          const companyinfoInput = document.createElement('input');
+          companyinfoInput.type = 'hidden';
+          companyinfoInput.name = 'company_info';
+          companyinfoInput.value = company_info;
+          form.appendChild(companyinfoInput);
+          document.body.appendChild(form);
+      
+          form.submit();
+      }
+
+      function pharmorderprod(email,company_info) {
+        console.log("Email Distribution:", email);
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/pharmorderprod';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+  
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+  
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+  
+        form.submit();
+    }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var notification = document.getElementById('notification');
+        var message = "{{ message }}";
+        
+        if (message) {
+          notification.textContent = message;
+          notification.classList.add('show');
+          
+          setTimeout(function() {
+            notification.classList.remove('show');
+          }, 5000); // Hide after 5 seconds
+        }
+      });
+</script>
+</body>
+</html>
