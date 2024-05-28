@@ -283,6 +283,12 @@ button#searchButton:hover {
   onclick="event.preventDefault(); pharmupdatesla('{{ email }}', '{{ company_info }}')"
   >Update SLA</a
   >
+  <a
+  href="#"
+  class="btn btn-sidebar w-100 mb-2"
+  onclick="event.preventDefault(); selldrugs('{{ email }}', '{{ company_info }}')"
+  >Sell Drugs</a
+  >
 </div>
 
 <div class="top-bar py-2 px-3 bg-light shadow-sm">
@@ -437,6 +443,30 @@ margin-left: 200px;!important">
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = '/pharmupdatesla';  // Replace with the actual URL for completing purchase
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'hidden';
+  emailInput.name = 'email';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+  document.body.appendChild(form);
+
+  const companyinfoInput = document.createElement('input');
+  companyinfoInput.type = 'hidden';
+  companyinfoInput.name = 'company_info';
+  companyinfoInput.value = company_info;
+  form.appendChild(companyinfoInput);
+  document.body.appendChild(form);
+
+  form.submit();
+}
+
+ function selldrugs(email,company_info) {
+  console.log("Viewing inventory...");
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '/sell_drugs';  // Replace with the actual URL for completing purchase
   form.style.display = 'none';
 
   const emailInput = document.createElement('input');

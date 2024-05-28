@@ -73,4 +73,5 @@ urlpatterns = [
     path('otp_manufacturer', views.otp_manufacturer, name='otp_manufacturer'),
     path('otp_distributor', views.otp_distributor, name='otp_distributor'),
     path('otp_pharmacy', views.otp_pharmacy, name='otp_pharmacy'),
+    path('sell_drugs', views.sell_drugs, name='sell_drugs'),
 ]

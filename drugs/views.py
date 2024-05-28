@@ -4076,3 +4076,9 @@ def otp_pharmacy(request):
         print(email)
         return render(request, "Signup-pharmacy1.html",{'email': email}) #if the email is not present then render this page
     
+
+def sell_drugs(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        print(email)
+        return HttpResponse("wired") #if the email is not present then render this page
