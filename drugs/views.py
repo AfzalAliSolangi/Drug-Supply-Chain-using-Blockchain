@@ -4383,12 +4383,28 @@ def view_solditem(request):
     print('\nviewing sold Items')
     if request.method == 'POST':
         email_rcvd = request.POST.get('email')
-        company_info = request.POST.get('comp_info')
+        company_info = request.POST.get('company_info')
         result = rpc_connection.liststreamkeyitems(users_pharmacy_sold_items_stream, email_rcvd)
         data = json.dumps(result)
         json_load = json.loads(data)
+        print(json_load)
         #apply length check for json_load
         if(len(json_load)>0):
-            ...
-            return render(request, 'viewsolditems.html', {'email': email_rcvd, 'company_info': company_info})
+            hist = []
+            for items in json_load:
+                some = {
+                    'Manufacturer_email': items['keys'][2],
+                    'Distributor_email': items['keys'][1],
+                    'recieptid': items['keys'][3],
+                    'orderPlaceOn': items['keys'][4],
+                    'product_name': decrypt_data(base64_to_bytes(items['data']['json']['productName'])),
+                    'batchId': decrypt_data(base64_to_bytes(items['data']['json']['batchId'])),
+                    'product_code': decrypt_data(base64_to_bytes(items['data']['json']['productCode'])),
+                    'quantity': decrypt_data(base64_to_bytes(items['data']['json']['quantity'])),
+                    'tot_price': decrypt_data(base64_to_bytes(items['data']['json']['totalprice'])),
+                    'trxid':items['txid']
+                }
+                hist.append(some)
+            print(hist)
+            return render(request, 'viewsolditems.html', {'orders': hist, 'email': email_rcvd, 'company_info': company_info})
 

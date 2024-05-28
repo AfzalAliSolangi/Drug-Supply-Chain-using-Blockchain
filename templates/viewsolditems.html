@@ -359,8 +359,8 @@ button#searchButton:hover {
         <thead>
             <th width="100" scope="col">ReceiptID</th>
             <th width="100" scope="col">Trx</th>
-            <th width="100" scope="col">Distributor</th>
             <th width="100" scope="col">Manufacturer</th>
+            <th width="100" scope="col">Distributor</th>
             <th width="100" scope="col">Date</th>
             <th width="100" scope="col">Product</th>
             <th width="100" scope="col">Batch</th>
@@ -369,13 +369,13 @@ button#searchButton:hover {
             <th width="100" scope="col" onclick="sortTableByPrice()" style="cursor: pointer;">
               Total Price <span id="priceSortIcon" class="sort-icon">&#8645;</span> <!-- Double-headed arrow -->
           </th>
-            <th width="100"scope="col">Status</th>
+          
           </tr>
         </thead>
         <tbody>
             {% for order in orders %}
             <tr class="table-row">
-                <td>{{ order.orderid }}</td>
+                <td>{{ order.recieptid }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.trxid }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.Manufacturer_email }}</td>
                 <td style="word-wrap: break-word; max-width: 150px;">{{ order.Distributor_email }}</td>
@@ -386,11 +386,6 @@ button#searchButton:hover {
                 <td>{{ order.quantity }}</td>
                 <td>{{ order.tot_price }}</td>
                 <td>
-                  <div
-                  class="oval-box"
-                  style="background-color: {% if order.confirmed == 'Cancelled' %}#dc3545{% elif order.confirmed == 'Confirmed' %}#198754{% else %}#ffff00{% endif %} !important; color: white;">
-                  {% if order.confirmed == '' %}Pending{% else %}{{ order.confirmed }}{% endif %}
-                </div>
                 <input type="hidden" name="manufacturer_email" value="{{ order.Manufacturer_email }}">
                 <input type="hidden" name="distributor_email" value="{{ order.distributor_email }}">
                 <input type="hidden" name="product_name" value="{{ order.product_name }}">
