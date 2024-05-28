@@ -4182,4 +4182,32 @@ def sell_checkout(request):
         
 
 def pharm_updateItems(request):
-    ...
+    print('\n\nSell items to customer\n\n')
+    if request.method == 'POST':
+        cart_items_json = request.POST.get('cartItems', None)
+        email_rcvd = request.POST.get('email')
+        company_info = request.POST.get('comp_info')
+
+        cart_items = json.loads(cart_items_json)
+
+        print("email_rcvd: ",email_rcvd)
+        print("company_info :",company_info)
+        print("Cart Items :",cart_items)
+        for cart_item in cart_items:
+                manu_email = cart_item['manu_email']
+                batchId = cart_item['batchId']
+                productCode = cart_item['productCode']
+                productName = cart_item['productName']
+                timestamp = cart_item['timestamp']
+                quantity = cart_item['quantity']
+                totalprice = cart_item['totalprice']
+                print(manu_email)
+                print(batchId)
+                print(productCode)
+                print(productName)
+                print(timestamp)
+                print(quantity)
+                print(totalprice)
+                response =  rpc_connection.liststreamqueryitems('{}'.format(users_pharmacy_items_stream), {'keys': [email_rcvd, batchId, productCode, productName]})               # print(len(response))
+                
+                

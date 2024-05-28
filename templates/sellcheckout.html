@@ -112,7 +112,7 @@
             // Create a form dynamically
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/pharmreqorder';  // Replace with the actual URL of your Django view
+            form.action = '/pharm_updateItems';  // Replace with the actual URL of your Django view
             form.style.display = 'none';
         
             // Add CSRF token
@@ -139,7 +139,7 @@
             // Add an input field for the email_dist value
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
-            emailInput.name = 'email_dist';  // Name to use in Django for the email_dist
+            emailInput.name = 'email';  // Name to use in Django for the email_dist
             emailInput.value = email_dist;  // Pass the email_dist value
             form.appendChild(emailInput);
 
