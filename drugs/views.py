@@ -4194,7 +4194,9 @@ def pharm_updateItems(request):
         print("email_rcvd: ",email_rcvd)
         print("company_info :",company_info)
         print("Cart Items :",cart_items)
-
+        base_string = f"{email_rcvd}{company_info}{timestamp_utc}"
+        hashed = hashlib.sha256(base_string.encode()).hexdigest()
+        orderid = ''.join(random.choices(hashed, k=6))
         #Getting hash sla from the user stream
         response = rpc_connection.liststreamkeyitems(users_pharmacy_stream, email_rcvd)
         json_string = json.dumps(response)
@@ -4214,11 +4216,6 @@ def pharm_updateItems(request):
             print(Pharmacy_hash_sla) 
 
         if fetched_sla==Pharmacy_hash_sla:            
-            base_string = f"{email_rcvd}{company_info}{timestamp_utc}"
-            hashed = hashlib.sha256(base_string.encode()).hexdigest()
-            orderid = ''.join(random.choices(hashed, k=6))
-
-
             for cart_item in cart_items:
                     manu_email = cart_item['manu_email']
                     batchId = cart_item['batchId']
@@ -4312,7 +4309,8 @@ def pharm_updateItems(request):
                                                                                                       distributor_email,
                                                                                                       manufacturer_email,
                                                                                                       orderid,
-                                                                                                      timestamp_utc
+                                                                                                      timestamp_utc,
+                                                                                                      batchId
                                                                                                      ],
                                                                                                      {'json': {
                                                                                                          "pharmacy":bytes_to_base64(encrypt_data(company_info)),
@@ -4324,56 +4322,54 @@ def pharm_updateItems(request):
                                                                                                          }
                                                                                                          })#Add a timestamp for sub logic
 
-                    x = rpc_connection.subscribe('{}'.format(users_distributor_items_stream)) # Subscribing
-                    response = rpc_connection.liststreamkeyitems('{}'.format(users_pharmacy_items_stream), '{}'.format(email_rcvd)) # Based on the manufacturer KEY the data is being fetched
-                    # Have a logic which fetches out items based on latest_timestamp
-                    print(len(response))
-                    if len(response) > 0:
-                        product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
-
-                        for item in response:
-                            data = item['data']['json']
-                            key = (decrypt_data(base64_to_bytes(data['email'])),
-                                   decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
-                                   decrypt_data(base64_to_bytes(data['batchId'])),
-                                   decrypt_data(base64_to_bytes(data['products'][0]['product_name'])))
-                            timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
-
-                            if key not in product_map or timestamp > product_map[key]['timestamp']:
-                                product_map[key] = {
-                                    'product_data': {
-                                                        'product_name': decrypt_data(base64_to_bytes(data['products'][0]['product_name'])),
-                                                        'product_code': decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
-                                                        'description': decrypt_data(base64_to_bytes(data['products'][0]['description'])),
-                                                        'ingredients': list(decrypt_data(base64_to_bytes(data['products'][0]['ingredients']))),
-                                                        'dosage': decrypt_data(base64_to_bytes(data['products'][0]['dosage'])),
-                                                        'quantity_in_stock': decrypt_data(base64_to_bytes(data['products'][0]['quantity_in_stock'])),
-                                                        'unit_price': decrypt_data(base64_to_bytes(data['products'][0]['unit_price'])),
-                                                        'manufacturing_date': decrypt_data(base64_to_bytes(data['products'][0]['manufacturing_date'])),
-                                                        'expiry_date': decrypt_data(base64_to_bytes(data['products'][0]['expiry_date'])),
-                                                        'drugbank_id': decrypt_data(base64_to_bytes(data['products'][0]['drugbank_id'])),
-                                                        'form': decrypt_data(base64_to_bytes(data['products'][0]['form'])),
-                                                        'strength': decrypt_data(base64_to_bytes(data['products'][0]['strength'])),
-                                                        'route': decrypt_data(base64_to_bytes(data['products'][0]['route'])),
-                                                        'published_on': decrypt_data(base64_to_bytes(data['products'][0]['published_on']))},
-                                    'timestamp': timestamp,
-                                    'email': key[0],
-                                    'product_code': key[1],
-                                    'batchId': key[2],
-                                    'product_name': key[3]
-                                }
-
-                        products_with_timestamp = [{
-                            'timestamp': value['timestamp'],
-                            'email': value['email'],
-                            'product_code': value['product_code'],
-                            'batchId': value['batchId'],
-                            'product_name': value['product_name'],
-                            'product_data': value['product_data']
-                        } for value in product_map.values()]
-
-                        print(products_with_timestamp)
-                        return render(request, 'selldrugs.html', {'products': products_with_timestamp, 'email': email_rcvd, 'company_info': company_info})            
+                    
+                    
+            x = rpc_connection.subscribe('{}'.format(users_distributor_items_stream)) # Subscribing
+            response = rpc_connection.liststreamkeyitems('{}'.format(users_pharmacy_items_stream), '{}'.format(email_rcvd)) # Based on the manufacturer KEY the data is being fetched
+            # Have a logic which fetches out items based on latest_timestamp
+            print(len(response))
+            if len(response) > 0:
+                product_map = {} # Initialize a dictionary to store product data and timestamp for each unique key
+                for item in response:
+                    data = item['data']['json']
+                    key = (decrypt_data(base64_to_bytes(data['email'])),
+                           decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                           decrypt_data(base64_to_bytes(data['batchId'])),
+                           decrypt_data(base64_to_bytes(data['products'][0]['product_name'])))
+                    timestamp = item['keys'][-1] # Get the timestamp from the last element of keys
+                    if key not in product_map or timestamp > product_map[key]['timestamp']:
+                        product_map[key] = {
+                            'product_data': {
+                                                'product_name': decrypt_data(base64_to_bytes(data['products'][0]['product_name'])),
+                                                'product_code': decrypt_data(base64_to_bytes(data['products'][0]['product_code'])),
+                                                'description': decrypt_data(base64_to_bytes(data['products'][0]['description'])),
+                                                'ingredients': list(decrypt_data(base64_to_bytes(data['products'][0]['ingredients']))),
+                                                'dosage': decrypt_data(base64_to_bytes(data['products'][0]['dosage'])),
+                                                'quantity_in_stock': decrypt_data(base64_to_bytes(data['products'][0]['quantity_in_stock'])),
+                                                'unit_price': decrypt_data(base64_to_bytes(data['products'][0]['unit_price'])),
+                                                'manufacturing_date': decrypt_data(base64_to_bytes(data['products'][0]['manufacturing_date'])),
+                                                'expiry_date': decrypt_data(base64_to_bytes(data['products'][0]['expiry_date'])),
+                                                'drugbank_id': decrypt_data(base64_to_bytes(data['products'][0]['drugbank_id'])),
+                                                'form': decrypt_data(base64_to_bytes(data['products'][0]['form'])),
+                                                'strength': decrypt_data(base64_to_bytes(data['products'][0]['strength'])),
+                                                'route': decrypt_data(base64_to_bytes(data['products'][0]['route'])),
+                                                'published_on': decrypt_data(base64_to_bytes(data['products'][0]['published_on']))},
+                            'timestamp': timestamp,
+                            'email': key[0],
+                            'product_code': key[1],
+                            'batchId': key[2],
+                            'product_name': key[3]
+                        }
+                products_with_timestamp = [{
+                    'timestamp': value['timestamp'],
+                    'email': value['email'],
+                    'product_code': value['product_code'],
+                    'batchId': value['batchId'],
+                    'product_name': value['product_name'],
+                    'product_data': value['product_data']
+                } for value in product_map.values()]
+                print(products_with_timestamp)
+                return render(request, 'selldrugs.html', {'products': products_with_timestamp, 'email': email_rcvd, 'company_info': company_info})            
 
         else:
             return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd,'pharmacy_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"})         
@@ -4415,4 +4411,5 @@ def view_solditem(request):
                 hist.append(some)
             print(hist)
             return render(request, 'viewsolditems.html', {'orders': hist, 'email': email_rcvd, 'company_info': company_info})
-
+        else:
+            return render(request, 'viewsolditems.html', {'message': 'No Drugs Sold!', 'email': email_rcvd, 'company_info': company_info})
