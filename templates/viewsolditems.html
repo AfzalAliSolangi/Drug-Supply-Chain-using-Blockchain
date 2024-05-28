@@ -456,10 +456,12 @@ button#searchButton:hover {
           // Define which columns to search (OrderID, Trx ID, Distributor, Product)
           var tds = [tr[i].getElementsByTagName('td')[1], // OrderID (adjust index as necessary)
                      tr[i].getElementsByTagName('td')[2], // Trx ID
+                     tr[i].getElementsByTagName('td')[0], // Trx ID
                      tr[i].getElementsByTagName('td')[3], // Distributor
                      tr[i].getElementsByTagName('td')[5], // Product
                      tr[i].getElementsByTagName('td')[6], // Batch ID	
                      tr[i].getElementsByTagName('td')[7], // Product Code
+                     tr[i].getElementsByTagName('td')[8], // Product Code
                      ]; // Product
       
           for (var j = 0; j < tds.length; j++) {
