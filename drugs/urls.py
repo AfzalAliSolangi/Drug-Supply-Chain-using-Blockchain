@@ -76,4 +76,5 @@ urlpatterns = [
     path('sell_drugs', views.sell_drugs, name='sell_drugs'),
     path('sell_checkout', views.sell_checkout, name='sell_checkout'),
     path('pharm_updateItems', views.pharm_updateItems, name='pharm_updateItems'),
+    path('view_solditem', views.view_solditem, name='view_solditem'),
 ]

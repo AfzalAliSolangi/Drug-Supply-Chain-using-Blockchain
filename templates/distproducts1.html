@@ -385,6 +385,12 @@ button#searchButton {
         onclick="event.preventDefault(); selldrugs('{{ email }}', '{{ company_info }}')"
         >Sell Drugs</a
         >
+        <a
+        href="#"
+        class="btn btn-sidebar w-100 mb-2"
+        onclick="event.preventDefault(); solddrugs('{{ email }}', '{{ company_info }}')"
+        >Sold Drugs</a
+        >
       </div>
 
 <div class="top-bar py-2 px-3 bg-light shadow-sm">
@@ -1119,6 +1125,31 @@ function sortTableByQuantity() {
           }, 5000); // Hide after 5 seconds
         }
       });
+
+      function solddrugs(email,company_info) {
+        console.log("Viewing inventory...");
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/view_solditem';  // Replace with the actual URL for completing purchase
+        form.style.display = 'none';
+    
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        document.body.appendChild(form);
+    
+        const companyinfoInput = document.createElement('input');
+        companyinfoInput.type = 'hidden';
+        companyinfoInput.name = 'company_info';
+        companyinfoInput.value = company_info;
+        form.appendChild(companyinfoInput);
+        document.body.appendChild(form);
+    
+        form.submit();
+    }
+    
 </script>
 </body>
 </html>

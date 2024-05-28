@@ -4377,3 +4377,17 @@ def pharm_updateItems(request):
 
         else:
             return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd,'pharmacy_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"})         
+
+
+def view_solditem(request):
+    print('\nviewing sold Items')
+    if request.method == 'POST':
+        # email_rcvd = request.POST.get('email')
+        # company_info = request.POST.get('comp_info')
+        # result = rpc_connection.liststreamkeyitems(users_pharmacy_sold_items_stream, email_rcvd)
+        # data = json.dumps(result)
+        # json_load = json.loads(data)
+        # #apply length check for json_load
+        # if(len(json_load)>0):
+            ...
+

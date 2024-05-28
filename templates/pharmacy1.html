@@ -298,6 +298,12 @@ button#searchButton:hover {
   onclick="event.preventDefault(); selldrugs('{{ email }}', '{{ company_info }}')"
   >Sell Drugs</a
   >
+  <a
+  href="#"
+  class="btn btn-sidebar w-100 mb-2"
+  onclick="event.preventDefault(); solddrugs('{{ email }}', '{{ company_info }}')"
+  >Sold Drugs</a
+  >
 </div>
 
 
@@ -710,6 +716,30 @@ function filterByStatus() {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '/sell_drugs';  // Replace with the actual URL for completing purchase
+    form.style.display = 'none';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+    document.body.appendChild(form);
+
+    const companyinfoInput = document.createElement('input');
+    companyinfoInput.type = 'hidden';
+    companyinfoInput.name = 'company_info';
+    companyinfoInput.value = company_info;
+    form.appendChild(companyinfoInput);
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+  function solddrugs(email,company_info) {
+    console.log("Viewing inventory...");
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/view_solditem';  // Replace with the actual URL for completing purchase
     form.style.display = 'none';
 
     const emailInput = document.createElement('input');
