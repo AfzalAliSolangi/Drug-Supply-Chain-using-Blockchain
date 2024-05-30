@@ -198,11 +198,6 @@ def pricing(request):
 def contact(request):
     return render(request, "contact.html")
 
-
-
-
-
-
 #### MASTER ####
 def signup_master(request):
     print("signup-master check")
@@ -3901,7 +3896,6 @@ def pharmorderstatus(request):
 
         return render(request, "pharmacy1.html",{'company_info': comp_info,'email':email_rcvd, 'orders':orders })
 
-
 def pharmupdatesla(request):# Adding Drugs In Manufacturer Item Stream
     print('manage_sla user')
     if request.method == 'POST':
@@ -3921,7 +3915,6 @@ def pharmupdatesla(request):# Adding Drugs In Manufacturer Item Stream
             print(pharmacy_hash_sla)
 
     return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd, 'pharmacy_hash_sla':pharmacy_hash_sla})
-
 
 def pharm_sla_upload(request):
     print('submiting Manufacturer user SLA')
@@ -4167,7 +4160,6 @@ def sell_drugs(request):
     else:
          return render(request, "pharmupdatesla.html",{'company_info': comp_info,'email':email_pharm,'pharmacy_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"}) 
 
-
 def sell_checkout(request):
     print("\nSell Drugs checkout\n\n")
     if request.method == 'POST':
@@ -4189,7 +4181,6 @@ def sell_checkout(request):
             # You can also render a template or return an appropriate HTTP response
             return render(request, 'sellcheckout.html', {'cart_items': cart_items,  'email_dist': email_dist, 'comp_info':comp_info})
         
-
 def pharm_updateItems(request):
     print('\n\nSell items to customer\n\n')
     if request.method == 'POST':
@@ -4382,7 +4373,6 @@ def pharm_updateItems(request):
 
         else:
             return render(request, "pharmupdatesla.html",{'company_info': company_info,'email':email_rcvd,'pharmacy_hash_sla':fetched_sla,'message': "Wrong SLA, Please provide correct SLA file!"})         
-
 
 def view_solditem(request):
     print('\nviewing sold Items')
