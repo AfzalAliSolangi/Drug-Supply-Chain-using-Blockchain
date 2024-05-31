@@ -2142,7 +2142,6 @@ def otp_manufacturer(request):
         return render(request, "signup-manufacturer1.html",{'email': email}) #if the email is not present then render this page
     
 
-
 #### DISTRIBUTOR #####
 def signup_distributor(request):
     print("signup-distributor check")
