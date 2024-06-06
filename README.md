@@ -76,4 +76,4 @@ multichain-cli <chain-name> subscribe pharmacy_sla_stream
 
 ## Special Thanks
 
-Special thanks for the guidance for the project to Dr. Shehbaz A. Siddiqui (FAST National University of Computer and Emerging Sciences, Karachi).
+Special thanks for the guidance for the project to Assistant Professor Dr. Shehbaz A. Siddiqui (FAST National University of Computer and Emerging Sciences, Karachi).
